@@ -79,7 +79,7 @@ export default function EmployeeView() {
   };
 
   return (
-    <div className="space-y-8 max-w-[1600px] mx-auto animate-fade-in">
+    <div className="space-y-8 max-w-[2560px] mx-auto animate-fade-in 2xl:px-8">
       
       {/* Page Header and Employee Selector */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

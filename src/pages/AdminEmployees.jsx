@@ -10,7 +10,7 @@ export default function AdminEmployees() {
   useEffect(() => {
     const user = taskService.getCurrentUser();
     setCurrentUser(user);
-    
+
     // Only load if Admin
     if (user && user.role === "Admin") {
       setEmployees(taskService.getEmployees());
@@ -33,12 +33,12 @@ export default function AdminEmployees() {
   if (!currentUser) return null; // loading or waiting to redirect
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 lg:space-y-8 animate-fade-in pb-8 lg:pb-12">
+    <div className="max-w-[2560px] mx-auto space-y-6 lg:space-y-8 animate-fade-in pb-8 lg:pb-12 2xl:px-8">
       {/* Header Section */}
       <div className="relative overflow-hidden rounded-[1.5rem] lg:rounded-[2rem] bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 sm:p-6 lg:p-10 shadow-premium">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 dark:bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/5 dark:bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"></div>
-        
+
         <div className="relative flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
           <div>
             <h2 className="text-3xl md:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-300 flex items-center gap-3">
@@ -60,14 +60,14 @@ export default function AdminEmployees() {
       </div>
 
       {/* Grid of Employees */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 min-[2560px]:grid-cols-6 gap-4 lg:gap-6">
         {employees.map(emp => (
           <div key={emp.id} className="bg-white dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 rounded-[1.5rem] lg:rounded-3xl p-5 lg:p-6 shadow-sm hover:shadow-premium transition-all duration-300">
             <div className="flex items-center gap-4 border-b border-slate-100 dark:border-slate-700/50 pb-5 mb-5">
-              <img 
-                src={emp.avatar} 
-                alt={emp.name} 
-                className="w-16 h-16 rounded-2xl object-cover ring-4 ring-slate-50 dark:ring-slate-800 shadow-sm" 
+              <img
+                src={emp.avatar}
+                alt={emp.name}
+                className="w-16 h-16 rounded-2xl object-cover ring-4 ring-slate-50 dark:ring-slate-800 shadow-sm"
               />
               <div className="flex-1 min-w-0">
                 <h3 className="text-lg font-black text-slate-900 dark:text-white truncate">{emp.name}</h3>
@@ -86,7 +86,7 @@ export default function AdminEmployees() {
                   <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 truncate">{emp.email}</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-3">
                 <Phone size={16} className="text-slate-400 shrink-0 mt-0.5" />
                 <div className="min-w-0">

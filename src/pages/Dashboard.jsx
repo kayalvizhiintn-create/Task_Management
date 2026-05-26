@@ -104,7 +104,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="space-y-6 lg:space-y-8 max-w-[1600px] mx-auto animate-fade-in pb-10">
+    <div className="space-y-6 lg:space-y-8 max-w-[2560px] mx-auto animate-fade-in pb-10 2xl:px-8">
 
       {/* Top Header Section */}
       <div className="flex justify-between items-center">

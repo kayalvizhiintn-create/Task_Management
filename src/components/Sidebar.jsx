@@ -32,7 +32,7 @@ const navItems = [
     { path: "/settings", icon: <Settings size={20} />, label: "Settings" }
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onClose }) {
     const currentUser = taskService.getCurrentUser();
     const userRole = currentUser?.role || "User";
 
@@ -46,11 +46,21 @@ export default function Sidebar() {
             {/* Subtle background glow */}
             <div className="absolute top-0 left-0 w-full h-32 bg-indigo-500/5 blur-3xl rounded-full -translate-y-1/2"></div>
 
-            <div className="p-6 border-b border-slate-800/50 flex items-center gap-3 relative z-10">
-                <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-indigo-500/20">
-                    N
+            <div className="p-6 border-b border-slate-800/50 flex items-center justify-between relative z-10">
+                <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-indigo-500/20">
+                        N
+                    </div>
+                    <h1 className="text-2xl font-black text-white tracking-tight">Navanala</h1>
                 </div>
-                <h1 className="text-2xl font-black text-white tracking-tight">Navanala</h1>
+                {onClose && (
+                    <button 
+                        onClick={onClose}
+                        className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg lg:hidden"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                )}
             </div>
 
             <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 custom-scrollbar relative z-10">

@@ -61,7 +61,7 @@ export default function Categories() {
       <div className="absolute -top-[20%] -right-[10%] w-[70%] h-[70%] rounded-full bg-primary/5 blur-[120px] pointer-events-none z-0" />
       <div className="absolute top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-blue-500/5 blur-[100px] pointer-events-none z-0" />
 
-      <div className="max-w-7xl mx-auto space-y-8 relative z-10">
+      <div className="max-w-[2560px] mx-auto space-y-8 relative z-10 2xl:px-8">
 
         {/* Header Section */}
         <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-800 p-8 rounded-[2.5rem] shadow-xl shadow-indigo-500/5">
@@ -113,7 +113,7 @@ export default function Categories() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 min-[2560px]:grid-cols-6 gap-6 lg:gap-8">
             {categories.map((cat, idx) => {
               const catTasks = tasks.filter(t => t.category === cat.name);
               const completedCount = catTasks.filter(t => t.status === "Completed").length;

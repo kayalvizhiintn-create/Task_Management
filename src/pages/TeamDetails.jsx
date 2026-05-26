@@ -437,7 +437,7 @@ export default function TeamDetails() {
   };
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8 max-w-[1600px] mx-auto animate-fade-in relative min-h-screen z-0 overflow-hidden">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8 max-w-[2560px] mx-auto animate-fade-in relative min-h-screen z-0 overflow-hidden 2xl:px-8">
       {/* Visual background accents */}
       <div className="fixed top-0 right-0 w-full h-full overflow-hidden -z-10 pointer-events-none" />
       {/* Toast Notification */}

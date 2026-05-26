@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Bell, Search, User, ChevronDown, CheckCircle2, AlertCircle, Info, Calendar } from "lucide-react";
+import { Bell, Search, User, ChevronDown, CheckCircle2, AlertCircle, Info, Calendar, Menu } from "lucide-react";
 import { taskService } from "../services/taskService";
 import { useNavigate } from "react-router-dom";
 
-export default function Navbar({ onSearchChange }) {
+export default function Navbar({ onSearchChange, onMenuClick }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -50,22 +50,33 @@ export default function Navbar({ onSearchChange }) {
   };
 
   return (
-    <header className="h-20 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-8 flex items-center justify-between sticky top-0 z-40 transition-colors duration-300 print:hidden">
-      {/* Search Bar */}
-      <div className="w-96 relative">
-        <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-          <Search size={18} />
-        </span>
-        <input
-          type="text"
-          placeholder="Search tasks, categories, assignees..."
-          onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 text-slate-800 placeholder-slate-400"
-        />
+    <header className="h-20 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-4 md:px-8 flex items-center justify-between sticky top-0 z-40 transition-colors duration-300 print:hidden">
+      {/* Left Section: Menu & Search */}
+      <div className="flex items-center gap-2 md:gap-4 flex-1 max-w-xl mr-2 md:mr-4">
+        {/* Hamburger Menu */}
+        <button 
+          onClick={onMenuClick}
+          className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl lg:hidden flex-shrink-0"
+        >
+          <Menu size={24} />
+        </button>
+
+        {/* Search Bar */}
+        <div className="w-full relative">
+          <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <Search size={18} />
+          </span>
+          <input
+            type="text"
+            placeholder="Search..."
+            onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 text-slate-800 dark:text-slate-100 placeholder-slate-400"
+          />
+        </div>
       </div>
 
       {/* Action Items */}
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-2 sm:gap-5 flex-shrink-0">
         {/* Notifications */}
         <div className="relative" ref={notifRef}>
           <button
