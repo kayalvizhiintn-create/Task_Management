@@ -35,18 +35,19 @@ export default function EmployeeView() {
     }
   }, [selectedEmpId]);
 
-  const loadData = () => {
+  function loadData() {
     const allTasks = taskService.getTasks();
     const filtered = allTasks.filter(t => t.assigneeId === selectedEmpId);
     setEmployeeTasks(filtered);
-  };
+  }
 
   const activeEmployee = employees.find(e => e.id === selectedEmpId);
 
   // Compute metrics for active employee
   const totalCount = employeeTasks.length;
   const completedCount = employeeTasks.filter(t => t.status === "Completed").length;
-  const pendingCount = employeeTasks.filter(t => t.status === "Pending" || t.status === "In Progress").length;
+  const testingCount = employeeTasks.filter(t => t.status === "Testing").length;
+  const pendingCount = employeeTasks.filter(t => t.status === "Pending" || t.status === "In Progress" || t.status === "Hold" || t.status === "Testing").length;
   const highPriorityCount = employeeTasks.filter(t => t.priority === "High" && t.status !== "Completed").length;
   
   // Due today calculation
@@ -61,6 +62,7 @@ export default function EmployeeView() {
   const getStatusBadge = (status) => {
     switch (status) {
       case "Completed": return "bg-emerald-50 text-emerald-700 border-emerald-200";
+      case "Testing": return "bg-violet-50 text-violet-700 border-violet-200";
       case "In Progress": return "bg-amber-50 text-amber-700 border-amber-200";
       case "Pending": return "bg-rose-50 text-rose-700 border-rose-200";
       default: return "bg-slate-50 text-slate-700 border-slate-200";
@@ -137,7 +139,7 @@ export default function EmployeeView() {
       )}
 
       {/* Statistics Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
         
         {/* Total Tasks */}
         <div className="bg-white border border-slate-200/50 p-5 rounded-3xl shadow-premium flex items-center justify-between">
@@ -164,6 +166,15 @@ export default function EmployeeView() {
             <h4 className="text-2xl font-black text-emerald-600">{completedCount}</h4>
           </div>
           <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl"><CheckCircle2 size={18} /></div>
+        </div>
+
+        {/* Testing Tasks */}
+        <div className="bg-white border border-slate-200/50 p-5 rounded-3xl shadow-premium flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Testing Phase</p>
+            <h4 className="text-2xl font-black text-violet-600">{testingCount}</h4>
+          </div>
+          <div className="p-3 bg-violet-50 text-violet-600 rounded-2xl"><CheckCircle2 size={18} /></div>
         </div>
 
         {/* Due Today */}
@@ -246,6 +257,7 @@ export default function EmployeeView() {
                   <div className="flex items-center gap-1.5">
                     <span className={`w-2 h-2 rounded-full ${
                       task.status === 'Completed' ? 'bg-emerald-500' :
+                      task.status === 'Testing' ? 'bg-violet-500' :
                       task.status === 'In Progress' ? 'bg-amber-500' :
                       task.status === 'Pending' ? 'bg-rose-500' : 'bg-slate-500'
                     }`} />
@@ -256,6 +268,7 @@ export default function EmployeeView() {
                     >
                       <option value="Pending">Pending</option>
                       <option value="In Progress">In Progress</option>
+                      <option value="Testing">Testing</option>
                       <option value="Completed">Completed</option>
                       <option value="Hold">Hold</option>
                     </select>

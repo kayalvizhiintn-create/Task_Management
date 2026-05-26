@@ -407,7 +407,7 @@ export const taskService = {
 
     return employees.map(emp => {
       const empTasks = tasks.filter(t => t.assigneeId === emp.id);
-      const pending = empTasks.filter(t => t.status === "Pending" || t.status === "In Progress" || t.status === "Hold").length;
+      const pending = empTasks.filter(t => t.status === "Pending" || t.status === "In Progress" || t.status === "Hold" || t.status === "Testing").length;
       const completed = empTasks.filter(t => t.status === "Completed").length;
 
       return {

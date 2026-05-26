@@ -116,7 +116,7 @@ export default function Reports() {
         </div>
 
         {/* Export Buttons */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap print:hidden">
           <button onClick={exportToCSV} className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 hover:text-slate-900 shadow-sm transition-all">
             <FileText size={14} /> CSV
           </button>

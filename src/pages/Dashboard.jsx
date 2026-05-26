@@ -36,13 +36,14 @@ export default function Dashboard() {
   const completedCount = tasks.filter(t => t.status === "Completed").length;
   const pendingCount = tasks.filter(t => t.status === "Pending").length;
   const inProgressCount = tasks.filter(t => t.status === "In Progress").length;
+  const testingCount = tasks.filter(t => t.status === "Testing").length;
   const highPriorityCount = tasks.filter(t => t.priority === "High").length;
 
   // Status Chart Percentages
   const completedPct = totalCount ? Math.round((completedCount / totalCount) * 100) : 0;
   const inProgressPct = totalCount ? Math.round((inProgressCount / totalCount) * 100) : 0;
   const pendingPct = totalCount ? Math.round((pendingCount / totalCount) * 100) : 0;
-  const holdPct = totalCount ? Math.round((tasks.filter(t => t.status === "Hold").length / totalCount) * 100) : 0;
+  const testingPct = totalCount ? Math.round((testingCount / totalCount) * 100) : 0;
 
   // Deadlines filtering (Tasks that are due, sorted)
   const urgentTasks = [...tasks]
@@ -63,8 +64,47 @@ export default function Dashboard() {
   const circ3 = 2 * Math.PI * radius3;
   const strokePending = circ3 - (pendingPct / 100) * circ3;
 
+  // Calculate Task Velocity (Timeline events per day over last 7 days)
+  const velocityData = Array.from({ length: 7 }).map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    const dateStr = d.toISOString().split("T")[0];
+    const dayName = d.toLocaleDateString("en-US", { weekday: "short" });
+    
+    let count = 0;
+    tasks.forEach(task => {
+      if (task.timeline) {
+         count += task.timeline.filter(event => event.date === dateStr).length;
+      }
+    });
+
+    return {
+      day: dayName,
+      count,
+      active: i === 6
+    };
+  });
+
+  const maxVelocity = Math.max(...velocityData.map(d => d.count), 1);
+  const totalVelocityThisWeek = velocityData.reduce((acc, curr) => acc + curr.count, 0);
+
+  const formattedVelocityData = velocityData.map(d => ({
+    ...d,
+    height: `${(d.count / maxVelocity) * 100}%`
+  }));
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "Completed": return "bg-emerald-100 text-emerald-700 border-emerald-200";
+      case "In Progress": return "bg-amber-100 text-amber-700 border-amber-200";
+      case "Testing": return "bg-blue-100 text-blue-700 border-blue-200";
+      case "Pending": return "bg-rose-100 text-rose-700 border-rose-200";
+      default: return "bg-slate-100 text-slate-700 border-slate-200";
+    }
+  };
+
   return (
-    <div className="space-y-6 lg:space-y-8 max-w-[1600px] mx-auto animate-fade-in">
+    <div className="space-y-6 lg:space-y-8 max-w-[1600px] mx-auto animate-fade-in pb-10">
 
       {/* Top Header Section */}
       <div className="flex justify-between items-center">
@@ -86,61 +126,60 @@ export default function Dashboard() {
       </div>
 
       {/* Top Statistics Cards Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-4">
 
         {/* Total Tasks */}
-        <div className="bg-gradient-to-br from-slate-900 to-indigo-950 border border-indigo-900/40 p-4 lg:p-6 rounded-2xl lg:rounded-3xl shadow-premium hover:shadow-floating transition-all duration-300 flex items-center justify-between group">
-          <div className="space-y-2">
-            <p className="text-[11px] font-bold text-indigo-400 uppercase tracking-widest">Total Tasks</p>
-            <h3 className="text-3xl font-black text-white tracking-tight">{totalCount}</h3>
+        <div className="bg-gradient-to-br from-slate-900 to-indigo-950 border border-indigo-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
+          <div className="flex justify-between items-start mb-2">
+            <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Total</p>
+            <ListTodo size={16} className="text-indigo-400" />
           </div>
-          <div className="p-4 bg-indigo-400 text-indigo-950 rounded-2xl transition-all duration-300 group-hover:scale-105 shadow-lg shadow-indigo-500/20">
-            <ListTodo size={24} className="stroke-[2.5]" />
-          </div>
+          <h3 className="text-2xl font-black text-white tracking-tight">{totalCount}</h3>
         </div>
 
         {/* Completed Tasks */}
-        <div className="bg-gradient-to-br from-slate-900 to-emerald-950 border border-emerald-900/40 p-4 lg:p-6 rounded-2xl lg:rounded-3xl shadow-premium hover:shadow-floating transition-all duration-300 flex items-center justify-between group">
-          <div className="space-y-2">
-            <p className="text-[11px] font-bold text-emerald-400 uppercase tracking-widest">Completed</p>
-            <h3 className="text-3xl font-black text-white tracking-tight">{completedCount}</h3>
+        <div className="bg-gradient-to-br from-slate-900 to-emerald-950 border border-emerald-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
+          <div className="flex justify-between items-start mb-2">
+            <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Completed</p>
+            <CheckCircle2 size={16} className="text-emerald-400" />
           </div>
-          <div className="p-4 bg-emerald-400 text-emerald-950 rounded-2xl transition-all duration-300 group-hover:scale-105 shadow-lg shadow-emerald-500/20">
-            <CheckCircle2 size={24} className="stroke-[2.5]" />
-          </div>
+          <h3 className="text-2xl font-black text-white tracking-tight">{completedCount}</h3>
         </div>
 
         {/* In Progress Tasks */}
-        <div className="bg-gradient-to-br from-slate-900 to-amber-950 border border-amber-900/40 p-4 lg:p-6 rounded-2xl lg:rounded-3xl shadow-premium hover:shadow-floating transition-all duration-300 flex items-center justify-between group">
-          <div className="space-y-2">
-            <p className="text-[11px] font-bold text-amber-400 uppercase tracking-widest">In Progress</p>
-            <h3 className="text-3xl font-black text-white tracking-tight">{inProgressCount}</h3>
+        <div className="bg-gradient-to-br from-slate-900 to-amber-950 border border-amber-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
+          <div className="flex justify-between items-start mb-2">
+            <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">In Progress</p>
+            <PlayCircle size={16} className="text-amber-400" />
           </div>
-          <div className="p-4 bg-amber-400 text-amber-950 rounded-2xl transition-all duration-300 group-hover:scale-105 shadow-lg shadow-amber-500/20">
-            <PlayCircle size={24} className="stroke-[2.5]" />
+          <h3 className="text-2xl font-black text-white tracking-tight">{inProgressCount}</h3>
+        </div>
+
+        {/* Testing Phase Tasks */}
+        <div className="bg-gradient-to-br from-slate-900 to-blue-950 border border-blue-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
+          <div className="flex justify-between items-start mb-2">
+            <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Testing</p>
+            <CheckCircle2 size={16} className="text-blue-400" />
           </div>
+          <h3 className="text-2xl font-black text-white tracking-tight">{testingCount}</h3>
         </div>
 
         {/* Pending Tasks */}
-        <div className="bg-gradient-to-br from-slate-900 to-rose-950 border border-rose-900/40 p-4 lg:p-6 rounded-2xl lg:rounded-3xl shadow-premium hover:shadow-floating transition-all duration-300 flex items-center justify-between group">
-          <div className="space-y-2">
-            <p className="text-[11px] font-bold text-rose-400 uppercase tracking-widest">Pending</p>
-            <h3 className="text-3xl font-black text-white tracking-tight">{pendingCount}</h3>
+        <div className="bg-gradient-to-br from-slate-900 to-rose-950 border border-rose-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
+          <div className="flex justify-between items-start mb-2">
+            <p className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Pending</p>
+            <Clock size={16} className="text-rose-400" />
           </div>
-          <div className="p-4 bg-rose-400 text-rose-950 rounded-2xl transition-all duration-300 group-hover:scale-105 shadow-lg shadow-rose-500/20">
-            <Clock size={24} className="stroke-[2.5]" />
-          </div>
+          <h3 className="text-2xl font-black text-white tracking-tight">{pendingCount}</h3>
         </div>
 
         {/* High Priority Tasks */}
-        <div className="bg-gradient-to-br from-slate-900 to-purple-950 border border-purple-900/40 p-4 lg:p-6 rounded-2xl lg:rounded-3xl shadow-premium hover:shadow-floating transition-all duration-300 flex items-center justify-between group">
-          <div className="space-y-2">
-            <p className="text-[11px] font-bold text-purple-400 uppercase tracking-widest">High Priority</p>
-            <h3 className="text-3xl font-black text-white tracking-tight">{highPriorityCount}</h3>
+        <div className="bg-gradient-to-br from-slate-900 to-purple-950 border border-purple-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
+          <div className="flex justify-between items-start mb-2">
+            <p className="text-[10px] font-bold text-purple-400 uppercase tracking-widest">High Priority</p>
+            <AlertTriangle size={16} className="text-purple-400" />
           </div>
-          <div className="p-4 bg-purple-400 text-purple-950 rounded-2xl transition-all duration-300 group-hover:scale-105 shadow-lg shadow-purple-500/20">
-            <AlertTriangle size={24} className="stroke-[2.5]" />
-          </div>
+          <h3 className="text-2xl font-black text-white tracking-tight">{highPriorityCount}</h3>
         </div>
 
       </div>
@@ -156,48 +195,22 @@ export default function Dashboard() {
           </div>
 
           <div className="relative flex justify-center items-center py-4">
-            {/* SVG Visual Circle representing multiple states */}
             <svg width="220" height="220" className="transform -rotate-90">
-              {/* Outer grey background track */}
               <circle cx="110" cy="110" r={radius1} stroke="#f1f5f9" strokeWidth="18" fill="transparent" />
 
-              {/* Completed stroke (Emerald) */}
               <circle
-                cx="110"
-                cy="110"
-                r={radius1}
-                stroke="#10b981"
-                strokeWidth="18"
-                fill="transparent"
-                strokeDasharray={circ1}
-                strokeDashoffset={strokeCompleted}
-                strokeLinecap="round"
+                cx="110" cy="110" r={radius1} stroke="#10b981" strokeWidth="18" fill="transparent"
+                strokeDasharray={circ1} strokeDashoffset={strokeCompleted} strokeLinecap="round"
                 className="transition-all duration-1000 ease-out"
               />
-              {/* In Progress stroke (Amber) - shifted to simulate stacked donut */}
               <circle
-                cx="110"
-                cy="110"
-                r={radius2}
-                stroke="#f59e0b"
-                strokeWidth="12"
-                fill="transparent"
-                strokeDasharray={circ2}
-                strokeDashoffset={strokeInProgress}
-                strokeLinecap="round"
+                cx="110" cy="110" r={radius2} stroke="#f59e0b" strokeWidth="12" fill="transparent"
+                strokeDasharray={circ2} strokeDashoffset={strokeInProgress} strokeLinecap="round"
                 className="transition-all duration-1000 ease-out"
               />
-              {/* Pending stroke (Rose) */}
               <circle
-                cx="110"
-                cy="110"
-                r={radius3}
-                stroke="#ef4444"
-                strokeWidth="8"
-                fill="transparent"
-                strokeDasharray={circ3}
-                strokeDashoffset={strokePending}
-                strokeLinecap="round"
+                cx="110" cy="110" r={radius3} stroke="#ef4444" strokeWidth="8" fill="transparent"
+                strokeDasharray={circ3} strokeDashoffset={strokePending} strokeLinecap="round"
                 className="transition-all duration-1000 ease-out"
               />
             </svg>
@@ -207,35 +220,40 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Donut Legend Info */}
-          <div className="grid grid-cols-3 gap-2 text-center mt-6 pt-6 border-t border-slate-100">
+          <div className="grid grid-cols-4 gap-2 text-center mt-6 pt-6 border-t border-slate-100">
             <div>
-              <div className="flex items-center gap-1.5 justify-center">
+              <div className="flex items-center gap-1 justify-center">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                <span className="text-xs font-bold text-slate-800">{completedPct}%</span>
+                <span className="text-[11px] font-bold text-slate-800">{completedPct}%</span>
               </div>
-              <p className="text-[10px] text-slate-400 mt-0.5 font-bold uppercase tracking-wider">Done</p>
+              <p className="text-[9px] text-slate-400 mt-0.5 font-bold uppercase tracking-wider">Done</p>
             </div>
             <div>
-              <div className="flex items-center gap-1.5 justify-center">
+              <div className="flex items-center gap-1 justify-center">
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                <span className="text-xs font-bold text-slate-800">{inProgressPct}%</span>
+                <span className="text-[11px] font-bold text-slate-800">{inProgressPct}%</span>
               </div>
-              <p className="text-[10px] text-slate-400 mt-0.5 font-bold uppercase tracking-wider">Active</p>
+              <p className="text-[9px] text-slate-400 mt-0.5 font-bold uppercase tracking-wider">Active</p>
             </div>
             <div>
-              <div className="flex items-center gap-1.5 justify-center">
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-                <span className="text-xs font-bold text-slate-800">{pendingPct}%</span>
+              <div className="flex items-center gap-1 justify-center">
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                <span className="text-[11px] font-bold text-slate-800">{testingPct}%</span>
               </div>
-              <p className="text-[10px] text-slate-400 mt-0.5 font-bold uppercase tracking-wider">Queue</p>
+              <p className="text-[9px] text-slate-400 mt-0.5 font-bold uppercase tracking-wider">Test</p>
+            </div>
+            <div>
+              <div className="flex items-center gap-1 justify-center">
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                <span className="text-[11px] font-bold text-slate-800">{pendingPct}%</span>
+              </div>
+              <p className="text-[9px] text-slate-400 mt-0.5 font-bold uppercase tracking-wider">Queue</p>
             </div>
           </div>
         </div>
 
         {/* Task Velocity Analytics Widget */}
         <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium flex flex-col justify-between lg:col-span-2 relative overflow-hidden">
-          {/* Background decoration */}
           <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-indigo-50/50 via-transparent to-transparent pointer-events-none" />
 
           <div className="relative z-10 flex justify-between items-start mb-2">
@@ -250,28 +268,17 @@ export default function Dashboard() {
             </div>
 
             <div className="text-right">
-              <h3 className="text-3xl font-black text-indigo-600">151</h3>
+              <h3 className="text-3xl font-black text-indigo-600">{totalVelocityThisWeek}</h3>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total this week</p>
             </div>
           </div>
 
           <div className="relative z-10 flex-1 flex items-end gap-2 sm:gap-4 h-48 mt-8">
-            {/* CSS Bar Chart */}
-            {[
-              { day: 'Mon', count: 18, height: '45%', active: false },
-              { day: 'Tue', count: 24, height: '60%', active: false },
-              { day: 'Wed', count: 15, height: '35%', active: false },
-              { day: 'Thu', count: 32, height: '80%', active: false },
-              { day: 'Fri', count: 40, height: '100%', active: true },
-              { day: 'Sat', count: 12, height: '30%', active: false },
-              { day: 'Sun', count: 10, height: '25%', active: false }
-            ].map((stat, i) => (
+            {formattedVelocityData.map((stat, i) => (
               <div key={i} className="flex-1 flex flex-col justify-end items-center group h-full">
-                {/* Tooltip on hover */}
                 <div className="opacity-0 group-hover:opacity-100 transition-all duration-200 bg-slate-800 text-white text-[10px] font-bold px-2 py-1 rounded-md mb-2 whitespace-nowrap shadow-lg translate-y-2 group-hover:translate-y-0 absolute bottom-[calc(100%+8px)] z-20 pointer-events-none">
                   {stat.count} tasks
                 </div>
-                {/* Bar */}
                 <div className="w-full max-w-[48px] bg-slate-100 rounded-t-xl relative overflow-hidden group-hover:bg-indigo-50 transition-colors duration-300 flex-1 flex flex-col justify-end">
                   <div
                     className={`w-full rounded-t-xl transition-all duration-1000 ease-out group-hover:bg-indigo-600 relative overflow-hidden shadow-inner ${stat.active ? 'bg-indigo-500' : 'bg-slate-300'}`}
@@ -280,7 +287,6 @@ export default function Dashboard() {
                     <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/30 to-transparent" />
                   </div>
                 </div>
-                {/* Label */}
                 <span className={`text-xs font-bold mt-3 transition-colors ${stat.active ? 'text-indigo-600' : 'text-slate-400 group-hover:text-indigo-600'}`}>{stat.day}</span>
               </div>
             ))}
@@ -292,18 +298,12 @@ export default function Dashboard() {
               <div className="flex items-center gap-1.5">
                 <span className="text-lg font-black text-slate-800">2.4</span>
                 <span className="text-xs font-semibold text-slate-500">days</span>
-                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center ml-1">
-                  <TrendingUp size={10} className="mr-0.5" /> 12%
-                </span>
               </div>
             </div>
             <div className="flex flex-col border-l border-slate-100 pl-4">
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">On-Time Rate</span>
               <div className="flex items-center gap-1.5">
                 <span className="text-lg font-black text-slate-800">94%</span>
-                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center ml-1">
-                  <TrendingUp size={10} className="mr-0.5" /> 3%
-                </span>
               </div>
             </div>
             <div className="flex flex-col border-l border-slate-100 pl-4">
@@ -455,6 +455,68 @@ export default function Dashboard() {
 
         </div>
 
+      </div>
+
+      {/* NEW SECTION: Detailed Task Breakdown */}
+      <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium">
+        <div className="flex justify-between items-center mb-6">
+          <h4 className="font-extrabold text-slate-900 text-lg">Detailed Task Breakdown</h4>
+          <Link to="/tasks" className="text-xs font-bold text-primary hover:text-primary-dark transition-all flex items-center gap-1">
+            <span>View All Tasks</span>
+            <ChevronRight size={14} />
+          </Link>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-slate-100 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                <th className="pb-3.5 pl-2">Task Description</th>
+                <th className="pb-3.5">Category</th>
+                <th className="pb-3.5">Entered By / Assigned To</th>
+                <th className="pb-3.5 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 text-sm">
+              {tasks.map((task) => {
+                const assignee = workloads.find(e => e.id === task.assigneeId);
+                return (
+                  <tr key={task.id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="py-4 pl-2">
+                      <p className="font-bold text-slate-800">{task.name}</p>
+                      <p className="text-[11px] text-slate-500 font-medium mt-0.5 line-clamp-1">{task.description}</p>
+                    </td>
+                    <td className="py-4">
+                      <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2 py-1 rounded-md">{task.category}</span>
+                    </td>
+                    <td className="py-4">
+                      <div className="flex items-center gap-2">
+                        {assignee ? (
+                          <>
+                            <img src={assignee.avatar} alt={assignee.name} className="w-7 h-7 rounded-full object-cover" />
+                            <span className="font-semibold text-slate-700">{assignee.name}</span>
+                          </>
+                        ) : (
+                          <span className="font-semibold text-slate-400 italic">Unassigned</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="py-4 text-center">
+                      <span className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md border ${getStatusBadge(task.status)}`}>
+                        {task.status}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+              {tasks.length === 0 && (
+                <tr>
+                  <td colSpan="4" className="py-8 text-center text-slate-400 font-medium text-sm">No tasks available to display.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>

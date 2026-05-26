@@ -42,7 +42,7 @@ export default function Sidebar() {
     };
 
     return (
-        <aside className="w-64 bg-slate-950 border-r border-slate-800 flex flex-col h-full shadow-2xl transition-colors duration-300 relative overflow-hidden z-20">
+        <aside className="w-64 bg-slate-950 border-r border-slate-800 flex flex-col h-full shadow-2xl transition-colors duration-300 relative overflow-hidden z-20 print:hidden">
             {/* Subtle background glow */}
             <div className="absolute top-0 left-0 w-full h-32 bg-indigo-500/5 blur-3xl rounded-full -translate-y-1/2"></div>
 

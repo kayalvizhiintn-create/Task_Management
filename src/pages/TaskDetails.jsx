@@ -28,7 +28,7 @@ export default function TaskDetails() {
     loadTaskDetails();
   }, [id]);
 
-  const loadTaskDetails = () => {
+  function loadTaskDetails() {
     const fetchedTask = taskService.getTaskById(id);
     if (!fetchedTask) {
       setTask(null);
@@ -39,7 +39,7 @@ export default function TaskDetails() {
 
     const emp = taskService.getEmployees().find(e => e.id === fetchedTask.assigneeId);
     setEmployee(emp);
-  };
+  }
 
   if (!task) {
     return (
@@ -83,6 +83,7 @@ export default function TaskDetails() {
   const getStatusColor = (status) => {
     switch (status) {
       case "Completed": return "bg-emerald-500 text-white";
+      case "Testing": return "bg-violet-500 text-white";
       case "In Progress": return "bg-amber-500 text-white";
       case "Pending": return "bg-rose-500 text-white";
       case "Hold":

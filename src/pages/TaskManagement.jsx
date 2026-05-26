@@ -50,11 +50,11 @@ export default function TaskManagement() {
     loadData();
   }, []);
 
-  const loadData = () => {
+  function loadData() {
     setTasks(taskService.getTasks());
     setEmployees(taskService.getEmployees());
     setCategories(taskService.getCategories());
-  };
+  }
 
   // Delete handler
   const handleDelete = (id) => {
@@ -151,6 +151,8 @@ export default function TaskManagement() {
         return "bg-emerald-50 text-emerald-700 border-emerald-200/80";
       case "In Progress":
         return "bg-amber-50 text-amber-700 border-amber-200/80";
+      case "Testing":
+        return "bg-violet-50 text-violet-700 border-violet-200/80";
       case "Pending":
         return "bg-rose-50 text-rose-700 border-rose-200/80";
       case "Hold":
@@ -221,6 +223,7 @@ export default function TaskManagement() {
               <option value="All">All Statuses</option>
               <option value="Pending">Pending</option>
               <option value="In Progress">In Progress</option>
+              <option value="Testing">Testing</option>
               <option value="Completed">Completed</option>
               <option value="Hold">Hold</option>
             </select>
@@ -346,6 +349,7 @@ export default function TaskManagement() {
                           >
                             <option value="Pending">Pending</option>
                             <option value="In Progress">In Progress</option>
+                            <option value="Testing">Testing</option>
                             <option value="Completed">Completed</option>
                             <option value="Hold">Hold</option>
                           </select>
@@ -516,6 +520,7 @@ export default function TaskManagement() {
                   >
                     <option value="Pending">Pending</option>
                     <option value="In Progress">In Progress</option>
+                    <option value="Testing">Testing</option>
                     <option value="Completed">Completed</option>
                     <option value="Hold">Hold</option>
                   </select>

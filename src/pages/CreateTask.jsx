@@ -286,10 +286,11 @@ export default function CreateTask() {
                   onChange={(e) => setStatus(e.target.value)}
                   className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 text-slate-700 shadow-inner"
                 >
-                  <option value="Pending">Pending / Queue</option>
+                  <option value="Pending">Pending</option>
                   <option value="In Progress">In Progress</option>
+                  <option value="Testing">Testing</option>
                   <option value="Completed">Completed</option>
-                  <option value="Hold">On Hold</option>
+                  <option value="Hold">Hold</option>
                 </select>
               </div>
             </div>

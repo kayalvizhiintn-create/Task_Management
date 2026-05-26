@@ -148,6 +148,7 @@ export default function TeamDetails() {
   const completedTasksCount = teamTasks.filter(t => t.status === "Completed").length;
   const inProgressTasksCount = teamTasks.filter(t => t.status === "In Progress").length;
   const pendingTasksCount = teamTasks.filter(t => t.status === "Pending").length;
+  const testingTasksCount = teamTasks.filter(t => t.status === "Testing").length;
   const holdTasksCount = teamTasks.filter(t => t.status === "Hold").length;
   
   const completionRate = totalTasksCount 
@@ -453,26 +454,32 @@ export default function TeamDetails() {
       )}
 
       {/* Page Header with Team Switcher */}
-      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 lg:gap-6 bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 md:p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-premium relative overflow-hidden">
+      <div 
+        className="flex flex-nowrap justify-between items-center gap-6 bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 md:p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-premium relative overflow-x-auto overflow-y-hidden"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        <style dangerouslySetInnerHTML={{__html: `
+          .flex-nowrap::-webkit-scrollbar { display: none; }
+        `}} />
         <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/3 pointer-events-none" />
-        <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 space-y-1.5">
-          <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
-            <Users size={32} className="text-primary" />
+        <div className="relative z-10 space-y-1.5 shrink-0 w-[300px] md:w-[380px]">
+          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-3 whitespace-nowrap">
+            <Users size={32} className="text-primary shrink-0" />
             Team Operations Hub
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 font-semibold text-sm max-w-lg leading-relaxed">
+          <p className="text-slate-500 dark:text-slate-400 font-semibold text-sm leading-relaxed whitespace-normal pr-4">
             Monitor organizational structures, assign department categories to leads, and delegate tasks to team members.
           </p>
         </div>
 
         {/* Team Selectors & Operations */}
-        <div className="relative z-10 flex flex-col xl:flex-row gap-3 items-center w-full lg:w-auto mt-4 md:mt-0">
+        <div className="relative z-10 flex flex-nowrap gap-3 items-center justify-end shrink-0 ml-auto pl-4">
           {teams.length > 0 && (
-            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            <div className="flex flex-nowrap gap-3 shrink-0">
               {/* By Team */}
-              <div className="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 px-4 py-3 rounded-2xl w-full sm:w-44">
+              <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 px-3 py-2.5 rounded-2xl w-36 md:w-44 shrink-0">
                 <Users size={16} className="text-slate-400 shrink-0" />
                 <select
                   value={selectedTeamId}
@@ -486,7 +493,7 @@ export default function TeamDetails() {
               </div>
 
               {/* By Team Lead */}
-              <div className="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 px-4 py-3 rounded-2xl w-full sm:w-44">
+              <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 px-3 py-2.5 rounded-2xl w-36 md:w-44 shrink-0">
                 <UserCheck size={16} className="text-slate-400 shrink-0" />
                 <select
                   value={selectedTeamId}
@@ -506,7 +513,7 @@ export default function TeamDetails() {
               </div>
 
               {/* By Project */}
-              <div className="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 px-4 py-3 rounded-2xl w-full sm:w-44">
+              <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 px-3 py-2.5 rounded-2xl w-36 md:w-44 shrink-0">
                 <Briefcase size={16} className="text-slate-400 shrink-0" />
                 <select
                   value={selectedTeamId}
@@ -523,7 +530,7 @@ export default function TeamDetails() {
           )}
           <button 
             onClick={() => setIsTeamModalOpen(true)}
-            className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white px-5 py-3.5 rounded-2xl font-bold text-sm shadow-glow hover:scale-[1.02] transition-all duration-200 w-full sm:w-auto shrink-0"
+            className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-2xl font-bold text-sm shadow-glow hover:scale-[1.02] transition-all duration-200 shrink-0"
           >
             <Plus size={16} />
             Create Team
@@ -617,7 +624,7 @@ export default function TeamDetails() {
           </div>
 
           {/* Quick Metrics Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6">
             <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 lg:p-6 rounded-[1.5rem] shadow-premium hover:-translate-y-1 transition-transform group flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">SLA Resolution Rate</p>
@@ -648,6 +655,14 @@ export default function TeamDetails() {
                 <h4 className="text-2xl font-black text-rose-600">{pendingTasksCount} tasks</h4>
               </div>
               <div className="p-3 bg-rose-50 dark:bg-rose-500/10 text-rose-600 rounded-2xl"><AlertCircle size={18} /></div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 rounded-3xl shadow-sm flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Testing</p>
+                <h4 className="text-2xl font-black text-violet-600">{testingTasksCount} tasks</h4>
+              </div>
+              <div className="p-3 bg-violet-50 dark:bg-violet-500/10 text-violet-600 rounded-2xl"><CheckCircle2 size={18} /></div>
             </div>
 
             <div className="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 rounded-3xl shadow-sm flex items-center justify-between">
@@ -730,6 +745,7 @@ export default function TeamDetails() {
                   {activeTeam.categories.map((catName, idx) => {
                     const catTasks = tasks.filter(t => t.category === catName);
                     const completed = catTasks.filter(t => t.status === "Completed").length;
+                    const testing = catTasks.filter(t => t.status === "Testing").length;
                     const inProgress = catTasks.filter(t => t.status === "In Progress").length;
                     
                     const progress = catTasks.length 
@@ -756,6 +772,7 @@ export default function TeamDetails() {
                         <div className="mt-auto pt-6 space-y-3">
                           <div className="flex justify-between text-[10px] font-semibold text-slate-400">
                             <span>Done: {completed}</span>
+                            <span>Testing: {testing}</span>
                             <span>Doing: {inProgress}</span>
                           </div>
                           
@@ -896,10 +913,10 @@ export default function TeamDetails() {
                         }
                       };
 
-                      // Status color codes
-                      const getStatusBadgeStyle = (status) => {
+                        const getStatusBadgeStyle = (status) => {
                         switch (status) {
                           case "Completed": return "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/50";
+                          case "Testing": return "bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/20 dark:text-violet-400 dark:border-violet-900/50";
                           case "In Progress": return "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/50";
                           case "Pending": return "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/20 dark:text-rose-400 dark:border-rose-900/50";
                           default: return "bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-900 dark:text-slate-400 dark:border-slate-800";

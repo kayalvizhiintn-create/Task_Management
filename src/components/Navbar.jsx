@@ -50,7 +50,7 @@ export default function Navbar({ onSearchChange }) {
   };
 
   return (
-    <header className="h-20 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-8 flex items-center justify-between sticky top-0 z-40 transition-colors duration-300">
+    <header className="h-20 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-8 flex items-center justify-between sticky top-0 z-40 transition-colors duration-300 print:hidden">
       {/* Search Bar */}
       <div className="w-96 relative">
         <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -140,7 +140,7 @@ export default function Navbar({ onSearchChange }) {
                 </div>
                 <div className="p-2 space-y-1">
                   <button
-                    onClick={() => { setShowProfileMenu(false); navigate("/settings"); }}
+                    onClick={() => { setShowProfileMenu(false); navigate("/employee-details"); }}
                     className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 rounded-xl transition-colors duration-150 text-left"
                   >
                     <User size={16} />
