@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { taskService } from "../services/taskService";
-import { User, CheckCircle2, Camera, Upload, Shield } from "lucide-react";
+import { User, CheckCircle2, Camera, Upload, Shield, X } from "lucide-react";
 
 export default function EmployeeDetails() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -89,20 +89,20 @@ export default function EmployeeDetails() {
     }
 
     setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-    }, 2000);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 lg:space-y-8 animate-fade-in pb-8 lg:pb-12">
 
+
+
       {showToast && (
-        <div className="fixed top-8 right-8 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-floating flex items-center gap-3 border border-slate-800 z-50 animate-slide-up">
+        <div className="fixed bottom-8 right-8 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-floating flex items-center gap-3 border border-slate-800 z-50 animate-slide-up">
           <div className="bg-emerald-500/20 p-1.5 rounded-full">
             <CheckCircle2 size={20} className="text-emerald-500" />
           </div>
-          <div>
+          <div className="mr-6">
             <h4 className="text-sm font-bold">Success</h4>
             <p className="text-xs text-slate-300 font-medium">Employee details saved successfully.</p>
           </div>

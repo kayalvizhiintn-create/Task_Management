@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { taskService } from "../services/taskService";
-import { 
-  FilePlus, 
-  UserPlus, 
-  Calendar, 
-  FileText, 
-  Bookmark, 
+import {
+  FilePlus,
+  UserPlus,
+  Calendar,
+  FileText,
+  Bookmark,
   ArrowLeft,
   CheckCircle2,
   LayoutGrid,
@@ -18,21 +18,33 @@ import {
 
 export default function CreateTask() {
   const navigate = useNavigate();
-  
+
   // Database options
   const [employees, setEmployees] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [priorities, setPriorities] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [tasksMaster, setTasksMaster] = useState([]);
+  const [zones, setZones] = useState([]);
+  const [statuses, setStatuses] = useState([]);
 
   // Form Fields State
   const [name, setName] = useState("");
+  const [projectName, setProjectName] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
-  const [assigneeId, setAssigneeId] = useState("");
-  const [priority, setPriority] = useState("Medium");
-  const [status, setStatus] = useState("Pending");
-  const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
+  const [assignedBy, setAssignedBy] = useState("");
+  const [assignTo, setAssignTo] = useState("");
+  const [priority, setPriority] = useState("");
+  const [status, setStatus] = useState("Task Created");
+  const [startDate, setStartDate] = useState(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16));
   const [dueDate, setDueDate] = useState("");
   const [remarks, setRemarks] = useState("");
+  const [zone, setZone] = useState("Marketing");
+  const [purchaseType, setPurchaseType] = useState("");
+  const [hardwareDetails, setHardwareDetails] = useState({ what: "", use: "", need: "" });
+  const [softwareDetails, setSoftwareDetails] = useState({ what: "", use: "", need: "" });
+  const [department, setDepartment] = useState("");
 
   // Attachment & Camera State
   const [attachment, setAttachment] = useState(null);
@@ -45,14 +57,49 @@ export default function CreateTask() {
   const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
-    const emps = taskService.getEmployees();
-    const cats = taskService.getCategories();
-    setEmployees(emps);
-    setCategories(cats);
-
-    // Set defaults
-    if (cats.length > 0) setCategory(cats[0].name);
-    if (emps.length > 0) setAssigneeId(emps[0].id);
+    const loadDependencies = async () => {
+      try {
+        let emps = await taskService.fetchEmployeesAsync();
+        if (!Array.isArray(emps)) emps = [];
+        const depts = taskService.getDepartments();
+        const prios = taskService.getPriorities();
+        const projs = taskService.getProjects();
+        const tasks = taskService.getTaskMaster();
+        const zns = taskService.getZoneMaster();
+        const stats = taskService.getStatuses();
+        
+        setEmployees(emps);
+        setDepartments(depts);
+        setPriorities(prios);
+        setProjects(projs);
+        setTasksMaster(tasks);
+        setZones(zns);
+        setStatuses(stats);
+        
+        if (tasks.length > 0 && !name) setName(tasks[0].name);
+        if (projs.length > 0 && !projectName) setProjectName(projs[0].name);
+        if (zns.length > 0 && !zone) setZone(zns[0].name);
+        if (stats.length > 0 && !status) setStatus(stats[0].name);
+        
+        // Set default department if none selected
+        if (depts.length > 0 && !department) {
+          setDepartment(depts[0].name);
+        }
+        
+        // Set default priority if none selected
+        if (prios.length > 0 && !priority) {
+          setPriority(prios[0].name);
+        }
+        
+        if (emps.length > 0) {
+          setAssignedBy(emps[0].id);
+          setAssignTo(emps[0].id);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    loadDependencies();
   }, []);
 
   useEffect(() => {
@@ -117,21 +164,28 @@ export default function CreateTask() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!name || !dueDate) {
-      alert("Please fill in required fields: Task Name and Due Date.");
+    if (!name) {
+      alert("Please fill in required fields: Task Name.");
       return;
     }
 
     const newTask = {
       name,
-      category,
+      projectName,
+      category: department,
       description,
-      assigneeId,
+      assignedBy,
+      assignTo,
       priority,
       status,
       startDate,
       dueDate,
-      remarks
+      remarks,
+      zone,
+      purchaseType,
+      hardwareDetails,
+      softwareDetails,
+      department
     };
 
     taskService.createTask(newTask);
@@ -142,7 +196,7 @@ export default function CreateTask() {
     setTimeout(() => {
       setShowToast(false);
       navigate("/tasks");
-    }, 1200);
+    }, 3000);
   };
 
   const handleSaveDraft = (e) => {
@@ -153,16 +207,16 @@ export default function CreateTask() {
     }
     setToastMessage("Draft saved in temporary workspace!");
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 2000);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-4 lg:space-y-8 animate-fade-in pb-8 lg:pb-12">
+    <div className="w-full space-y-4 lg:space-y-8 animate-fade-in pb-8 lg:pb-12">
       {/* Success Toast */}
       {showToast && (
-        <div className="fixed top-8 right-8 bg-slate-900 text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-700 z-50 animate-slide-up">
+        <div className="fixed bottom-8 right-8 bg-slate-900 text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-700 z-50 animate-slide-up">
           <CheckCircle2 size={20} className="text-emerald-400 shrink-0" />
-          <span className="text-sm font-bold tracking-wide">{toastMessage}</span>
+          <span className="text-sm font-bold tracking-wide mr-6">{toastMessage}</span>
         </div>
       )}
 
@@ -181,12 +235,12 @@ export default function CreateTask() {
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white border border-slate-200/60 rounded-[1.5rem] lg:rounded-[2rem] shadow-2xl overflow-hidden relative">
-        
+
         {/* Subtle top gradient */}
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-indigo-500 to-purple-500" />
 
         <div className="p-5 sm:p-6 lg:p-10 space-y-6 lg:space-y-12">
-          
+
           {/* Section 1: Basic Information */}
           <div className="space-y-6">
             <h4 className="text-lg font-extrabold text-slate-900 flex items-center gap-2.5 pb-2 border-b border-slate-100">
@@ -195,33 +249,89 @@ export default function CreateTask() {
               </div>
               <span>Task Details</span>
             </h4>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8">
-              <div className="md:col-span-2 space-y-2">
+              <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
                   <span>Task Name</span>
                   <span className="text-rose-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Conduct compliance audit on cloud services"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-base focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-800 font-bold transition-all shadow-inner"
-                  required
-                />
+                <div className="relative">
+                  <select
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-700 appearance-none shadow-inner"
+                    required
+                  >
+                    <option value="" disabled>Select Task Name</option>
+                    {tasksMaster.map(t => (
+                      <option key={t.id} value={t.name}>{t.name}</option>
+                    ))}
+                    {name && !tasksMaster.find(t => t.name === name) && <option value={name}>{name}</option>}
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <LayoutGrid size={16} />
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700">Scope Category</label>
+                <label className="text-sm font-bold text-slate-700">Project Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    list="create-project-names"
+                    placeholder="Enter or select Project Name (Optional)"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                    className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-700 shadow-inner"
+                  />
+                  <datalist id="create-project-names">
+                    {projects.map(p => (
+                      <option key={p.id} value={p.name} />
+                    ))}
+                  </datalist>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <LayoutGrid size={16} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700">Zone</label>
                 <div className="relative">
                   <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    value={zone}
+                    onChange={(e) => {
+                      setZone(e.target.value);
+                      if (e.target.value !== "Purchase") {
+                        setPurchaseType("");
+                      }
+                    }}
                     className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-700 appearance-none shadow-inner"
                   >
-                    {categories.map(cat => (
-                      <option key={cat.id} value={cat.name}>{cat.name}</option>
+                    <option value="">Select Zone</option>
+                    {zones.map(z => (
+                      <option key={z.id} value={z.name}>{z.name}</option>
+                    ))}
+                    {zone && !zones.find(z => z.name === zone) && <option value={zone}>{zone}</option>}
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <LayoutGrid size={16} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700">Department</label>
+                <div className="relative">
+                  <select
+                    value={department}
+                    onChange={(e) => setDepartment(e.target.value)}
+                    className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-700 appearance-none shadow-inner"
+                  >
+                    {departments.map(dept => (
+                      <option key={dept.id} value={dept.name}>{dept.name}</option>
                     ))}
                   </select>
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
@@ -229,6 +339,106 @@ export default function CreateTask() {
                   </div>
                 </div>
               </div>
+
+              {zone === "Purchase" && (
+                <div className="md:col-span-2 space-y-4 p-5 border border-slate-200/80 rounded-2xl bg-white shadow-sm">
+                  <label className="text-sm font-bold text-slate-700">Purchase Type</label>
+                  <div className="flex gap-6">
+                    <label className="flex items-center gap-2.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="purchaseType"
+                        value="Hardware"
+                        checked={purchaseType === "Hardware"}
+                        onChange={(e) => setPurchaseType(e.target.value)}
+                        className="w-4 h-4 text-primary focus:ring-primary"
+                      />
+                      <span className="text-sm font-bold text-slate-700">Hardware</span>
+                    </label>
+                    <label className="flex items-center gap-2.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="purchaseType"
+                        value="Software"
+                        checked={purchaseType === "Software"}
+                        onChange={(e) => setPurchaseType(e.target.value)}
+                        className="w-4 h-4 text-primary focus:ring-primary"
+                      />
+                      <span className="text-sm font-bold text-slate-700">Software</span>
+                    </label>
+                  </div>
+
+                  {purchaseType === "Hardware" && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-700">What Hardware</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Laptops"
+                          value={hardwareDetails.what}
+                          onChange={(e) => setHardwareDetails({ ...hardwareDetails, what: e.target.value })}
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-medium"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-700">Use</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Office work"
+                          value={hardwareDetails.use}
+                          onChange={(e) => setHardwareDetails({ ...hardwareDetails, use: e.target.value })}
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-medium"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-700">Need</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. High performance"
+                          value={hardwareDetails.need}
+                          onChange={(e) => setHardwareDetails({ ...hardwareDetails, need: e.target.value })}
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-medium"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {purchaseType === "Software" && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-700">What Software</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Adobe Suite"
+                          value={softwareDetails.what}
+                          onChange={(e) => setSoftwareDetails({ ...softwareDetails, what: e.target.value })}
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-medium"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-700">Use</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Design"
+                          value={softwareDetails.use}
+                          onChange={(e) => setSoftwareDetails({ ...softwareDetails, use: e.target.value })}
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-medium"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-700">Need</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. 5 licenses"
+                          value={softwareDetails.need}
+                          onChange={(e) => setSoftwareDetails({ ...softwareDetails, need: e.target.value })}
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-medium"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="md:col-span-2 space-y-2">
                 <label className="text-sm font-bold text-slate-700">Detailed Description</label>
@@ -251,13 +461,26 @@ export default function CreateTask() {
               </div>
               <span>Assignment & Priority</span>
             </h4>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-8">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700">Assignee</label>
+                <label className="text-sm font-bold text-slate-700">Assigned By</label>
                 <select
-                  value={assigneeId}
-                  onChange={(e) => setAssigneeId(e.target.value)}
+                  value={assignedBy}
+                  onChange={(e) => setAssignedBy(e.target.value)}
+                  className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 text-slate-700 shadow-inner"
+                >
+                  {employees.map(emp => (
+                    <option key={emp.id} value={emp.id}>{emp.name} ({emp.role})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700">Assign To</label>
+                <select
+                  value={assignTo}
+                  onChange={(e) => setAssignTo(e.target.value)}
                   className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 text-slate-700 shadow-inner"
                 >
                   {employees.map(emp => (
@@ -273,9 +496,9 @@ export default function CreateTask() {
                   onChange={(e) => setPriority(e.target.value)}
                   className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 text-slate-700 shadow-inner"
                 >
-                  <option value="High">🔴 High Priority</option>
-                  <option value="Medium">🟡 Medium Priority</option>
-                  <option value="Low">🔵 Low Priority</option>
+                  {priorities.map(prio => (
+                    <option key={prio.id} value={prio.name}>{prio.name}</option>
+                  ))}
                 </select>
               </div>
 
@@ -286,11 +509,7 @@ export default function CreateTask() {
                   onChange={(e) => setStatus(e.target.value)}
                   className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 text-slate-700 shadow-inner"
                 >
-                  <option value="Pending">Pending</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Testing">Testing</option>
-                  <option value="Completed">Completed</option>
-                  <option value="Hold">Hold</option>
+                  <option value="Task Created">Task Created</option>
                 </select>
               </div>
             </div>
@@ -304,13 +523,13 @@ export default function CreateTask() {
               </div>
               <span>Timeframe & Notes</span>
             </h4>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-slate-700">Start Date</label>
                   <input
-                    type="date"
+                    type="datetime-local"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
                     className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 text-slate-700 shadow-inner"
@@ -320,14 +539,12 @@ export default function CreateTask() {
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
                     <span>Due Date</span>
-                    <span className="text-rose-500">*</span>
                   </label>
                   <input
-                    type="date"
+                    type="datetime-local"
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
                     className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 text-slate-700 shadow-inner"
-                    required
                   />
                 </div>
               </div>
@@ -353,7 +570,7 @@ export default function CreateTask() {
               </div>
               <span>Attachments (Optional)</span>
             </h4>
-            
+
             <div className="bg-slate-50/50 border border-slate-200 rounded-2xl p-6 shadow-inner">
               {attachment ? (
                 <div className="relative group rounded-xl overflow-hidden border border-slate-200 inline-block">

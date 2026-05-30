@@ -64,13 +64,13 @@ export default function Categories() {
       <div className="max-w-[2560px] mx-auto space-y-8 relative z-10 2xl:px-8">
 
         {/* Header Section */}
-        <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-800 p-8 rounded-[2.5rem] shadow-xl shadow-indigo-500/5">
-          <div className="space-y-4 max-w-2xl">
+        <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 lg:gap-8 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-800 p-6 lg:p-8 rounded-[2rem] lg:rounded-[2.5rem] shadow-xl shadow-indigo-500/5">
+          <div className="space-y-4 max-w-2xl w-full">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider">
               <Layers size={14} /> Organization Hub
             </div>
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
-              Workspace <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-600">Departments</span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
+              Workspace <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-600 block sm:inline">Departments</span>
             </h1>
             <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed font-medium">
               Manage your organizational sectors, track department-wide productivity, and create new divisions for your tasks.
@@ -128,20 +128,20 @@ export default function Categories() {
               return (
                 <div
                   key={cat.id}
-                  className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] p-6 lg:p-8 shadow-xl shadow-slate-200/20 dark:shadow-none hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 hover:-translate-y-1 overflow-hidden flex flex-col"
+                  className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] p-5 sm:p-6 lg:p-8 shadow-xl shadow-slate-200/20 dark:shadow-none hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 hover:-translate-y-1 overflow-hidden flex flex-col"
                 >
                   {/* Top glowing line */}
                   <div className={`absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r ${theme.from} ${theme.to} opacity-80 group-hover:opacity-100 transition-opacity`} />
 
                   {/* Card Header */}
                   <div className="flex justify-between items-start mb-6">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${theme.from} ${theme.to} text-white flex items-center justify-center shrink-0 shadow-lg`}>
-                        <Folder size={24} strokeWidth={2.5} />
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${theme.from} ${theme.to} text-white flex items-center justify-center shrink-0 shadow-lg`}>
+                        <Folder size={20} className="sm:w-6 sm:h-6" strokeWidth={2.5} />
                       </div>
-                      <div>
-                        <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight line-clamp-1">{cat.name}</h3>
-                        <div className="flex items-center gap-1.5 mt-1 text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider">
+                      <div className="pr-2">
+                        <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight line-clamp-1" title={cat.name}>{cat.name}</h3>
+                        <div className="flex items-center gap-1.5 mt-1 text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-bold uppercase tracking-wider">
                           {totalTasks} {totalTasks === 1 ? 'Task' : 'Tasks'}
                         </div>
                       </div>
@@ -157,21 +157,21 @@ export default function Categories() {
                   </div>
 
                   {/* Stats Grid */}
-                  <div className="grid grid-cols-3 gap-3 mb-8 mt-auto">
-                    <div className={`flex flex-col items-center justify-center p-4 rounded-2xl border ${theme.border} ${theme.bg} transition-colors`}>
-                      <CheckCircle2 size={20} className={`${theme.text} mb-2`} />
-                      <span className="text-2xl font-black text-slate-800 dark:text-slate-100">{completedCount}</span>
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Done</span>
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6 sm:mb-8 mt-auto">
+                    <div className={`flex flex-col items-center justify-center py-3 px-1 sm:p-4 rounded-xl sm:rounded-2xl border ${theme.border} ${theme.bg} transition-colors`}>
+                      <CheckCircle2 size={18} className={`sm:w-5 sm:h-5 ${theme.text} mb-1 sm:mb-2`} />
+                      <span className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100">{completedCount}</span>
+                      <span className="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-wider sm:tracking-widest mt-1">Done</span>
                     </div>
-                    <div className={`flex flex-col items-center justify-center p-4 rounded-2xl border ${theme.border} ${theme.bg} transition-colors`}>
-                      <TrendingUp size={20} className={`${theme.text} mb-2`} />
-                      <span className="text-2xl font-black text-slate-800 dark:text-slate-100">{inProgressCount}</span>
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Doing</span>
+                    <div className={`flex flex-col items-center justify-center py-3 px-1 sm:p-4 rounded-xl sm:rounded-2xl border ${theme.border} ${theme.bg} transition-colors`}>
+                      <TrendingUp size={18} className={`sm:w-5 sm:h-5 ${theme.text} mb-1 sm:mb-2`} />
+                      <span className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100">{inProgressCount}</span>
+                      <span className="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-wider sm:tracking-widest mt-1">Doing</span>
                     </div>
-                    <div className={`flex flex-col items-center justify-center p-4 rounded-2xl border ${theme.border} ${theme.bg} transition-colors`}>
-                      <Clock size={20} className={`${theme.text} mb-2`} />
-                      <span className="text-2xl font-black text-slate-800 dark:text-slate-100">{pendingCount}</span>
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Wait</span>
+                    <div className={`flex flex-col items-center justify-center py-3 px-1 sm:p-4 rounded-xl sm:rounded-2xl border ${theme.border} ${theme.bg} transition-colors`}>
+                      <Clock size={18} className={`sm:w-5 sm:h-5 ${theme.text} mb-1 sm:mb-2`} />
+                      <span className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100">{pendingCount}</span>
+                      <span className="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-wider sm:tracking-widest mt-1">Wait</span>
                     </div>
                   </div>
 

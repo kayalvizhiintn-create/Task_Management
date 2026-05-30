@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Bell, Shield, CheckCircle2, Moon, Sun, Palette, Mail, Smartphone } from "lucide-react";
+import { Bell, Shield, CheckCircle2, Moon, Sun, Palette, Mail, Smartphone, X } from "lucide-react";
 
 export default function SettingsPage() {
   const [notifEmail, setNotifEmail] = useState(true);
@@ -10,9 +10,7 @@ export default function SettingsPage() {
   const handleSaveSettings = (e) => {
     e.preventDefault();
     setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-    }, 1500);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
   const handleThemeChange = (newTheme) => {
@@ -27,13 +25,15 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 lg:space-y-8 animate-fade-in pb-8 lg:pb-12">
-      
+
+
+
       {showToast && (
-        <div className="fixed top-8 right-8 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-floating flex items-center gap-3 border border-slate-800 z-50 animate-slide-up">
+        <div className="fixed bottom-8 right-8 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-floating flex items-center gap-3 border border-slate-800 z-50 animate-slide-up">
           <div className="bg-emerald-500/20 p-1.5 rounded-full">
             <CheckCircle2 size={20} className="text-emerald-500" />
           </div>
-          <div>
+          <div className="mr-6">
             <h4 className="text-sm font-bold">Success</h4>
             <p className="text-xs text-slate-300 font-medium">Settings updated successfully.</p>
           </div>
@@ -44,7 +44,7 @@ export default function SettingsPage() {
       <div className="relative overflow-hidden rounded-[1.5rem] lg:rounded-[2rem] bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 sm:p-6 lg:p-10 shadow-premium">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 dark:bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/5 dark:bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"></div>
-        
+
         <div className="relative flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
           <div>
             <h2 className="text-3xl md:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-300">
@@ -54,7 +54,7 @@ export default function SettingsPage() {
               Tweak the visual appearance and configure your notification preferences.
             </p>
           </div>
-          <button 
+          <button
             onClick={handleSaveSettings}
             className="group relative px-6 py-3.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-sm font-extrabold shadow-lg hover:shadow-xl transition-all overflow-hidden whitespace-nowrap shrink-0"
           >
@@ -77,7 +77,7 @@ export default function SettingsPage() {
               <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Appearance</h3>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => handleThemeChange('light')}
@@ -88,7 +88,7 @@ export default function SettingsPage() {
               </div>
               <span className={`text-xs font-bold ${theme === 'light' ? 'text-primary' : 'text-slate-600 dark:text-slate-400'}`}>Light Mode</span>
             </button>
-            
+
             <button
               onClick={() => handleThemeChange('dark')}
               className={`flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all ${theme === 'dark' ? 'border-primary bg-primary/5 dark:bg-primary/10 shadow-glow' : 'border-slate-100 dark:border-slate-700/50 hover:border-slate-200 dark:hover:border-slate-600 bg-slate-50/50 dark:bg-slate-900/30'}`}

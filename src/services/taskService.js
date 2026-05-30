@@ -1,5 +1,5 @@
 // React SaaS Task Management Dashboard Mock Database Service
-
+import axios from "axios";
 const INITIAL_EMPLOYEES = [
   { id: "emp-1", name: "Emma Thompson", role: "Project Manager", email: "emma@company.com", password: "password123", avatar: "https://ui-avatars.com/api/?name=Emma+Thompson&background=random" },
   { id: "emp-2", name: "Michael Chen", role: "Senior Developer", email: "michael@company.com", password: "password123", avatar: "https://ui-avatars.com/api/?name=Michael+Chen&background=random" },
@@ -8,14 +8,14 @@ const INITIAL_EMPLOYEES = [
   { id: "emp-5", name: "Sofia Rodriguez", role: "Content Specialist", email: "sofia@company.com", password: "password123", avatar: "https://ui-avatars.com/api/?name=Sofia+Rodriguez&background=random" }
 ];
 
-const INITIAL_CATEGORIES = [
-  { id: "cat-1", name: "Branding Identity", progress: 75 },
-  { id: "cat-2", name: "Legal", progress: 40 },
-  { id: "cat-3", name: "Marketing", progress: 90 },
-  { id: "cat-4", name: "HR", progress: 60 },
-  { id: "cat-5", name: "Finance", progress: 25 },
-  { id: "cat-6", name: "Engineering", progress: 65 }
-];
+// const INITIAL_CATEGORIES = [
+//   { id: "cat-1", name: "Branding Identity", progress: 75 },
+//   { id: "cat-2", name: "Legal", progress: 40 },
+//   { id: "cat-3", name: "Marketing", progress: 90 },
+//   { id: "cat-4", name: "HR", progress: 60 },
+//   { id: "cat-5", name: "Finance", progress: 25 },
+//   { id: "cat-6", name: "Engineering", progress: 65 }
+// ];
 
 const INITIAL_TASKS = [
   {
@@ -136,7 +136,7 @@ const initDB = () => {
     localStorage.setItem("navanala_employees", JSON.stringify(INITIAL_EMPLOYEES));
   }
   if (!localStorage.getItem("navanala_categories")) {
-    localStorage.setItem("navanala_categories", JSON.stringify(INITIAL_CATEGORIES));
+    localStorage.setItem("navanala_categories", JSON.stringify([]));
   }
   if (!localStorage.getItem("navanala_tasks")) {
     localStorage.setItem("navanala_tasks", JSON.stringify(INITIAL_TASKS));
@@ -161,7 +161,7 @@ const initDB = () => {
     ];
     localStorage.setItem("navanala_master_roles", JSON.stringify(defaultRoles));
   }
-  
+
   if (!localStorage.getItem("navanala_master_locations")) {
     const defaultLocations = [
       { id: "loc-1", name: "Remote" },
@@ -171,6 +171,100 @@ const initDB = () => {
       { id: "loc-5", name: "Bangalore" }
     ];
     localStorage.setItem("navanala_master_locations", JSON.stringify(defaultLocations));
+  }
+
+  if (!localStorage.getItem("navanala_master_menus")) {
+    const defaultMenus = [
+      { id: "menu-1", parent: "Dashboard", child: "Overview" },
+      { id: "menu-2", parent: "Tasks", child: "Task List" },
+      { id: "menu-3", parent: "Directory", child: "Employees" }
+    ];
+    localStorage.setItem("navanala_master_menus", JSON.stringify(defaultMenus));
+  }
+
+  if (!localStorage.getItem("navanala_role_privileges")) {
+    localStorage.setItem("navanala_role_privileges", JSON.stringify([]));
+  }
+
+  if (!localStorage.getItem("navanala_projects")) {
+    localStorage.setItem("navanala_projects", JSON.stringify([]));
+  }
+
+  if (!localStorage.getItem("navanala_languages")) {
+    localStorage.setItem("navanala_languages", JSON.stringify([]));
+  }
+
+  if (!localStorage.getItem("navanala_frameworks")) {
+    const defaultFrameworks = [
+      { id: "fw-1", name: "MVC" },
+      { id: "fw-2", name: "Flask" },
+      { id: "fw-3", name: "Django" },
+      { id: "fw-4", name: "FastAPI" },
+      { id: "fw-5", name: "Laravel" }
+    ];
+    localStorage.setItem("navanala_frameworks", JSON.stringify(defaultFrameworks));
+  }
+
+  if (!localStorage.getItem("navanala_priorities")) {
+    const defaultPriorities = [
+      { id: "prio-1", name: "High" },
+      { id: "prio-2", name: "Medium" },
+      { id: "prio-3", name: "Low" }
+    ];
+    localStorage.setItem("navanala_priorities", JSON.stringify(defaultPriorities));
+  }
+
+  if (!localStorage.getItem("navanala_statuses")) {
+    const defaultStatuses = [
+      { id: "status-1", name: "Pending" },
+      { id: "status-2", name: "In Progress" },
+      { id: "status-3", name: "Testing" },
+      { id: "status-4", name: "Hold" },
+      { id: "status-5", name: "Completed" }
+    ];
+    localStorage.setItem("navanala_statuses", JSON.stringify(defaultStatuses));
+  }
+
+  if (!localStorage.getItem("navanala_task_master")) {
+    const defaultTaskMaster = [
+      { id: "tm-1", name: "Design UI" },
+      { id: "tm-2", name: "Backend Development" },
+      { id: "tm-3", name: "Testing" }
+    ];
+    localStorage.setItem("navanala_task_master", JSON.stringify(defaultTaskMaster));
+  }
+
+  if (!localStorage.getItem("navanala_taskfiles")) {
+    const defaultTaskFiles = [
+      { id: "tf-1", name: "Documentation.pdf" },
+      { id: "tf-2", name: "DesignAssets.zip" }
+    ];
+    localStorage.setItem("navanala_taskfiles", JSON.stringify(defaultTaskFiles));
+  }
+
+  if (!localStorage.getItem("navanala_task_roles")) {
+    const defaultTaskRoles = [
+      { id: "tr-1", name: "Tester" },
+      { id: "tr-2", name: "Developer" },
+      { id: "tr-3", name: "Reviewer" }
+    ];
+    localStorage.setItem("navanala_task_roles", JSON.stringify(defaultTaskRoles));
+  }
+
+  if (!localStorage.getItem("navanala_user_master")) {
+    const defaultUserMaster = [
+      { id: "um-1", name: "Internal User" },
+      { id: "um-2", name: "External Client" }
+    ];
+    localStorage.setItem("navanala_user_master", JSON.stringify(defaultUserMaster));
+  }
+
+  if (!localStorage.getItem("navanala_zone_master")) {
+    const defaultZoneMaster = [
+      { id: "zm-1", name: "North Zone" },
+      { id: "zm-2", name: "South Zone" }
+    ];
+    localStorage.setItem("navanala_zone_master", JSON.stringify(defaultZoneMaster));
   }
 
   if (!localStorage.getItem("navanala_currentUser")) {
@@ -260,13 +354,15 @@ export const taskService = {
     const tasks = this.getTasks();
     const employees = this.getEmployees();
     const newId = `task-${Date.now()}`;
-    const assignee = employees.find(e => e.id === taskData.assigneeId);
+    const assignee = employees.find(e => e.id === (taskData.assigneeId || taskData.assignTo));
 
     const newTask = {
+      ...taskData,
       id: newId,
       name: taskData.name,
-      category: taskData.category,
-      assigneeId: taskData.assigneeId,
+      category: taskData.category || taskData.department,
+      assigneeId: taskData.assigneeId || taskData.assignTo,
+      assignTo: taskData.assignTo || taskData.assigneeId,
       priority: taskData.priority || "Medium",
       status: taskData.status || "Pending",
       startDate: taskData.startDate || new Date().toISOString().split("T")[0],
@@ -346,11 +442,53 @@ export const taskService = {
     return employees ? JSON.parse(employees) : [];
   },
 
-  addEmployee(employeeData) {
+  async fetchEmployeesAsync() {
+    try {
+      const res = await axios.get("http://192.23.2.19:1012/api/v1/employee/get-all-employees");
+      const data = res.data;
+      let apiEmps = Array.isArray(data) ? data : (data.data || data.employees || []);
+      const formatted = apiEmps.map(e => ({
+        id: e._id || e.id || e.employeeId,
+        name: e.name || e.employeeName || "New Employee",
+        displayName: e.displayName || e.name || "New Employee",
+        role: e.role || "Team Member",
+        email: e.email || "",
+        place: e.place || "",
+        bioId: e.bioId || "",
+        password: e.password || "password123",
+        aadharNumber: e.aadharNumber || "",
+        mobileNumber: e.mobileNumber || "",
+        avatar: e.avatar || e.img || `https://ui-avatars.com/api/?name=${encodeURIComponent(e.name || "New Employee")}&background=random`
+      }));
+      if (formatted.length > 0) {
+        localStorage.setItem("navanala_employees", JSON.stringify(formatted));
+        return formatted;
+      }
+    } catch(err) {
+      console.error("API Fetch Employees failed:", err);
+    }
+    return this.getEmployees();
+  },
+
+  async addEmployee(employeeData) {
+    try {
+      const res = await axios.post("http://192.23.2.19:1012/api/v1/employee/create-employee", employeeData);
+      if (res.status === 200 || res.status === 201) {
+        this.addActivity("create", `New employee added via API: ${employeeData.name}`);
+        // Refresh local cache via API
+        await this.getEmployees();
+        return res.data;
+      }
+    } catch(err) {
+      console.error("API Add Employee failed:", err);
+    }
+    
+    // Fallback
     const employees = this.getEmployees();
     const newEmployee = {
       id: `emp-${Date.now()}`,
       name: employeeData.name || "New Employee",
+      displayName: employeeData.displayName || employeeData.name || "New Employee",
       role: employeeData.role || "Team Member",
       email: employeeData.email || "",
       place: employeeData.place || "",
@@ -358,41 +496,76 @@ export const taskService = {
       password: employeeData.password || "password123", // Default if not provided
       aadharNumber: employeeData.aadharNumber || "",
       mobileNumber: employeeData.mobileNumber || "",
-      avatar: employeeData.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(employeeData.name || "New Employee")}&background=random`
+      avatar: employeeData.avatar || employeeData.img || `https://ui-avatars.com/api/?name=${encodeURIComponent(employeeData.name || "New Employee")}&background=random`
     };
     employees.push(newEmployee);
     localStorage.setItem("navanala_employees", JSON.stringify(employees));
-    this.addActivity("create", `New employee added: ${newEmployee.name}`);
+    this.addActivity("create", `New employee added locally: ${newEmployee.name}`);
     return newEmployee;
   },
-  
-  updateEmployee(id, data) {
+
+  async updateEmployee(id, data) {
+    try {
+      const res = await axios.put("http://192.23.2.19:1012/api/v1/employee/update-employee", { id, _id: id, employeeId: id, ...data });
+      if (res.status === 200 || res.status === 204) {
+        this.addActivity("update", `Employee profile updated via API`);
+        await this.getEmployees();
+        return res.data;
+      }
+    } catch(err) {
+      console.error("API Update Employee failed:", err);
+    }
+
+    // Fallback
     const employees = this.getEmployees();
     const index = employees.findIndex(e => e.id === id);
     if (index !== -1) {
+      if (data.password === "") {
+        delete data.password; // Keep old password
+      }
       employees[index] = { ...employees[index], ...data };
       localStorage.setItem("navanala_employees", JSON.stringify(employees));
-      
+
       // Update current user session if editing own profile
       const currentUser = this.getCurrentUser();
       if (currentUser && currentUser.id === id) {
         localStorage.setItem("navanala_currentUser", JSON.stringify(employees[index]));
       }
 
-      this.addActivity("update", `Employee profile updated: ${employees[index].name}`);
+      this.addActivity("update", `Employee profile updated locally: ${employees[index].name}`);
       return employees[index];
     }
     return null;
   },
 
-  deleteEmployee(id) {
-    const employees = this.getEmployees();
+  async deleteEmployee(id) {
+    let success = false;
+    try {
+      const res = await axios.delete(`http://192.23.2.19:1012/api/v1/employee/delete-employee/${id}`);
+      if (res.status === 200 || res.status === 204) success = true;
+    } catch (err) {}
+    
+    if (!success) {
+      try {
+        const res = await axios.delete(`http://192.23.2.19:1012/api/v1/employee/delete-employee`, { data: { id, _id: id, employeeId: id } });
+        if (res.status === 200 || res.status === 204) success = true;
+      } catch (err) {}
+    }
+
+    if (success) {
+      this.addActivity("delete", `Employee deleted via API`);
+      this.getEmployees();
+      return true;
+    }
+
+    // Fallback
+    const employees = await this.getEmployees();
     const employeeToDelete = employees.find(e => e.id === id);
     if (!employeeToDelete) return false;
 
     const filtered = employees.filter(e => e.id !== id);
     localStorage.setItem("navanala_employees", JSON.stringify(filtered));
-    this.addActivity("delete", `Employee deleted: ${employeeToDelete.name}`);
+    this.addActivity("delete", `Employee deleted locally: ${employeeToDelete.name}`);
     return true;
   },
 
@@ -505,6 +678,355 @@ export const taskService = {
     let locations = this.getMasterLocations();
     locations = locations.filter(l => l.id !== id);
     localStorage.setItem("navanala_master_locations", JSON.stringify(locations));
+    return true;
+  },
+
+  // --- MASTER DATA (MENUS) ---
+  getMasterMenus() {
+    const menus = localStorage.getItem("navanala_master_menus");
+    return menus ? JSON.parse(menus) : [];
+  },
+  addMasterMenu(parent, child) {
+    const menus = this.getMasterMenus();
+    if (menus.some(m => m.parent === parent && m.child.toLowerCase() === child.toLowerCase())) return false;
+    const newMenu = { id: `menu-${Date.now()}`, parent, child };
+    menus.push(newMenu);
+    localStorage.setItem("navanala_master_menus", JSON.stringify(menus));
+    return newMenu;
+  },
+  deleteMasterMenu(id) {
+    let menus = this.getMasterMenus();
+    menus = menus.filter(m => m.id !== id);
+    localStorage.setItem("navanala_master_menus", JSON.stringify(menus));
+    return true;
+  },
+
+  // --- ROLE PRIVILEGES ---
+  getRolePrivileges() {
+    const privs = localStorage.getItem("navanala_role_privileges");
+    return privs ? JSON.parse(privs) : [];
+  },
+  saveRolePrivileges(role, menuId, permissions) {
+    let privs = this.getRolePrivileges();
+    const index = privs.findIndex(p => p.role === role && p.menuId === menuId);
+    if (index !== -1) {
+      privs[index].permissions = permissions;
+    } else {
+      privs.push({ id: `priv-${Date.now()}`, role, menuId, permissions });
+    }
+    localStorage.setItem("navanala_role_privileges", JSON.stringify(privs));
+    return true;
+  },
+
+  // --- PROJECT MASTER ---
+  getProjects() {
+    const data = localStorage.getItem("navanala_projects");
+    return data ? JSON.parse(data) : [];
+  },
+  addProject(data) {
+    const projects = this.getProjects();
+    const newProject = { id: `proj-${Date.now()}`, ...data };
+    projects.push(newProject);
+    localStorage.setItem("navanala_projects", JSON.stringify(projects));
+    return newProject;
+  },
+  deleteProject(id) {
+    let projects = this.getProjects();
+    projects = projects.filter(p => p.id !== id);
+    localStorage.setItem("navanala_projects", JSON.stringify(projects));
+    return true;
+  },
+  updateProject(id, data) {
+    let projects = this.getProjects();
+    const index = projects.findIndex(p => p.id === id);
+    if (index !== -1) {
+      projects[index] = { ...projects[index], ...data };
+      localStorage.setItem("navanala_projects", JSON.stringify(projects));
+      return projects[index];
+    }
+    return null;
+  },
+
+  // --- LANGUAGE MASTER ---
+  getLanguages() {
+    const data = localStorage.getItem("navanala_languages");
+    return data ? JSON.parse(data) : [];
+  },
+  addLanguage(name) {
+    const languages = this.getLanguages();
+    if (languages.some(l => l.name.toLowerCase() === name.toLowerCase())) return false;
+    const newLang = { id: `lang-${Date.now()}`, name };
+    languages.push(newLang);
+    localStorage.setItem("navanala_languages", JSON.stringify(languages));
+    return newLang;
+  },
+  deleteLanguage(id) {
+    let languages = this.getLanguages();
+    languages = languages.filter(l => l.id !== id);
+    localStorage.setItem("navanala_languages", JSON.stringify(languages));
+    return true;
+  },
+
+  // --- FRAMEWORK MASTER ---
+  getFrameworks() {
+    const data = localStorage.getItem("navanala_frameworks");
+    return data ? JSON.parse(data) : [];
+  },
+  addFramework(name) {
+    const frameworks = this.getFrameworks();
+    if (frameworks.some(f => f.name.toLowerCase() === name.toLowerCase())) return false;
+    const newFw = { id: `fw-${Date.now()}`, name };
+    frameworks.push(newFw);
+    localStorage.setItem("navanala_frameworks", JSON.stringify(frameworks));
+    return newFw;
+  },
+  deleteFramework(id) {
+    let frameworks = this.getFrameworks();
+    frameworks = frameworks.filter(f => f.id !== id);
+    localStorage.setItem("navanala_frameworks", JSON.stringify(frameworks));
+    return true;
+  },
+
+  // --- DEPARTMENT MASTER ---
+  getDepartments() {
+    const data = localStorage.getItem("navanala_departments");
+    return data ? JSON.parse(data) : [
+      { id: "dept-1", name: "Hardware" },
+      { id: "dept-2", name: "Software" },
+      { id: "dept-3", name: "IOT" },
+      { id: "dept-4", name: "HR" }
+    ];
+  },
+  addDepartment(name) {
+    const depts = this.getDepartments();
+    if (depts.some(d => d.name.toLowerCase() === name.toLowerCase())) return false;
+    const newDept = { id: `dept-${Date.now()}`, name };
+    depts.push(newDept);
+    localStorage.setItem("navanala_departments", JSON.stringify(depts));
+    return newDept;
+  },
+  updateDepartment(id, newName) {
+    let depts = this.getDepartments();
+    const index = depts.findIndex(d => d.id === id);
+    if (index !== -1) {
+      depts[index].name = newName;
+      localStorage.setItem("navanala_departments", JSON.stringify(depts));
+      return true;
+    }
+    return false;
+  },
+  deleteDepartment(id) {
+    let depts = this.getDepartments();
+    depts = depts.filter(d => d.id !== id);
+    localStorage.setItem("navanala_departments", JSON.stringify(depts));
+    return true;
+  },
+
+  // --- PRIORITY MASTER ---
+  getPriorities() {
+    const data = localStorage.getItem("navanala_priorities");
+    return data ? JSON.parse(data) : [
+      { id: "prio-1", name: "High" },
+      { id: "prio-2", name: "Medium" },
+      { id: "prio-3", name: "Low" }
+    ];
+  },
+  addPriority(name) {
+    const priorities = this.getPriorities();
+    if (priorities.some(p => p.name.toLowerCase() === name.toLowerCase())) return false;
+    const newPriority = { id: `prio-${Date.now()}`, name };
+    priorities.push(newPriority);
+    localStorage.setItem("navanala_priorities", JSON.stringify(priorities));
+    return newPriority;
+  },
+  updatePriority(id, newName) {
+    let priorities = this.getPriorities();
+    const index = priorities.findIndex(p => p.id === id);
+    if (index !== -1) {
+      priorities[index].name = newName;
+      localStorage.setItem("navanala_priorities", JSON.stringify(priorities));
+      return true;
+    }
+    return false;
+  },
+  deletePriority(id) {
+    let priorities = this.getPriorities();
+    priorities = priorities.filter(p => p.id !== id);
+    localStorage.setItem("navanala_priorities", JSON.stringify(priorities));
+    return true;
+  },
+
+  // --- STATUSES ---
+  getStatuses() {
+    const data = localStorage.getItem("navanala_statuses");
+    return data ? JSON.parse(data) : [];
+  },
+  addStatus(name) {
+    const statuses = this.getStatuses();
+    if (statuses.find(s => s.name.toLowerCase() === name.toLowerCase())) return false;
+    statuses.push({ id: `status-${Date.now()}`, name });
+    localStorage.setItem("navanala_statuses", JSON.stringify(statuses));
+    return true;
+  },
+  updateStatus(id, newName) {
+    const statuses = this.getStatuses();
+    const index = statuses.findIndex(s => s.id === id);
+    if (index !== -1) {
+      statuses[index].name = newName;
+      localStorage.setItem("navanala_statuses", JSON.stringify(statuses));
+      return true;
+    }
+    return false;
+  },
+  deleteStatus(id) {
+    let statuses = this.getStatuses();
+    statuses = statuses.filter(s => s.id !== id);
+    localStorage.setItem("navanala_statuses", JSON.stringify(statuses));
+    return true;
+  },
+
+  // --- TASK MASTER ---
+  getTaskMaster() {
+    const data = localStorage.getItem("navanala_task_master");
+    return data ? JSON.parse(data) : [];
+  },
+  addTaskMaster(name) {
+    const list = this.getTaskMaster();
+    if (list.find(t => t.name.toLowerCase() === name.toLowerCase())) return false;
+    list.push({ id: `tm-${Date.now()}`, name });
+    localStorage.setItem("navanala_task_master", JSON.stringify(list));
+    return true;
+  },
+  updateTaskMaster(id, newName) {
+    const list = this.getTaskMaster();
+    const index = list.findIndex(t => t.id === id);
+    if (index !== -1) {
+      list[index].name = newName;
+      localStorage.setItem("navanala_task_master", JSON.stringify(list));
+      return true;
+    }
+    return false;
+  },
+  deleteTaskMaster(id) {
+    let list = this.getTaskMaster();
+    list = list.filter(t => t.id !== id);
+    localStorage.setItem("navanala_task_master", JSON.stringify(list));
+    return true;
+  },
+
+  // --- TASKFILE MASTER ---
+  getTaskFiles() {
+    const data = localStorage.getItem("navanala_taskfiles");
+    return data ? JSON.parse(data) : [];
+  },
+  addTaskFile(name) {
+    const list = this.getTaskFiles();
+    if (list.find(t => t.name.toLowerCase() === name.toLowerCase())) return false;
+    list.push({ id: `tf-${Date.now()}`, name });
+    localStorage.setItem("navanala_taskfiles", JSON.stringify(list));
+    return true;
+  },
+  updateTaskFile(id, newName) {
+    const list = this.getTaskFiles();
+    const index = list.findIndex(t => t.id === id);
+    if (index !== -1) {
+      list[index].name = newName;
+      localStorage.setItem("navanala_taskfiles", JSON.stringify(list));
+      return true;
+    }
+    return false;
+  },
+  deleteTaskFile(id) {
+    let list = this.getTaskFiles();
+    list = list.filter(t => t.id !== id);
+    localStorage.setItem("navanala_taskfiles", JSON.stringify(list));
+    return true;
+  },
+
+  // --- TASKROLE MASTER ---
+  getTaskRoles() {
+    const data = localStorage.getItem("navanala_task_roles");
+    return data ? JSON.parse(data) : [];
+  },
+  addTaskRole(name) {
+    const list = this.getTaskRoles();
+    if (list.find(t => t.name.toLowerCase() === name.toLowerCase())) return false;
+    list.push({ id: `tr-${Date.now()}`, name });
+    localStorage.setItem("navanala_task_roles", JSON.stringify(list));
+    return true;
+  },
+  updateTaskRole(id, newName) {
+    const list = this.getTaskRoles();
+    const index = list.findIndex(t => t.id === id);
+    if (index !== -1) {
+      list[index].name = newName;
+      localStorage.setItem("navanala_task_roles", JSON.stringify(list));
+      return true;
+    }
+    return false;
+  },
+  deleteTaskRole(id) {
+    let list = this.getTaskRoles();
+    list = list.filter(t => t.id !== id);
+    localStorage.setItem("navanala_task_roles", JSON.stringify(list));
+    return true;
+  },
+
+  // --- USER MASTER ---
+  getUserMaster() {
+    const data = localStorage.getItem("navanala_user_master");
+    return data ? JSON.parse(data) : [];
+  },
+  addUserMaster(name) {
+    const list = this.getUserMaster();
+    if (list.find(u => u.name.toLowerCase() === name.toLowerCase())) return false;
+    list.push({ id: `um-${Date.now()}`, name });
+    localStorage.setItem("navanala_user_master", JSON.stringify(list));
+    return true;
+  },
+  updateUserMaster(id, newName) {
+    const list = this.getUserMaster();
+    const index = list.findIndex(u => u.id === id);
+    if (index !== -1) {
+      list[index].name = newName;
+      localStorage.setItem("navanala_user_master", JSON.stringify(list));
+      return true;
+    }
+    return false;
+  },
+  deleteUserMaster(id) {
+    let list = this.getUserMaster();
+    list = list.filter(u => u.id !== id);
+    localStorage.setItem("navanala_user_master", JSON.stringify(list));
+    return true;
+  },
+
+  // --- ZONE MASTER ---
+  getZoneMaster() {
+    const data = localStorage.getItem("navanala_zone_master");
+    return data ? JSON.parse(data) : [];
+  },
+  addZoneMaster(name) {
+    const list = this.getZoneMaster();
+    if (list.find(z => z.name.toLowerCase() === name.toLowerCase())) return false;
+    list.push({ id: `zm-${Date.now()}`, name });
+    localStorage.setItem("navanala_zone_master", JSON.stringify(list));
+    return true;
+  },
+  updateZoneMaster(id, newName) {
+    const list = this.getZoneMaster();
+    const index = list.findIndex(z => z.id === id);
+    if (index !== -1) {
+      list[index].name = newName;
+      localStorage.setItem("navanala_zone_master", JSON.stringify(list));
+      return true;
+    }
+    return false;
+  },
+  deleteZoneMaster(id) {
+    let list = this.getZoneMaster();
+    list = list.filter(z => z.id !== id);
+    localStorage.setItem("navanala_zone_master", JSON.stringify(list));
     return true;
   }
 };

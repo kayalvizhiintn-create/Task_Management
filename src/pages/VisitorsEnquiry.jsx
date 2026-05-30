@@ -26,7 +26,6 @@ export default function VisitorsEnquiry() {
   const navigate = useNavigate();
   const activeTab = type || "external";
   const [globalSearch, setGlobalSearch] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [enquiries, setEnquiries] = useState(() => {
     const saved = localStorage.getItem("navanala_visitors");
@@ -63,87 +62,7 @@ export default function VisitorsEnquiry() {
     localStorage.setItem("navanala_visitors", JSON.stringify(enquiries));
   }, [enquiries]);
 
-  // Form states
-  const [clientName, setClientName] = useState("");
-  const [placesVisited, setPlacesVisited] = useState("");
-  const [comments, setComments] = useState("");
-  const [detailsAsked, setDetailsAsked] = useState("");
-  const [improvementsSuggested, setImprovementsSuggested] = useState("");
-  const [pictures, setPictures] = useState([]);
-  const [editingId, setEditingId] = useState(null);
-
-  const handleImageUpload = async (e) => {
-    const files = Array.from(e.target.files);
-
-    const convertToBase64 = (file) => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = (error) => reject(error);
-      });
-    };
-
-    try {
-      const base64Files = await Promise.all(files.map(file => convertToBase64(file)));
-      setPictures(prev => [...prev, ...base64Files]);
-    } catch (error) {
-      console.error("Error converting images to Base64:", error);
-      alert("Failed to load images. Please try smaller files to avoid browser memory limits.");
-    }
-  };
-
-  const removePicture = (indexToRemove) => {
-    setPictures(prev => prev.filter((_, idx) => idx !== indexToRemove));
-  };
-
-  const openModal = (enquiry = null) => {
-    if (enquiry && enquiry.id) {
-      setClientName(enquiry.clientName);
-      setPlacesVisited(enquiry.placesVisited);
-      setComments(enquiry.comments);
-      setDetailsAsked(enquiry.detailsAsked);
-      setImprovementsSuggested(enquiry.improvementsSuggested);
-      setPictures(enquiry.pictures || []);
-      setEditingId(enquiry.id);
-    } else {
-      setClientName("");
-      setPlacesVisited("");
-      setComments("");
-      setDetailsAsked("");
-      setImprovementsSuggested("");
-      setPictures([]);
-      setEditingId(null);
-    }
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => setIsModalOpen(false);
-
-  const handleSave = (e) => {
-    e.preventDefault();
-    if (editingId) {
-      setEnquiries(enquiries.map(enq =>
-        enq.id === editingId
-          ? { ...enq, clientName, placesVisited, comments, detailsAsked, improvementsSuggested, pictures }
-          : enq
-      ));
-    } else {
-      const newEnquiry = {
-        id: `e${Date.now()}`,
-        type: activeTab,
-        clientName,
-        placesVisited,
-        comments,
-        detailsAsked,
-        improvementsSuggested,
-        pictures,
-        date: new Date().toISOString().split('T')[0]
-      };
-      setEnquiries([newEnquiry, ...enquiries]);
-    }
-    closeModal();
-  };
+  // Form state and logic moved to VisitorForm.jsx
 
   const deleteEnquiry = (id) => {
     if (window.confirm("Are you sure you want to delete this record?")) {
@@ -181,7 +100,7 @@ export default function VisitorsEnquiry() {
           </div>
 
           <button
-            onClick={() => openModal()}
+            onClick={() => navigate('/visitors/add/' + activeTab)}
             className="group relative flex items-center gap-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-4 rounded-2xl font-bold text-sm overflow-hidden shadow-2xl shadow-slate-900/20 hover:shadow-indigo-500/20 transition-all hover:-translate-y-1 w-full md:w-auto justify-center shrink-0"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -242,7 +161,7 @@ export default function VisitorsEnquiry() {
               There are no {activeTab === "external" ? "external" : "internal"} visits recorded yet. Start by logging the first visitor.
             </p>
             <button
-              onClick={() => openModal()}
+              onClick={() => navigate('/visitors/add/' + activeTab)}
               className="flex items-center gap-2 bg-white dark:bg-slate-800 text-primary dark:text-white px-6 py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 border border-slate-100 dark:border-slate-700"
             >
               <Plus size={18} /> Add First Entry
@@ -277,7 +196,7 @@ export default function VisitorsEnquiry() {
                   {/* Actions */}
                   <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <button
-                      onClick={() => openModal(enquiry)}
+                      onClick={() => navigate('/visitors/edit/' + enquiry.id)}
                       className="p-2.5 text-slate-400 hover:text-indigo-600 bg-slate-50 hover:bg-indigo-50 dark:bg-slate-800 dark:hover:bg-indigo-500/20 rounded-xl transition-all"
                       title="Edit"
                     >
@@ -357,190 +276,7 @@ export default function VisitorsEnquiry() {
         )}
       </div>
 
-      {/* Modern Glassmorphic Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6 py-12">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-md transition-opacity"
-            onClick={closeModal}
-          />
-
-          {/* Modal Container */}
-          <div className="relative w-full max-w-4xl bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-full animate-in fade-in zoom-in-95 duration-300 border border-white/50 dark:border-slate-800">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                  {activeTab === "external" ? <Building size={24} /> : <Users size={24} />}
-                </div>
-                <div>
-                  <h2 className="text-2xl font-black text-slate-900 dark:text-white">
-                    {editingId ? "Edit Visit Record" : "Log New Visit"}
-                  </h2>
-                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-0.5">
-                    {activeTab === "external" ? "External Company Client" : "Internal Department Member"}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={closeModal}
-                className="p-3 text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            {/* Modal Body (Scrollable) */}
-            <div className="overflow-y-auto px-8 py-8 custom-scrollbar">
-              <form id="enquiryForm" onSubmit={handleSave} className="space-y-8">
-
-                {/* Section 1: Basic Info */}
-                <div className="space-y-6">
-                  <div className="flex items-center gap-2 text-lg font-black text-slate-800 dark:text-slate-200">
-                    <Info size={20} className="text-primary" /> Basic Information
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                        {activeTab === "external" ? "Client Company Name" : "Internal Dept/Employee Name"} <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={clientName}
-                        onChange={(e) => setClientName(e.target.value)}
-                        placeholder={activeTab === "external" ? "e.g. Acme Corp" : "e.g. Finance Dept - John Doe"}
-                        className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-900 dark:text-white"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                        Places Visited <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={placesVisited}
-                        onChange={(e) => setPlacesVisited(e.target.value)}
-                        placeholder="e.g. Server Room, Main Office"
-                        className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-900 dark:text-white"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Section 2: Feedback Details */}
-                <div className="space-y-6 pt-6 border-t border-slate-100 dark:border-slate-800">
-                  <div className="flex items-center gap-2 text-lg font-black text-slate-800 dark:text-slate-200">
-                    <MessageSquare size={20} className="text-indigo-500" /> Feedback & Discussion
-                  </div>
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Comments <span className="text-rose-500">*</span></label>
-                      <textarea
-                        required
-                        value={comments}
-                        onChange={(e) => setComments(e.target.value)}
-                        placeholder="General impressions and thoughts..."
-                        rows={4}
-                        className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-medium focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none text-slate-900 dark:text-white"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Details Asked <span className="text-rose-500">*</span></label>
-                      <textarea
-                        required
-                        value={detailsAsked}
-                        onChange={(e) => setDetailsAsked(e.target.value)}
-                        placeholder="Specific questions raised..."
-                        rows={4}
-                        className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-medium focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none text-slate-900 dark:text-white"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Improvements <span className="text-rose-500">*</span></label>
-                      <textarea
-                        required
-                        value={improvementsSuggested}
-                        onChange={(e) => setImprovementsSuggested(e.target.value)}
-                        placeholder="Suggestions for improvement..."
-                        rows={4}
-                        className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-medium focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all resize-none text-slate-900 dark:text-white"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Section 3: Media */}
-                <div className="space-y-6 pt-6 border-t border-slate-100 dark:border-slate-800">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-lg font-black text-slate-800 dark:text-slate-200">
-                      <Camera size={20} className="text-slate-500" /> Attached Photos
-                    </div>
-                    <span className="text-xs font-medium text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
-                      Optional
-                    </span>
-                  </div>
-
-                  <div className="relative group border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl p-8 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-primary transition-all text-center">
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    />
-                    <div className="w-16 h-16 bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                      <ImageIcon size={28} className="text-slate-400 group-hover:text-primary transition-colors" />
-                    </div>
-                    <h4 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-1">Upload Visit Photos</h4>
-                    <p className="text-sm text-slate-500 font-medium">Drag & drop or click to browse (JPG, PNG)</p>
-                  </div>
-
-                  {pictures.length > 0 && (
-                    <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
-                      {pictures.map((pic, idx) => (
-                        <div key={idx} className="relative group aspect-square rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-700 shadow-sm">
-                          <img src={pic} alt="Upload preview" className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                            <button
-                              type="button"
-                              onClick={() => removePicture(idx)}
-                              className="p-2.5 bg-white text-rose-500 rounded-full hover:bg-rose-50 hover:scale-110 transition-all shadow-xl"
-                            >
-                              <Trash size={18} strokeWidth={2.5} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </form>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="px-8 py-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-end gap-4">
-              <button
-                type="button"
-                onClick={closeModal}
-                className="px-6 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-bold text-sm transition-all"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                form="enquiryForm"
-                className="px-8 py-3.5 bg-primary hover:bg-indigo-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:shadow-indigo-600/30 transition-all hover:-translate-y-0.5 flex items-center gap-2"
-              >
-                <Check size={18} strokeWidth={3} />
-                Save Record
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal removed */}
     </div>
   );
 }

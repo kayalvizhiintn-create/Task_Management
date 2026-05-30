@@ -1,5 +1,5 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard,
     CheckSquare,
@@ -13,16 +13,31 @@ import {
     Shield,
     Layers,
     MapPin,
-    LogOut
+    LogOut,
+    ChevronDown,
+    ChevronRight,
+    Server,
+    Activity,
+    Wifi,
+    PlusSquare
 } from "lucide-react";
 import { taskService } from "../services/taskService";
 
 const navItems = [
-    { path: "/", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
+    {
+        label: "Dashboards",
+        icon: <LayoutDashboard size={20} />,
+        subItems: [
+            { path: "/", icon: <Activity size={18} />, label: "Software Dashboard" },
+            { path: "/hardware-dashboard", icon: <Server size={18} />, label: "Hardware Dashboard" },
+            { path: "/iot-dashboard", icon: <Wifi size={18} />, label: "IoT Dashboard" }
+        ]
+    },
     { path: "/tasks", icon: <CheckSquare size={20} />, label: "Tasks" },
+    { path: "/create-task", icon: <PlusSquare size={20} />, label: "Create Task" },
     { path: "/employees", icon: <Users size={20} />, label: "Task Planner" },
     { path: "/directory", icon: <UsersRound size={20} />, label: "Directory" },
-    { path: "/categories", icon: <FolderTree size={20} />, label: "Categories" },
+    // { path: "/categories", icon: <FolderTree size={20} />, label: "Categories" },
     { path: "/reports", icon: <FileText size={20} />, label: "Reports" },
     { path: "/employee-details", icon: <UserCircle size={20} />, label: "My Profile" },
     { path: "/team-details", icon: <Briefcase size={20} />, label: "Team Details" },
@@ -35,6 +50,8 @@ const navItems = [
 export default function Sidebar({ onClose }) {
     const currentUser = taskService.getCurrentUser();
     const userRole = currentUser?.role || "User";
+    const [expandedMenu, setExpandedMenu] = useState("Dashboards");
+    const location = useLocation();
 
     const handleLogout = () => {
         taskService.logout();
@@ -54,7 +71,7 @@ export default function Sidebar({ onClose }) {
                     <h1 className="text-2xl font-black text-white tracking-tight">Navanala</h1>
                 </div>
                 {onClose && (
-                    <button 
+                    <button
                         onClick={onClose}
                         className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg lg:hidden"
                     >
@@ -64,27 +81,77 @@ export default function Sidebar({ onClose }) {
             </div>
 
             <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 custom-scrollbar relative z-10">
-                {navItems.map((item) => (
-                    <NavLink
-                        key={item.path}
-                        to={item.path}
-                        className={({ isActive }) =>
-                            `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${isActive
-                                ? "bg-indigo-500/10 text-indigo-400 font-bold shadow-inner"
-                                : "text-slate-400 hover:bg-slate-800/60 hover:text-slate-100 font-medium"
-                            }`
-                        }
-                    >
-                        <div className={`transition-transform duration-300 ${/* group-hover:scale-110 active adds scale? maybe skip for now */ ""}`}>
-                            {item.icon}
-                        </div>
-                        <span className="text-sm tracking-wide">{item.label}</span>
-                    </NavLink>
-                ))}
+                {navItems.map((item) => {
+                    if (item.subItems) {
+                        const isExpanded = expandedMenu === item.label;
+                        const hasActiveChild = item.subItems.some(sub => sub.path === location.pathname);
+
+                        return (
+                            <div key={item.label} className="flex flex-col space-y-1">
+                                <button
+                                    onClick={() => setExpandedMenu(isExpanded ? null : item.label)}
+                                    className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 w-full group ${hasActiveChild && !isExpanded
+                                        ? "bg-indigo-500/10 text-indigo-400 font-bold shadow-inner"
+                                        : "text-slate-400 hover:bg-slate-800/60 hover:text-slate-100 font-medium"
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="transition-transform duration-300">
+                                            {item.icon}
+                                        </div>
+                                        <span className="text-sm tracking-wide">{item.label}</span>
+                                    </div>
+                                    <div className={`transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}>
+                                        <ChevronDown size={16} />
+                                    </div>
+                                </button>
+
+                                {/* Dropdown Content */}
+                                <div className={`overflow-hidden transition-all duration-300 ease-in-out pl-4 pr-2 space-y-1 ${isExpanded ? "max-h-48 opacity-100 mt-1" : "max-h-0 opacity-0"}`}>
+                                    {item.subItems.map((sub) => (
+                                        <NavLink
+                                            key={sub.path}
+                                            to={sub.path}
+                                            className={({ isActive }) =>
+                                                `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group ${isActive
+                                                    ? "bg-indigo-500/10 text-indigo-400 font-bold shadow-inner"
+                                                    : "text-slate-500 hover:bg-slate-800/40 hover:text-slate-200 font-medium"
+                                                }`
+                                            }
+                                        >
+                                            <div className="transition-transform duration-300">
+                                                {sub.icon}
+                                            </div>
+                                            <span className="text-sm tracking-wide">{sub.label}</span>
+                                        </NavLink>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    return (
+                        <NavLink
+                            key={item.path}
+                            to={item.path}
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${isActive
+                                    ? "bg-indigo-500/10 text-indigo-400 font-bold shadow-inner"
+                                    : "text-slate-400 hover:bg-slate-800/60 hover:text-slate-100 font-medium"
+                                }`
+                            }
+                        >
+                            <div className="transition-transform duration-300">
+                                {item.icon}
+                            </div>
+                            <span className="text-sm tracking-wide">{item.label}</span>
+                        </NavLink>
+                    );
+                })}
             </nav>
 
             <div className="p-4 border-t border-slate-800/50 relative z-10 bg-slate-950/80 backdrop-blur-sm">
-               
+
 
                 <button
                     onClick={handleLogout}

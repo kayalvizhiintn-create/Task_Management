@@ -3,8 +3,11 @@ import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import HardwareDashboard from "./pages/HardwareDashboard";
+import IoTDashboard from "./pages/IoTDashboard";
 import TaskManagement from "./pages/TaskManagement";
 import CreateTask from "./pages/CreateTask";
+import EditTask from "./pages/EditTask";
 import TaskDetails from "./pages/TaskDetails";
 import EmployeeView from "./pages/EmployeeView";
 import Categories from "./pages/Categories";
@@ -14,8 +17,14 @@ import EmployeeDetails from "./pages/EmployeeDetails";
 import AdminEmployees from "./pages/AdminEmployees";
 import EmployeeDirectory from "./pages/EmployeeDirectory";
 import EmployeeProfileView from "./pages/EmployeeProfileView";
+import AddEmployee from "./pages/AddEmployee";
+import EditEmployee from "./pages/EditEmployee";
 import TeamDetails from "./pages/TeamDetails";
+import CreateTeam from "./pages/CreateTeam";
+import AddTeamTask from "./pages/AddTeamTask";
+import AddTeamMember from "./pages/AddTeamMember";
 import VisitorsEnquiry from "./pages/VisitorsEnquiry";
+import VisitorForm from "./pages/VisitorForm";
 import Masters from "./pages/Masters";
 import Privileges from "./pages/Privileges";
 import { taskService } from "./services/taskService";
@@ -73,22 +82,33 @@ export default function App() {
         >
           {/* Dashboard Hub */}
           <Route path="/" element={<ProtectedRoute screenName="Dashboard"><Dashboard /></ProtectedRoute>} />
+          <Route path="/hardware-dashboard" element={<ProtectedRoute screenName="Dashboard"><HardwareDashboard /></ProtectedRoute>} />
+          <Route path="/iot-dashboard" element={<ProtectedRoute screenName="Dashboard"><IoTDashboard /></ProtectedRoute>} />
 
           {/* Task Operations */}
           <Route path="/tasks" element={<ProtectedRoute screenName="Tasks"><TaskManagement /></ProtectedRoute>} />
           <Route path="/create-task" element={<ProtectedRoute screenName="Create Task"><CreateTask /></ProtectedRoute>} />
+          <Route path="/edit-task/:id" element={<ProtectedRoute screenName="Tasks"><EditTask /></ProtectedRoute>} />
           <Route path="/task/:id" element={<ProtectedRoute screenName="Tasks"><TaskDetails /></ProtectedRoute>} />
 
           {/* Core Sidebar Links */}
           <Route path="/employees" element={<ProtectedRoute screenName="Task Planner"><EmployeeView /></ProtectedRoute>} />
           <Route path="/directory" element={<ProtectedRoute screenName="Employee Directory"><EmployeeDirectory /></ProtectedRoute>} />
+          <Route path="/add-employee" element={<ProtectedRoute screenName="Employee Directory"><AddEmployee /></ProtectedRoute>} />
+          <Route path="/edit-employee/:id" element={<ProtectedRoute screenName="Employee Directory"><EditEmployee /></ProtectedRoute>} />
           <Route path="/directory/:id" element={<ProtectedRoute screenName="Employee Directory"><EmployeeProfileView /></ProtectedRoute>} />
           <Route path="/admin/employees" element={<ProtectedRoute screenName="Admin Directory"><AdminEmployees /></ProtectedRoute>} />
           <Route path="/categories" element={<ProtectedRoute screenName="Categories"><Categories /></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute screenName="Reports"><Reports /></ProtectedRoute>} />
           <Route path="/employee-details" element={<ProtectedRoute screenName="Employee Details"><EmployeeDetails /></ProtectedRoute>} />
           <Route path="/team-details" element={<ProtectedRoute screenName="Team Details"><TeamDetails /></ProtectedRoute>} />
+          <Route path="/team-details/add" element={<ProtectedRoute screenName="Team Details"><CreateTeam /></ProtectedRoute>} />
+          <Route path="/team-details/edit/:id" element={<ProtectedRoute screenName="Team Details"><CreateTeam /></ProtectedRoute>} />
+          <Route path="/team-details/:teamId/add-task" element={<ProtectedRoute screenName="Team Details"><AddTeamTask /></ProtectedRoute>} />
+          <Route path="/team-details/:teamId/add-member" element={<ProtectedRoute screenName="Team Details"><AddTeamMember /></ProtectedRoute>} />
           <Route path="/visitors" element={<Navigate to="/visitors/external" replace />} />
+          <Route path="/visitors/add/:type" element={<ProtectedRoute screenName="Visitors Enquiry"><VisitorForm /></ProtectedRoute>} />
+          <Route path="/visitors/edit/:id" element={<ProtectedRoute screenName="Visitors Enquiry"><VisitorForm /></ProtectedRoute>} />
           <Route path="/visitors/:type" element={<ProtectedRoute screenName="Visitors Enquiry"><VisitorsEnquiry /></ProtectedRoute>} />
           <Route path="/masters" element={<ProtectedRoute screenName="Masters"><Masters /></ProtectedRoute>} />
           <Route path="/privileges" element={<ProtectedRoute screenName="Privileges"><Privileges /></ProtectedRoute>} />

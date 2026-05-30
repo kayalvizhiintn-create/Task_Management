@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { taskService } from "../services/taskService";
-import { 
+import {
   Check,
-  Users, 
-  User, 
-  Briefcase, 
-  Calendar, 
-  Folder, 
-  Plus, 
-  Trash2, 
-  Edit, 
-  CheckCircle2, 
-  ChevronRight, 
-  X, 
-  AlertCircle, 
-  PlusCircle, 
-  UserPlus, 
-  TrendingUp, 
-  Clock, 
+  Users,
+  User,
+  Briefcase,
+  Calendar,
+  Folder,
+  Plus,
+  Trash2,
+  Edit,
+  CheckCircle2,
+  ChevronRight,
+  X,
+  AlertCircle,
+  PlusCircle,
+  UserPlus,
+  TrendingUp,
+  Clock,
   ArrowRight,
   ClipboardList,
   Upload,
@@ -29,7 +29,7 @@ import {
   CreditCard,
   UserCheck
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const DEFAULT_TEAMS = [
   {
@@ -56,44 +56,9 @@ export default function TeamDetails() {
   const [employees, setEmployees] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tasks, setTasks] = useState([]);
-  
-  // Modal states
-  const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
 
-  // Add Member Modal & Form states
-  const [activeMemberTab, setActiveMemberTab] = useState("existing");
-  const [memberSearchQuery, setMemberSearchQuery] = useState("");
-  const [newMemberName, setNewMemberName] = useState("");
-  const [newMemberEmail, setNewMemberEmail] = useState("");
-  const [newMemberRole, setNewMemberRole] = useState("");
-  const [newMemberPlace, setNewMemberPlace] = useState("");
-  const [newMemberBioId, setNewMemberBioId] = useState("");
-  const [newMemberMobileNumber, setNewMemberMobileNumber] = useState("");
-  const [newMemberAadharNumber, setNewMemberAadharNumber] = useState("");
-  const [newMemberAvatar, setNewMemberAvatar] = useState("");
-
-  const [masterRoles, setMasterRoles] = useState([]);
-  const [masterLocations, setMasterLocations] = useState([]);
-
-  // Create Team form state
-  const [teamName, setTeamName] = useState("");
-  const [teamDescription, setTeamDescription] = useState("");
-  const [teamLeadId, setTeamLeadId] = useState("");
-  const [teamMemberIds, setTeamMemberIds] = useState([]);
-  const [teamCategories, setTeamCategories] = useState([]);
-  const [editingTeamId, setEditingTeamId] = useState(null);
-
-  // Create Task form state
-  const [taskName, setTaskName] = useState("");
-  const [taskCategory, setTaskCategory] = useState("");
-  const [taskAssigneeId, setTaskAssigneeId] = useState("");
-  const [taskPriority, setTaskPriority] = useState("Medium");
-  const [taskDueDate, setTaskDueDate] = useState("");
-  const [taskDescription, setTaskDescription] = useState("");
+  // Component state
+  const navigate = useNavigate();
 
   // Initialize and load data
   useEffect(() => {
@@ -116,8 +81,6 @@ export default function TeamDetails() {
     setEmployees(taskService.getEmployees());
     setCategories(taskService.getCategories());
     setTasks(taskService.getTasks());
-    setMasterRoles(taskService.getMasterRoles());
-    setMasterLocations(taskService.getMasterLocations());
   }, []);
 
   // Reload local tasks and employees when state updates
@@ -125,8 +88,6 @@ export default function TeamDetails() {
     setTasks(taskService.getTasks());
     setEmployees(taskService.getEmployees());
     setCategories(taskService.getCategories());
-    setMasterRoles(taskService.getMasterRoles());
-    setMasterLocations(taskService.getMasterLocations());
     const storedTeams = localStorage.getItem("navanala_teams");
     if (storedTeams) {
       setTeams(JSON.parse(storedTeams));
@@ -139,8 +100,8 @@ export default function TeamDetails() {
   const teamMembers = activeTeam ? employees.filter(e => activeTeam.memberIds.includes(e.id)) : [];
 
   // Filter tasks that belong to active team's categories
-  const teamTasks = activeTeam 
-    ? tasks.filter(t => activeTeam.categories.includes(t.category)) 
+  const teamTasks = activeTeam
+    ? tasks.filter(t => activeTeam.categories.includes(t.category))
     : [];
 
   // Task statistics under the active team
@@ -150,9 +111,9 @@ export default function TeamDetails() {
   const pendingTasksCount = teamTasks.filter(t => t.status === "Pending").length;
   const testingTasksCount = teamTasks.filter(t => t.status === "Testing").length;
   const holdTasksCount = teamTasks.filter(t => t.status === "Hold").length;
-  
-  const completionRate = totalTasksCount 
-    ? Math.round((completedTasksCount / totalTasksCount) * 100) 
+
+  const completionRate = totalTasksCount
+    ? Math.round((completedTasksCount / totalTasksCount) * 100)
     : 0;
 
   // Handle task reassignment
@@ -163,58 +124,16 @@ export default function TeamDetails() {
   };
 
   // Trigger popup alerts
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
   const triggerToast = (msg) => {
     setToastMessage(msg);
     setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
-  // Create or update Team
-  const handleSaveTeam = (e) => {
-    e.preventDefault();
-    if (!teamName.trim() || !teamLeadId) {
-      alert("Team Name and Team Lead are required.");
-      return;
-    }
-
-    let updatedTeams = [...teams];
-    if (editingTeamId) {
-      // Edit mode
-      updatedTeams = updatedTeams.map(t => {
-        if (t.id === editingTeamId) {
-          return {
-            ...t,
-            name: teamName,
-            description: teamDescription,
-            leadId: teamLeadId,
-            memberIds: teamMemberIds,
-            categories: teamCategories
-          };
-        }
-        return t;
-      });
-      triggerToast(`Team "${teamName}" updated successfully!`);
-    } else {
-      // Create mode
-      const newTeam = {
-        id: `team-${Date.now()}`,
-        name: teamName,
-        description: teamDescription,
-        leadId: teamLeadId,
-        memberIds: teamMemberIds,
-        categories: teamCategories
-      };
-      updatedTeams.push(newTeam);
-      setSelectedTeamId(newTeam.id);
-      triggerToast(`Team "${teamName}" created successfully!`);
-    }
-
-    localStorage.setItem("navanala_teams", JSON.stringify(updatedTeams));
-    setTeams(updatedTeams);
-    closeTeamModal();
-  };
+  const handleSaveTeam = () => {};
 
   // Delete Team
   const handleDeleteTeam = (id, name) => {
@@ -232,78 +151,17 @@ export default function TeamDetails() {
   };
 
   const openEditTeamModal = (team) => {
-    setEditingTeamId(team.id);
-    setTeamName(team.name);
-    setTeamDescription(team.description || "");
-    setTeamLeadId(team.leadId);
-    setTeamMemberIds(team.memberIds || []);
-    setTeamCategories(team.categories || []);
-    setIsTeamModalOpen(true);
+    navigate(`/team-details/edit/${team.id}`);
   };
 
-  const closeTeamModal = () => {
-    setIsTeamModalOpen(false);
-    setEditingTeamId(null);
-    setTeamName("");
-    setTeamDescription("");
-    setTeamLeadId("");
-    setTeamMemberIds([]);
-    setTeamCategories([]);
-  };
+  const closeTeamModal = () => {};
 
-  // Toggle member inclusion in checklist
-  const handleToggleMember = (empId) => {
-    if (teamMemberIds.includes(empId)) {
-      setTeamMemberIds(teamMemberIds.filter(id => id !== empId));
-    } else {
-      setTeamMemberIds([...teamMemberIds, empId]);
-    }
-  };
-
-  // Toggle category inclusion in checklist
-  const handleToggleCategory = (catName) => {
-    if (teamCategories.includes(catName)) {
-      setTeamCategories(teamCategories.filter(c => c !== catName));
-    } else {
-      setTeamCategories([...teamCategories, catName]);
-    }
-  };
-
-  // Handle task creation
-  const handleCreateTask = (e) => {
-    e.preventDefault();
-    if (!taskName.trim() || !taskCategory || !taskAssigneeId || !taskDueDate) {
-      alert("All fields are required.");
-      return;
-    }
-
-    taskService.createTask({
-      name: taskName,
-      category: taskCategory,
-      assigneeId: taskAssigneeId,
-      priority: taskPriority,
-      dueDate: taskDueDate,
-      description: taskDescription,
-      status: "Pending"
-    });
-
-    // Reset task form
-    setTaskName("");
-    setTaskCategory("");
-    setTaskAssigneeId("");
-    setTaskPriority("Medium");
-    setTaskDueDate("");
-    setTaskDescription("");
-    setIsTaskModalOpen(false);
-
-    refreshData();
-    triggerToast("Task created and assigned successfully!");
-  };
+  const handleCreateTask = () => {};
 
   // Handle adding an existing employee to the team
   const handleAddExistingMember = (empId, empName) => {
     if (!activeTeam) return;
-    
+
     let updatedTeams = [...teams];
     updatedTeams = updatedTeams.map(t => {
       if (t.id === activeTeam.id) {
@@ -325,7 +183,7 @@ export default function TeamDetails() {
   // Handle removing a member from the team
   const handleRemoveMember = (empId, empName) => {
     if (!activeTeam) return;
-    
+
     if (window.confirm(`Are you sure you want to remove ${empName} from this team?`)) {
       let updatedTeams = [...teams];
       updatedTeams = updatedTeams.map(t => {
@@ -345,71 +203,7 @@ export default function TeamDetails() {
     }
   };
 
-  // Handle creating a new employee and adding to the team
-  const handleCreateAndAddMember = (e) => {
-    e.preventDefault();
-    if (!newMemberName.trim()) {
-      alert("Name is required");
-      return;
-    }
-    if (!newMemberEmail.trim() || !newMemberEmail.includes("@")) {
-      alert("Please enter a valid email address");
-      return;
-    }
-
-    const mobileRegex = /^\d{10}$/;
-    if (!newMemberMobileNumber || !mobileRegex.test(newMemberMobileNumber.replace(/[\s-]/g, ''))) {
-      alert("Mobile number must be exactly 10 digits.");
-      return;
-    }
-    const aadharRegex = /^\d{12}$/;
-    if (!newMemberAadharNumber || !aadharRegex.test(newMemberAadharNumber.replace(/[\s-]/g, ''))) {
-      alert("Aadhar number must be exactly 12 digits.");
-      return;
-    }
-
-    // Add employee to DB
-    const newEmp = taskService.addEmployee({
-      name: newMemberName,
-      email: newMemberEmail,
-      role: newMemberRole || "Team Member",
-      place: newMemberPlace,
-      bioId: newMemberBioId,
-      mobileNumber: newMemberMobileNumber,
-      aadharNumber: newMemberAadharNumber,
-      avatar: newMemberAvatar
-    });
-
-    // Add to current team
-    let updatedTeams = [...teams];
-    updatedTeams = updatedTeams.map(t => {
-      if (t.id === activeTeam.id) {
-        const memberIds = [...(t.memberIds || [])];
-        if (!memberIds.includes(newEmp.id)) {
-          memberIds.push(newEmp.id);
-        }
-        return { ...t, memberIds };
-      }
-      return t;
-    });
-
-    localStorage.setItem("navanala_teams", JSON.stringify(updatedTeams));
-    setTeams(updatedTeams);
-
-    // Clear form state
-    setNewMemberName("");
-    setNewMemberEmail("");
-    setNewMemberRole("");
-    setNewMemberPlace("");
-    setNewMemberBioId("");
-    setNewMemberMobileNumber("");
-    setNewMemberAadharNumber("");
-    setNewMemberAvatar("");
-    setIsAddMemberModalOpen(false);
-
-    refreshData();
-    triggerToast(`Employee "${newEmp.name}" created and added to team!`);
-  };
+  const handleCreateAndAddMember = () => {};
 
   // Handle new member photo upload
   const handleNewMemberPhotoUpload = (e) => {
@@ -442,11 +236,11 @@ export default function TeamDetails() {
       <div className="fixed top-0 right-0 w-full h-full overflow-hidden -z-10 pointer-events-none" />
       {/* Toast Notification */}
       {showToast && (
-        <div className="fixed top-8 right-8 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-4 rounded-2xl shadow-premium flex items-center gap-3 border border-slate-800 dark:border-slate-100 z-50 animate-slide-up">
+        <div className="fixed bottom-8 right-8 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-4 rounded-2xl shadow-premium flex items-center gap-3 border border-slate-800 dark:border-slate-100 z-50 animate-slide-up">
           <div className="bg-emerald-500/20 p-1.5 rounded-full">
             <CheckCircle2 size={20} className="text-emerald-500" />
           </div>
-          <div>
+          <div className="mr-6">
             <h4 className="text-sm font-bold">Success</h4>
             <p className="text-xs text-slate-350 dark:text-slate-650 font-semibold">{toastMessage}</p>
           </div>
@@ -454,32 +248,18 @@ export default function TeamDetails() {
       )}
 
       {/* Page Header with Team Switcher */}
-      <div 
-        className="flex flex-nowrap justify-between items-center gap-6 bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 md:p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-premium relative overflow-x-auto overflow-y-hidden"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      <div
+        className="flex justify-between items-center gap-6 bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 md:p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-premium relative"
       >
-        <style dangerouslySetInnerHTML={{__html: `
-          .flex-nowrap::-webkit-scrollbar { display: none; }
-        `}} />
         <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/3 pointer-events-none" />
         <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 space-y-1.5 shrink-0 w-[300px] md:w-[380px]">
-          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-3 whitespace-nowrap">
-            <Users size={32} className="text-primary shrink-0" />
-            Team Operations Hub
-          </h2>
-          <p className="text-slate-500 dark:text-slate-400 font-semibold text-sm leading-relaxed whitespace-normal pr-4">
-            Monitor organizational structures, assign department categories to leads, and delegate tasks to team members.
-          </p>
-        </div>
-
         {/* Team Selectors & Operations */}
-        <div className="relative z-10 flex flex-nowrap gap-3 items-center justify-end shrink-0 ml-auto pl-4">
+        <div className="relative z-10 flex flex-wrap items-center justify-start gap-3 w-full">
           {teams.length > 0 && (
-            <div className="flex flex-nowrap gap-3 shrink-0">
+            <>
               {/* By Team */}
-              <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 px-3 py-2.5 rounded-2xl w-36 md:w-44 shrink-0">
+              <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 px-3 py-2.5 rounded-2xl w-[140px] md:w-44 shrink-0">
                 <Users size={16} className="text-slate-400 shrink-0" />
                 <select
                   value={selectedTeamId}
@@ -512,7 +292,7 @@ export default function TeamDetails() {
                 </select>
               </div>
 
-              {/* By Project */}
+              {/* By Project Name */}
               <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 px-3 py-2.5 rounded-2xl w-36 md:w-44 shrink-0">
                 <Briefcase size={16} className="text-slate-400 shrink-0" />
                 <select
@@ -520,20 +300,39 @@ export default function TeamDetails() {
                   onChange={(e) => setSelectedTeamId(e.target.value)}
                   className="text-sm font-extrabold text-slate-800 dark:text-white bg-transparent border-none p-0 focus:ring-0 cursor-pointer w-full focus:outline-none truncate"
                 >
-                  <option value="" disabled>Select Project</option>
-                  {teams.flatMap(t => t.categories.map(cat => (
-                    <option key={`proj-${t.id}-${cat}`} value={t.id}>{cat}</option>
-                  )))}
+                  <option value="" disabled>Select Project Name</option>
+                  {teams.map(t => (
+                    <option key={`proj-name-${t.id}`} value={t.id}>
+                      {t.projectName || "No Project"}
+                    </option>
+                  ))}
                 </select>
               </div>
-            </div>
+
+              {/* By Task Name */}
+              <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 px-3 py-2.5 rounded-2xl w-36 md:w-44 shrink-0">
+                <ClipboardList size={16} className="text-slate-400 shrink-0" />
+                <select
+                  value={selectedTeamId}
+                  onChange={(e) => setSelectedTeamId(e.target.value)}
+                  className="text-sm font-extrabold text-slate-800 dark:text-white bg-transparent border-none p-0 focus:ring-0 cursor-pointer w-full focus:outline-none truncate"
+                >
+                  <option value="" disabled>Select Task Name</option>
+                  {teams.map(t => (
+                    <option key={`task-name-${t.id}`} value={t.id}>
+                      {t.taskName || "No Task"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
           )}
-          <button 
-            onClick={() => setIsTeamModalOpen(true)}
+          <button
+            onClick={() => navigate("/team-details/add")}
             className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-2xl font-bold text-sm shadow-glow hover:scale-[1.02] transition-all duration-200 shrink-0"
           >
             <Plus size={16} />
-            Create Team
+            <span className="hidden sm:inline">Create Team</span>
           </button>
         </div>
       </div>
@@ -557,7 +356,7 @@ export default function TeamDetails() {
                     {activeTeam.description || "Core collaborative division managing tasks, operational strategies, and targets."}
                   </p>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => openEditTeamModal(activeTeam)}
@@ -680,12 +479,12 @@ export default function TeamDetails() {
               {teamLead ? (
                 <div className="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 rounded-[2rem] p-6 md:p-8 shadow-premium flex flex-col items-center text-center relative overflow-hidden group">
                   <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-emerald-600 to-teal-600" />
-                  
+
                   <div className="relative z-10 pt-8 flex flex-col items-center">
-                    <img 
-                      src={teamLead.avatar} 
-                      alt={teamLead.name} 
-                      className="w-32 h-40 rounded-2xl object-cover ring-4 ring-white dark:ring-slate-800 shadow-lg bg-white mb-4 group-hover:scale-105 transition-transform" 
+                    <img
+                      src={teamLead.avatar}
+                      alt={teamLead.name}
+                      className="w-32 h-40 rounded-2xl object-cover ring-4 ring-white dark:ring-slate-800 shadow-lg bg-white mb-4 group-hover:scale-105 transition-transform"
                     />
                     <span className="bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase">
                       TEAM LEAD
@@ -710,7 +509,7 @@ export default function TeamDetails() {
                     </div>
                   </div>
 
-                  <Link 
+                  <Link
                     to={`/directory/${teamLead.id}`}
                     className="mt-6 flex items-center justify-center gap-1.5 w-full py-3 bg-slate-50 hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-350 text-xs font-bold rounded-xl transition-all"
                   >
@@ -747,9 +546,9 @@ export default function TeamDetails() {
                     const completed = catTasks.filter(t => t.status === "Completed").length;
                     const testing = catTasks.filter(t => t.status === "Testing").length;
                     const inProgress = catTasks.filter(t => t.status === "In Progress").length;
-                    
-                    const progress = catTasks.length 
-                      ? Math.round((completed / catTasks.length) * 100) 
+
+                    const progress = catTasks.length
+                      ? Math.round((completed / catTasks.length) * 100)
                       : 0;
 
                     const gradient = getGradientForIndex(idx);
@@ -757,7 +556,7 @@ export default function TeamDetails() {
                     return (
                       <div key={catName} className="bg-slate-50 dark:bg-slate-900/30 border border-slate-200/70 dark:border-slate-700/50 rounded-3xl p-5 hover:shadow-md transition-all relative overflow-hidden flex flex-col h-full group">
                         <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${gradient}`} />
-                        
+
                         <div className="flex justify-between items-start mb-4">
                           <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
                             <Folder size={16} />
@@ -768,22 +567,22 @@ export default function TeamDetails() {
                         </div>
 
                         <h5 className="font-extrabold text-slate-800 dark:text-white text-base truncate group-hover:text-primary transition-colors">{catName}</h5>
-                        
+
                         <div className="mt-auto pt-6 space-y-3">
                           <div className="flex justify-between text-[10px] font-semibold text-slate-400">
                             <span>Done: {completed}</span>
                             <span>Testing: {testing}</span>
                             <span>Doing: {inProgress}</span>
                           </div>
-                          
+
                           <div className="space-y-1.5">
                             <div className="flex justify-between items-center text-xs">
                               <span className="font-bold text-slate-500">Progress</span>
                               <span className="font-extrabold text-slate-900 dark:text-white">{progress}%</span>
                             </div>
                             <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                              <div 
-                                className={`h-full bg-gradient-to-r ${gradient} transition-all duration-1000`} 
+                              <div
+                                className={`h-full bg-gradient-to-r ${gradient} transition-all duration-1000`}
                                 style={{ width: `${progress}%` }}
                               />
                             </div>
@@ -810,11 +609,7 @@ export default function TeamDetails() {
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Team personnel, project assignments and workload overview.</p>
               </div>
               <button
-                onClick={() => {
-                  setActiveMemberTab("existing");
-                  setMemberSearchQuery("");
-                  setIsAddMemberModalOpen(true);
-                }}
+                onClick={() => navigate(`/team-details/${activeTeam.id}/add-member`)}
                 className="flex items-center justify-center gap-1.5 bg-primary hover:bg-primary-dark text-white px-4 py-2.5 rounded-xl font-extrabold text-sm shadow-glow hover:scale-[1.02] transition-all self-start sm:self-auto"
               >
                 <Plus size={16} /> Add Member
@@ -824,7 +619,7 @@ export default function TeamDetails() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {teamMembers.map(member => {
                 const memberProjects = [...new Set(tasks.filter(t => t.assigneeId === member.id && activeTeam.categories.includes(t.category)).map(t => t.category))];
-                
+
                 return (
                   <div key={member.id} className="flex flex-col items-center text-center p-6 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100/60 dark:hover:bg-slate-900 border border-slate-200/60 dark:border-slate-700/50 rounded-[2rem] transition-all group/member relative">
                     <button
@@ -836,10 +631,10 @@ export default function TeamDetails() {
                     </button>
 
                     <img src={member.avatar} alt={member.name} className="w-32 h-40 rounded-[1.5rem] object-cover shadow-md ring-4 ring-white dark:ring-slate-800 bg-white mb-5 group-hover/member:scale-[1.02] transition-transform" />
-                    
+
                     <h5 className="text-lg font-black text-slate-800 dark:text-white leading-tight">{member.name}</h5>
                     <span className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1 block">{member.role}</span>
-                    
+
                     <div className="w-full mt-6 pt-5 border-t border-slate-200/80 dark:border-slate-700/60">
                       <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-3">Assigned Projects</span>
                       {memberProjects.length > 0 ? (
@@ -874,7 +669,7 @@ export default function TeamDetails() {
               </div>
 
               <button
-                onClick={() => setIsTaskModalOpen(true)}
+                onClick={() => navigate(`/team-details/${activeTeam.id}/add-task`)}
                 className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-850 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-xl font-bold text-xs shadow-premium hover:scale-[1.02] transition-all self-start sm:self-auto"
               >
                 <PlusCircle size={15} />
@@ -903,7 +698,7 @@ export default function TeamDetails() {
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50 text-slate-700 dark:text-slate-350 text-xs font-semibold">
                     {teamTasks.map((task) => {
                       const assignee = employees.find(e => e.id === task.assigneeId);
-                      
+
                       // Priority color codes
                       const getPriorityStyle = (priority) => {
                         switch (priority) {
@@ -913,7 +708,7 @@ export default function TeamDetails() {
                         }
                       };
 
-                        const getStatusBadgeStyle = (status) => {
+                      const getStatusBadgeStyle = (status) => {
                         switch (status) {
                           case "Completed": return "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/50";
                           case "Testing": return "bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/20 dark:text-violet-400 dark:border-violet-900/50";
@@ -936,10 +731,10 @@ export default function TeamDetails() {
                           <td className="px-6 py-4.5">
                             {/* Delegate Selector Dropdown */}
                             <div className="flex items-center gap-2">
-                              <img 
-                                src={assignee ? assignee.avatar : "https://ui-avatars.com/api/?name=Unassigned"} 
-                                alt={assignee ? assignee.name : "Unassigned"} 
-                                className="w-8 h-8 rounded-lg object-cover bg-white shadow-sm ring-1 ring-slate-100 dark:ring-slate-800" 
+                              <img
+                                src={assignee ? assignee.avatar : "https://ui-avatars.com/api/?name=Unassigned"}
+                                alt={assignee ? assignee.name : "Unassigned"}
+                                className="w-8 h-8 rounded-lg object-cover bg-white shadow-sm ring-1 ring-slate-100 dark:ring-slate-800"
                               />
                               <select
                                 value={task.assigneeId || ""}
@@ -984,7 +779,7 @@ export default function TeamDetails() {
                             </span>
                           </td>
                           <td className="px-6 py-4.5 text-right">
-                            <Link 
+                            <Link
                               to={`/task/${task.id}`}
                               className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary-dark transition-colors"
                             >
@@ -1008,8 +803,8 @@ export default function TeamDetails() {
           <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mt-2">
             Create a collaborative workgroup to unlock team assignment workflows.
           </p>
-          <button 
-            onClick={() => setIsTeamModalOpen(true)}
+          <button
+            onClick={() => navigate("/team-details/add")}
             className="mt-6 inline-flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-5 py-3 rounded-xl font-bold text-sm shadow-glow transition-all"
           >
             <Plus size={16} /> Create Team
@@ -1017,612 +812,7 @@ export default function TeamDetails() {
         </div>
       )}
 
-      {/* TEAM CREATION & EDIT MODAL */}
-      {isTeamModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 animate-fade-in overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-premium max-w-2xl w-full max-h-[95vh] overflow-y-auto p-4 sm:p-6 md:p-8 animate-slide-up">
-            <div className="flex justify-between items-center mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-slate-100 dark:border-slate-700/50">
-              <div>
-                <h3 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <UserPlus className="text-primary" size={24} />
-                  {editingTeamId ? "Edit Team Profile" : "Create Workspace Team"}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-semibold">Define the name, lead representative, team members, and departments.</p>
-              </div>
-              <button 
-                onClick={closeTeamModal}
-                className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveTeam} className="space-y-4 sm:space-y-6 lg:space-y-8 mt-2">
-              <div className="space-y-4 sm:space-y-6">
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                  {/* Team Name */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest ml-1">Team Name *</label>
-                    <input
-                      type="text"
-                      required
-                      value={teamName}
-                      onChange={(e) => setTeamName(e.target.value)}
-                      placeholder="e.g. Creative & Product Suite"
-                      className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-900 dark:text-white font-semibold transition-all placeholder:text-slate-400"
-                    />
-                  </div>
-
-                  {/* Team Lead */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest ml-1">Team Lead *</label>
-                    <div className="relative">
-                      <select
-                        required
-                        value={teamLeadId}
-                        onChange={(e) => setTeamLeadId(e.target.value)}
-                        className="w-full px-5 py-3.5 appearance-none bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-900 dark:text-white font-semibold transition-all cursor-pointer"
-                      >
-                        <option value="" disabled>-- Assign Team Lead Representative --</option>
-                        {employees.map(emp => (
-                          <option key={emp.id} value={emp.id}>{emp.name} ({emp.role})</option>
-                        ))}
-                      </select>
-                      <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none rotate-90" size={16} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Team Description */}
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest ml-1">Short Description</label>
-                  <textarea
-                    value={teamDescription}
-                    onChange={(e) => setTeamDescription(e.target.value)}
-                    placeholder="Provide overview details of this team's corporate mission..."
-                    rows={2}
-                    className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-900 dark:text-white font-semibold transition-all resize-none placeholder:text-slate-400"
-                  />
-                </div>
-
-                {/* Team Members Selection Grid */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between ml-1">
-                    <label className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Team Members Roster</label>
-                    <span className="text-[10px] font-bold text-slate-400">{teamMemberIds.length} Selected</span>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-56 overflow-y-auto p-1 custom-scrollbar">
-                    {employees.map(emp => {
-                      const isSelected = teamMemberIds.includes(emp.id);
-                      return (
-                        <label 
-                          key={emp.id} 
-                          className={`relative cursor-pointer group flex flex-col items-center text-center p-4 rounded-[1.5rem] border-2 transition-all duration-200 ${
-                            isSelected 
-                              ? "bg-primary/5 border-primary shadow-glow shadow-primary/20" 
-                              : "bg-white dark:bg-slate-800 border-slate-150 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => handleToggleMember(emp.id)}
-                            className="hidden"
-                          />
-                          
-                          <div className={`absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                            isSelected ? "bg-primary border-primary scale-100" : "border-slate-200 dark:border-slate-600 scale-90 opacity-50 group-hover:opacity-100"
-                          }`}>
-                            {isSelected && <Check size={12} className="text-white" strokeWidth={3} />}
-                          </div>
-
-                          <img src={emp.avatar} alt={emp.name} className={`w-14 h-14 rounded-2xl object-cover mb-3 transition-transform duration-300 ${isSelected ? "ring-4 ring-primary/20 scale-105" : "ring-1 ring-slate-200 dark:ring-slate-700 group-hover:scale-105"}`} />
-                          
-                          <span className={`text-sm font-black leading-tight transition-colors ${isSelected ? "text-primary dark:text-primary-light" : "text-slate-800 dark:text-white"}`}>{emp.name}</span>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase mt-1">{emp.role}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Project Categories Badges */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between ml-1">
-                    <label className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Project Categories</label>
-                    <span className="text-[10px] font-bold text-slate-400">{teamCategories.length} Selected</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2.5 p-1">
-                    {categories.map(cat => {
-                      const isSelected = teamCategories.includes(cat.name);
-                      return (
-                        <label 
-                          key={cat.id} 
-                          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 cursor-pointer select-none text-xs font-bold transition-all duration-200 ${
-                            isSelected 
-                              ? "bg-primary text-white border-primary shadow-glow shadow-primary/30 scale-105" 
-                              : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => handleToggleCategory(cat.name)}
-                            className="hidden"
-                          />
-                          {isSelected && <Check size={14} className="text-white" strokeWidth={3} />}
-                          <span className="truncate">{cat.name}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              {/* Form Buttons */}
-              <div className="flex justify-end items-center gap-3 pt-6 border-t border-slate-100 dark:border-slate-700/50 mt-8">
-                <button
-                  type="button"
-                  onClick={closeTeamModal}
-                  className="px-6 py-3.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-2xl font-bold text-sm transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-8 py-3.5 bg-primary hover:bg-primary-dark text-white rounded-2xl font-extrabold text-sm shadow-glow shadow-primary/30 hover:scale-[1.02] transition-all"
-                >
-                  {editingTeamId ? "Save Profile Changes" : "Assemble Team"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* TASK DELEGATION INLINE MODAL */}
-      {isTaskModalOpen && activeTeam && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[2.5rem] shadow-premium max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 animate-slide-up">
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100 dark:border-slate-700/50">
-              <div>
-                <h3 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <PlusCircle className="text-primary" size={24} />
-                  Delegate Team Scope
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-semibold">Assign new operational projects to your roster.</p>
-              </div>
-              <button 
-                onClick={() => setIsTaskModalOpen(false)}
-                className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateTask} className="space-y-5">
-              <div className="space-y-4">
-                {/* Task Name */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-extrabold text-slate-700 dark:text-slate-300 ml-1">Task Scope Title *</label>
-                  <input
-                    type="text"
-                    required
-                    value={taskName}
-                    onChange={(e) => setTaskName(e.target.value)}
-                    placeholder="e.g. Design Brand Identity System"
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-semibold transition-all"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Category */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-extrabold text-slate-700 dark:text-slate-300 ml-1">Project Category *</label>
-                    <select
-                      required
-                      value={taskCategory}
-                      onChange={(e) => setTaskCategory(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-semibold transition-all cursor-pointer"
-                    >
-                      <option value="" disabled>-- Select Project --</option>
-                      {activeTeam.categories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Assignee */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-extrabold text-slate-700 dark:text-slate-300 ml-1">Delegate Assignee *</label>
-                    <select
-                      required
-                      value={taskAssigneeId}
-                      onChange={(e) => setTaskAssigneeId(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-semibold transition-all cursor-pointer"
-                    >
-                      <option value="" disabled>-- Choose Roster Resource --</option>
-                      {teamLead && (
-                        <option value={teamLead.id}>{teamLead.name} (Team Lead)</option>
-                      )}
-                      {teamMembers.map(member => (
-                        <option key={member.id} value={member.id}>{member.name}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Priority */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-extrabold text-slate-700 dark:text-slate-300 ml-1">Priority Scale</label>
-                    <select
-                      value={taskPriority}
-                      onChange={(e) => setTaskPriority(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-semibold transition-all cursor-pointer"
-                    >
-                      <option value="High">High / Critical</option>
-                      <option value="Medium">Medium / Standard</option>
-                      <option value="Low">Low / Tactical</option>
-                    </select>
-                  </div>
-
-                  {/* Due Date */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-extrabold text-slate-700 dark:text-slate-300 ml-1">Due Date *</label>
-                    <input
-                      type="date"
-                      required
-                      value={taskDueDate}
-                      onChange={(e) => setTaskDueDate(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-semibold transition-all cursor-pointer"
-                    />
-                  </div>
-                </div>
-
-                {/* Description */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-extrabold text-slate-700 dark:text-slate-300 ml-1">Detailed Description</label>
-                  <textarea
-                    value={taskDescription}
-                    onChange={(e) => setTaskDescription(e.target.value)}
-                    placeholder="Enter granular details and criteria of this project..."
-                    rows={3}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-semibold transition-all resize-none"
-                  />
-                </div>
-              </div>
-
-              {/* Form Buttons */}
-              <div className="flex justify-end items-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-700/50">
-                <button
-                  type="button"
-                  onClick={() => setIsTaskModalOpen(false)}
-                  className="px-5 py-3 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-xl font-bold text-sm transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold text-sm shadow-glow transition-all"
-                >
-                  Delegate Task
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ADD MEMBER TO TEAM MODAL */}
-      {isAddMemberModalOpen && activeTeam && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[2.5rem] shadow-premium max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 animate-slide-up">
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100 dark:border-slate-700/50">
-              <div>
-                <h3 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <UserPlus className="text-primary" size={24} />
-                  Add Member to Team
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-semibold">
-                  Select an existing employee or register a new one to join "{activeTeam.name}".
-                </p>
-              </div>
-              <button 
-                onClick={() => setIsAddMemberModalOpen(false)}
-                className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* Glassmorphic Tab Selector */}
-            <div className="flex border-b border-slate-150 dark:border-slate-700/50 mb-6 gap-2">
-              <button
-                type="button"
-                onClick={() => setActiveMemberTab("existing")}
-                className={`pb-3 px-4 font-bold text-sm flex items-center gap-2 border-b-2 transition-all ${
-                  activeMemberTab === "existing"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                }`}
-              >
-                <UserCheck size={16} />
-                Add Existing Employee
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveMemberTab("new")}
-                className={`pb-3 px-4 font-bold text-sm flex items-center gap-2 border-b-2 transition-all ${
-                  activeMemberTab === "new"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                }`}
-              >
-                <PlusCircle size={16} />
-                Create & Add New Employee
-              </button>
-            </div>
-
-            {activeMemberTab === "existing" ? (
-              <div className="space-y-4">
-                {/* Search existing directory */}
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                  <input 
-                    type="text" 
-                    placeholder="Search employees by name, role, email..." 
-                    value={memberSearchQuery}
-                    onChange={(e) => setMemberSearchQuery(e.target.value)}
-                    className="pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 w-full text-slate-900 dark:text-white font-semibold transition-all"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[40vh] overflow-y-auto pr-1">
-                  {employees
-                    .filter(emp => {
-                      // Filter: exclude lead and current members
-                      const isNotAlreadyInTeam = emp.id !== activeTeam.leadId && !(activeTeam.memberIds || []).includes(emp.id);
-                      const matchesSearch = emp.name.toLowerCase().includes(memberSearchQuery.toLowerCase()) || 
-                                            (emp.role && emp.role.toLowerCase().includes(memberSearchQuery.toLowerCase())) ||
-                                            (emp.email && emp.email.toLowerCase().includes(memberSearchQuery.toLowerCase()));
-                      return isNotAlreadyInTeam && matchesSearch;
-                    })
-                    .map(emp => (
-                      <div 
-                        key={emp.id} 
-                        className="p-4 bg-slate-50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-700/60 rounded-2xl flex flex-col justify-between hover:shadow-md hover:border-primary/45 dark:hover:border-primary/40 transition-all group"
-                      >
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-3">
-                            <img src={emp.avatar} alt={emp.name} className="w-11 h-11 rounded-xl object-cover ring-2 ring-white dark:ring-slate-800 shadow-sm bg-white" />
-                            <div>
-                              <h5 className="text-sm font-extrabold text-slate-800 dark:text-white leading-tight">{emp.name}</h5>
-                              <span className="text-[10px] font-bold text-slate-400 uppercase mt-0.5 block">{emp.role}</span>
-                            </div>
-                          </div>
-
-                          <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800/80 text-left">
-                            {emp.email && (
-                              <div className="flex items-center gap-2 text-[10px] text-slate-400 dark:text-slate-500 font-semibold truncate">
-                                <Mail size={12} className="shrink-0 text-slate-400" />
-                                <span className="truncate">{emp.email}</span>
-                              </div>
-                            )}
-                            {emp.place && (
-                              <div className="flex items-center gap-2 text-[10px] text-slate-400 dark:text-slate-500 font-semibold">
-                                <MapPin size={12} className="shrink-0 text-slate-400" />
-                                <span>{emp.place}</span>
-                              </div>
-                            )}
-                            {emp.bioId && (
-                              <div className="flex items-center gap-2 text-[10px] text-slate-400 dark:text-slate-500 font-semibold">
-                                <CreditCard size={12} className="shrink-0 text-slate-400" />
-                                <span>ID: {emp.bioId}</span>
-                              </div>
-                            )}
-                            {emp.mobileNumber && (
-                              <div className="flex items-center gap-2 text-[10px] text-slate-400 dark:text-slate-500 font-semibold">
-                                <Phone size={12} className="shrink-0 text-slate-400" />
-                                <span>{emp.mobileNumber}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        <button
-                          onClick={() => handleAddExistingMember(emp.id, emp.name)}
-                          className="mt-4 flex items-center justify-center gap-1.5 w-full py-2 bg-slate-900 hover:bg-slate-850 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-xl shadow-premium transition-all hover:scale-[1.02]"
-                        >
-                          <Plus size={13} />
-                          <span>Add to Team</span>
-                        </button>
-                      </div>
-                    ))}
-
-                  {employees.filter(emp => {
-                    const isNotAlreadyInTeam = emp.id !== activeTeam.leadId && !(activeTeam.memberIds || []).includes(emp.id);
-                    const matchesSearch = emp.name.toLowerCase().includes(memberSearchQuery.toLowerCase()) || 
-                                          (emp.role && emp.role.toLowerCase().includes(memberSearchQuery.toLowerCase())) ||
-                                          (emp.email && emp.email.toLowerCase().includes(memberSearchQuery.toLowerCase()));
-                    return isNotAlreadyInTeam && matchesSearch;
-                  }).length === 0 && (
-                    <div className="col-span-2 py-12 text-center text-slate-400 font-semibold italic">
-                      No matching employees found in the directory.
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleCreateAndAddMember} className="space-y-5 text-left">
-                {/* Photo Upload Section */}
-                <div className="flex flex-col sm:flex-row items-center gap-5 bg-slate-50 dark:bg-slate-900/40 p-4 rounded-3xl border border-slate-150 dark:border-slate-700/30">
-                  <div 
-                    className="relative group cursor-pointer shrink-0"
-                    onClick={() => {
-                      const input = document.getElementById("new-member-file-input");
-                      if (input) input.click();
-                    }}
-                  >
-                    <div className="w-18 h-18 rounded-2xl overflow-hidden ring-4 ring-white dark:ring-slate-800 shadow-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
-                      {newMemberAvatar ? (
-                        <img src={newMemberAvatar} alt="Preview" className="w-full h-full object-cover" />
-                      ) : (
-                        <Camera size={22} className="text-slate-400" />
-                      )}
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 rounded-2xl">
-                      <Camera size={16} className="text-white" />
-                    </div>
-                    <input 
-                      id="new-member-file-input"
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
-                      onChange={handleNewMemberPhotoUpload} 
-                    />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-extrabold text-slate-900 dark:text-white">Profile Photo</h4>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium leading-relaxed">
-                      Upload a profile picture or leave blank to auto-generate a sleek avatar.
-                    </p>
-                    <button 
-                      type="button"
-                      onClick={() => {
-                        const input = document.getElementById("new-member-file-input");
-                        if (input) input.click();
-                      }}
-                      className="mt-1.5 inline-flex items-center gap-1.5 text-[10px] font-black text-primary hover:text-primary-dark transition-colors"
-                    >
-                      <Upload size={12} /> Select Image
-                    </button>
-                  </div>
-                </div>
-
-                {/* Form fields identical to EmployeeDirectory */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Full Name */}
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-355 ml-1">Full Name *</label>
-                    <input
-                      type="text"
-                      required
-                      value={newMemberName}
-                      onChange={(e) => setNewMemberName(e.target.value)}
-                      placeholder="e.g. Rachel Green"
-                      className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all"
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-355 ml-1">Email Address *</label>
-                    <input
-                      type="email"
-                      required
-                      value={newMemberEmail}
-                      onChange={(e) => setNewMemberEmail(e.target.value)}
-                      placeholder="e.g. rachel@company.com"
-                      className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all"
-                    />
-                  </div>
-
-                  {/* Role */}
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 ml-1">Role / Job Title</label>
-                    <select
-                      value={newMemberRole}
-                      onChange={(e) => setNewMemberRole(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-semibold transition-all appearance-none"
-                    >
-                      <option value="" disabled>Select Role</option>
-                      {masterRoles.map(r => (
-                        <option key={r.id} value={r.name}>{r.name}</option>
-                      ))}
-                      {newMemberRole && !masterRoles.find(r => r.name === newMemberRole) && (
-                        <option value={newMemberRole}>{newMemberRole}</option>
-                      )}
-                    </select>
-                  </div>
-
-                  {/* Location */}
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 ml-1">Place / Location</label>
-                    <select
-                      value={newMemberPlace}
-                      onChange={(e) => setNewMemberPlace(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-semibold transition-all appearance-none"
-                    >
-                      <option value="" disabled>Select Location</option>
-                      {masterLocations.map(l => (
-                        <option key={l.id} value={l.name}>{l.name}</option>
-                      ))}
-                      {newMemberPlace && !masterLocations.find(l => l.name === newMemberPlace) && (
-                        <option value={newMemberPlace}>{newMemberPlace}</option>
-                      )}
-                    </select>
-                  </div>
-
-                  {/* Bio ID */}
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-355 ml-1">Bio ID / Employee ID</label>
-                    <input
-                      type="text"
-                      value={newMemberBioId}
-                      onChange={(e) => setNewMemberBioId(e.target.value)}
-                      placeholder="e.g. BIO-34984"
-                      className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all"
-                    />
-                  </div>
-
-                  {/* Mobile */}
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-355 ml-1">Mobile Number</label>
-                    <input
-                      type="text"
-                      required
-                      maxLength={10}
-                      value={newMemberMobileNumber}
-                      onChange={(e) => setNewMemberMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                      placeholder="e.g. 9876543210"
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-semibold transition-all"
-                    />
-                  </div>
-
-                  {/* Aadhar */}
-                  <div className="space-y-1.5 sm:col-span-2">
-                    <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-355 ml-1">Aadhar Number</label>
-                    <input
-                      type="text"
-                      value={newMemberAadharNumber}
-                      onChange={(e) => setNewMemberAadharNumber(e.target.value)}
-                      placeholder="XXXX-XXXX-XXXX"
-                      className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all"
-                    />
-                  </div>
-                </div>
-
-                {/* Form Buttons */}
-                <div className="flex justify-end items-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-700/50">
-                  <button
-                    type="button"
-                    onClick={() => setIsAddMemberModalOpen(false)}
-                    className="px-5 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-xl font-bold text-xs transition-all"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-6 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold text-xs shadow-glow transition-all"
-                  >
-                    Create & Add to Team
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Modals removed for standalone pages */}
     </div>
   );
 }

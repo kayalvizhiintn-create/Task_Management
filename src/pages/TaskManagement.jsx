@@ -20,6 +20,8 @@ export default function TaskManagement() {
   const [tasks, setTasks] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [statuses, setStatuses] = useState([]);
+  const [priorities, setPriorities] = useState([]);
   const navigate = useNavigate();
 
   // Search & Filter state
@@ -33,18 +35,7 @@ export default function TaskManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Edit Modal State
-  const [editingTask, setEditingTask] = useState(null);
-  const [editFormData, setEditFormData] = useState({
-    name: "",
-    category: "",
-    assigneeId: "",
-    priority: "",
-    status: "",
-    dueDate: "",
-    description: "",
-    remarks: ""
-  });
+  // Edit modal state removed, using EditTask.jsx page
 
   useEffect(() => {
     loadData();
@@ -54,6 +45,8 @@ export default function TaskManagement() {
     setTasks(taskService.getTasks());
     setEmployees(taskService.getEmployees());
     setCategories(taskService.getCategories());
+    setStatuses(taskService.getStatuses());
+    setPriorities(taskService.getPriorities());
   }
 
   // Delete handler
@@ -64,32 +57,7 @@ export default function TaskManagement() {
     }
   };
 
-  // Open Edit Modal
-  const startEdit = (task) => {
-    setEditingTask(task);
-    setEditFormData({
-      name: task.name,
-      category: task.category,
-      assigneeId: task.assigneeId,
-      priority: task.priority,
-      status: task.status,
-      dueDate: task.dueDate,
-      description: task.description || "",
-      remarks: task.remarks || ""
-    });
-  };
-
-  // Save Edit
-  const handleSaveEdit = (e) => {
-    e.preventDefault();
-    if (!editFormData.name || !editFormData.dueDate) {
-      alert("Please fill in required fields.");
-      return;
-    }
-    taskService.updateTask(editingTask.id, editFormData);
-    setEditingTask(null);
-    loadData();
-  };
+  // Edit handlers removed, using EditTask.jsx page
 
   // Inline Status quick toggling
   const handleQuickStatusChange = (id, newStatus) => {
@@ -98,14 +66,14 @@ export default function TaskManagement() {
   };
 
   // Inline Assignee quick change
-  const handleQuickAssign = (id, newAssigneeId) => {
-    taskService.updateTask(id, { assigneeId: newAssigneeId });
+  const handleQuickAssign = (id, newAssignTo) => {
+    taskService.updateTask(id, { assignTo: newAssignTo });
     loadData();
   };
 
   // Filtering & Sorting calculations
   const filteredTasks = tasks.filter(task => {
-    const assignee = employees.find(e => e.id === task.assigneeId);
+    const assignee = employees.find(e => e.id === task.assignTo || e.id === task.assigneeId);
     const assigneeName = assignee ? assignee.name : "unassigned";
 
     const matchesSearch =
@@ -221,11 +189,9 @@ export default function TaskManagement() {
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-700"
             >
               <option value="All">All Statuses</option>
-              <option value="Pending">Pending</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Testing">Testing</option>
-              <option value="Completed">Completed</option>
-              <option value="Hold">Hold</option>
+              {statuses.map(s => (
+                <option key={s.id} value={s.name}>{s.name}</option>
+              ))}
             </select>
           </div>
 
@@ -238,9 +204,9 @@ export default function TaskManagement() {
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-700"
             >
               <option value="All">All Priorities</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
+              {priorities.map(p => (
+                <option key={p.id} value={p.name}>{p.name}</option>
+              ))}
             </select>
           </div>
 
@@ -286,7 +252,7 @@ export default function TaskManagement() {
                 </tr>
               ) : (
                 currentItems.map((task) => {
-                  const assignee = employees.find(e => e.id === task.assigneeId);
+                  const assignee = employees.find(e => e.id === task.assignTo || e.id === task.assigneeId);
 
                   return (
                     <tr key={task.id} className="hover:bg-slate-50/40 transition-colors">
@@ -312,7 +278,7 @@ export default function TaskManagement() {
                               <div>
                                 <p className="font-bold text-xs text-slate-800">{assignee.name}</p>
                                 <select
-                                  value={task.assigneeId}
+                                  value={task.assignTo || task.assigneeId}
                                   onChange={(e) => handleQuickAssign(task.id, e.target.value)}
                                   className="text-[9px] font-bold text-primary hover:underline bg-transparent border-none p-0 cursor-pointer focus:ring-0"
                                 >
@@ -347,11 +313,10 @@ export default function TaskManagement() {
                             className="w-5 h-5 opacity-0 absolute cursor-pointer"
                             title="Quick Change Status"
                           >
-                            <option value="Pending">Pending</option>
-                            <option value="In Progress">In Progress</option>
-                            <option value="Testing">Testing</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Hold">Hold</option>
+                            {statuses.map(s => (
+                              <option key={s.id} value={s.name}>{s.name}</option>
+                            ))}
+                            {task.status && !statuses.find(s => s.name === task.status) && <option value={task.status}>{task.status}</option>}
                           </select>
                         </div>
                       </td>
@@ -372,7 +337,7 @@ export default function TaskManagement() {
                             <Eye size={16} />
                           </button>
                           <button
-                            onClick={() => startEdit(task)}
+                            onClick={() => navigate(`/edit-task/${task.id}`)}
                             title="Edit Task"
                             className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-amber-600 transition-all duration-150"
                           >
@@ -415,8 +380,8 @@ export default function TaskManagement() {
                   key={idx}
                   onClick={() => paginate(idx + 1)}
                   className={`w-9 h-9 flex items-center justify-center rounded-xl text-xs font-bold transition-all ${currentPage === idx + 1
-                      ? "bg-primary text-white shadow-glow"
-                      : "border border-slate-200 bg-white hover:bg-slate-50 text-slate-600"
+                    ? "bg-primary text-white shadow-glow"
+                    : "border border-slate-200 bg-white hover:bg-slate-50 text-slate-600"
                     }`}
                 >
                   {idx + 1}
@@ -434,154 +399,7 @@ export default function TaskManagement() {
         )}
       </div>
 
-      {/* Edit Task Modal */}
-      {editingTask && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 animate-fade-in">
-          <div className="bg-white border border-slate-200 rounded-[1.5rem] lg:rounded-3xl w-full max-w-lg shadow-floating overflow-hidden animate-slide-up">
-            <div className="p-4 sm:p-6 border-b border-slate-100 bg-slate-50/65 flex justify-between items-center">
-              <div>
-                <h3 className="font-extrabold text-slate-900 text-lg">Modify Enterprise Task</h3>
-                <p className="text-xs text-slate-400 font-medium">Task ID: {editingTask.id}</p>
-              </div>
-              <button
-                onClick={() => setEditingTask(null)}
-                className="p-2 hover:bg-slate-200 rounded-xl text-slate-400 hover:text-slate-700 transition-colors"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveEdit} className="p-4 sm:p-6 space-y-4 max-h-[85vh] overflow-y-auto custom-scrollbar">
-
-              {/* Task Name */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Task Name</label>
-                <input
-                  type="text"
-                  value={editFormData.name}
-                  onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-800 font-semibold"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                {/* Category */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Category</label>
-                  <select
-                    value={editFormData.category}
-                    onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-700"
-                  >
-                    {categories.map(cat => (
-                      <option key={cat.id} value={cat.name}>{cat.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Assignee */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Assign To</label>
-                  <select
-                    value={editFormData.assigneeId}
-                    onChange={(e) => setEditFormData({ ...editFormData, assigneeId: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-700"
-                  >
-                    {employees.map(emp => (
-                      <option key={emp.id} value={emp.id}>{emp.name} ({emp.role})</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                {/* Priority */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Priority</label>
-                  <select
-                    value={editFormData.priority}
-                    onChange={(e) => setEditFormData({ ...editFormData, priority: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-700"
-                  >
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
-                  </select>
-                </div>
-
-                {/* Status */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Status</label>
-                  <select
-                    value={editFormData.status}
-                    onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-700"
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Testing">Testing</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Hold">Hold</option>
-                  </select>
-                </div>
-
-                {/* Due Date */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Due Date</label>
-                  <input
-                    type="date"
-                    value={editFormData.dueDate}
-                    onChange={(e) => setEditFormData({ ...editFormData, dueDate: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-700"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Description */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Description</label>
-                <textarea
-                  value={editFormData.description}
-                  onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                  rows="3"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-800 font-semibold"
-                />
-              </div>
-
-              {/* Remarks */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Notes / Remarks</label>
-                <input
-                  type="text"
-                  value={editFormData.remarks}
-                  onChange={(e) => setEditFormData({ ...editFormData, remarks: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-800 font-semibold"
-                />
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-3.5 pt-4 border-t border-slate-100 justify-end">
-                <button
-                  type="button"
-                  onClick={() => setEditingTask(null)}
-                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl text-xs shadow-glow transition-all"
-                >
-                  Save Modifications
-                </button>
-              </div>
-
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Edit modal removed */}
 
     </div>
   );
