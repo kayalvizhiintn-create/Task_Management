@@ -350,6 +350,36 @@ export const taskService = {
     return tasks.find(t => t.id === id) || null;
   },
 
+  async fetchTasksMasterAsync() {
+    try {
+      const res = await axios.get("http://192.23.2.19:1012/api/v1/task/get-all-tasks");
+      const data = res.data;
+      let apiTasks = [];
+      if (Array.isArray(data)) apiTasks = data;
+      else if (data.data && Array.isArray(data.data)) apiTasks = data.data;
+      else if (data.tasks && Array.isArray(data.tasks)) apiTasks = data.tasks;
+
+      const formatted = apiTasks.map(t => ({
+        id: t._id || t.id || t.taskId,
+        name: t.name || t.taskName || t.task_name || t.TaskName
+      })).filter(t => t.name);
+
+      if (formatted.length > 0) {
+        // Merge with local ones
+        const localTasks = this.getTaskMaster();
+        const apiNames = formatted.map(f => f.name.toLowerCase());
+        const missingLocals = localTasks.filter(lt => !apiNames.includes(lt.name.toLowerCase()));
+        const merged = [...formatted, ...missingLocals];
+        
+        localStorage.setItem("navanala_task_master", JSON.stringify(merged));
+        return merged;
+      }
+    } catch (err) {
+      console.error("API Fetch Tasks Master failed:", err);
+    }
+    return this.getTaskMaster();
+  },
+
   createTask(taskData) {
     const tasks = this.getTasks();
     const employees = this.getEmployees();
@@ -722,6 +752,44 @@ export const taskService = {
   getProjects() {
     const data = localStorage.getItem("navanala_projects");
     return data ? JSON.parse(data) : [];
+  },
+
+  async fetchProjectsAsync() {
+    try {
+      const res = await axios.get("http://192.23.2.19:1012/api/v1/project/get-all-projects");
+      const data = res.data;
+      
+      let apiProjects = [];
+      if (Array.isArray(data)) apiProjects = data;
+      else if (data.data && Array.isArray(data.data)) apiProjects = data.data;
+      else if (data.projects && Array.isArray(data.projects)) apiProjects = data.projects;
+
+      const localProjects = this.getProjects();
+
+      const formatted = apiProjects.map(p => {
+        const name = p.name || p.projectName || p.project_name || p.ProjectName;
+        const existingLocal = localProjects.find(lp => lp.name === name);
+        return {
+          id: p._id || p.id || p.projectId,
+          name: name,
+          description: p.description || existingLocal?.description || "",
+          environment: p.environment || existingLocal?.environment || "Indoor",
+          bioIds: p.bioIds && p.bioIds.length > 0 ? p.bioIds : (existingLocal?.bioIds || [])
+        };
+      }).filter(p => p.name);
+
+      if (formatted.length > 0) {
+        const apiNames = formatted.map(f => f.name.toLowerCase());
+        const missingLocals = localProjects.filter(lp => !apiNames.includes(lp.name.toLowerCase()));
+        const merged = [...formatted, ...missingLocals];
+        
+        localStorage.setItem("navanala_projects", JSON.stringify(merged));
+        return merged;
+      }
+    } catch (err) {
+      console.error("API Fetch Projects failed:", err);
+    }
+    return this.getProjects();
   },
   addProject(data) {
     const projects = this.getProjects();

@@ -257,18 +257,22 @@ export default function CreateTask() {
                   <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
-                  <select
+                  <input
+                    list="create-task-names"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-700 appearance-none shadow-inner"
+                    placeholder="Enter or select Task Name"
+                    className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-700 shadow-inner"
                     required
-                  >
-                    <option value="" disabled>Select Task Name</option>
-                    {tasksMaster.map(t => (
-                      <option key={t.id} value={t.name}>{t.name}</option>
+                  />
+                  <datalist id="create-task-names">
+                    {Array.from(new Set([
+                      ...tasksMaster.map(t => t.name),
+                      ...taskService.getTasks().map(t => t.name).filter(Boolean)
+                    ])).map(n => (
+                      <option key={n} value={n} />
                     ))}
-                    {name && !tasksMaster.find(t => t.name === name) && <option value={name}>{name}</option>}
-                  </select>
+                  </datalist>
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                     <LayoutGrid size={16} />
                   </div>
@@ -287,8 +291,11 @@ export default function CreateTask() {
                     className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-700 shadow-inner"
                   />
                   <datalist id="create-project-names">
-                    {projects.map(p => (
-                      <option key={p.id} value={p.name} />
+                    {Array.from(new Set([
+                      ...projects.map(p => p.name),
+                      ...taskService.getTasks().map(t => t.projectName).filter(Boolean)
+                    ])).map(pName => (
+                      <option key={pName} value={pName} />
                     ))}
                   </datalist>
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">

@@ -129,7 +129,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-4">
 
         {/* Total Tasks */}
-        <div className="bg-gradient-to-br from-slate-900 to-indigo-950 border border-indigo-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
+        <div onClick={() => navigate("/tasks")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-indigo-950 border border-indigo-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
           <div className="flex justify-between items-start mb-2">
             <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Total</p>
             <ListTodo size={16} className="text-indigo-400" />
@@ -138,7 +138,7 @@ export default function Dashboard() {
         </div>
 
         {/* Completed Tasks */}
-        <div className="bg-gradient-to-br from-slate-900 to-emerald-950 border border-emerald-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
+        <div onClick={() => navigate("/tasks?status=Completed")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-emerald-950 border border-emerald-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
           <div className="flex justify-between items-start mb-2">
             <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Completed</p>
             <CheckCircle2 size={16} className="text-emerald-400" />
@@ -147,7 +147,7 @@ export default function Dashboard() {
         </div>
 
         {/* In Progress Tasks */}
-        <div className="bg-gradient-to-br from-slate-900 to-amber-950 border border-amber-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
+        <div onClick={() => navigate("/tasks?status=In Progress")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-amber-950 border border-amber-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
           <div className="flex justify-between items-start mb-2">
             <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">In Progress</p>
             <PlayCircle size={16} className="text-amber-400" />
@@ -156,7 +156,7 @@ export default function Dashboard() {
         </div>
 
         {/* Testing Phase Tasks */}
-        <div className="bg-gradient-to-br from-slate-900 to-blue-950 border border-blue-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
+        <div onClick={() => navigate("/tasks?status=Testing")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-blue-950 border border-blue-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
           <div className="flex justify-between items-start mb-2">
             <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Testing</p>
             <CheckCircle2 size={16} className="text-blue-400" />
@@ -165,7 +165,7 @@ export default function Dashboard() {
         </div>
 
         {/* Pending Tasks */}
-        <div className="bg-gradient-to-br from-slate-900 to-rose-950 border border-rose-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
+        <div onClick={() => navigate("/tasks?status=Pending")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-rose-950 border border-rose-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
           <div className="flex justify-between items-start mb-2">
             <p className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Pending</p>
             <Clock size={16} className="text-rose-400" />
@@ -174,7 +174,7 @@ export default function Dashboard() {
         </div>
 
         {/* High Priority Tasks */}
-        <div className="bg-gradient-to-br from-slate-900 to-purple-950 border border-purple-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
+        <div onClick={() => navigate("/tasks?priority=High")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-purple-950 border border-purple-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
           <div className="flex justify-between items-start mb-2">
             <p className="text-[10px] font-bold text-purple-400 uppercase tracking-widest">High Priority</p>
             <AlertTriangle size={16} className="text-purple-400" />

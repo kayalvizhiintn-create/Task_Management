@@ -34,38 +34,38 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen w-screen flex items-center justify-center bg-[#1a1c23] font-sans text-[#a0aec0] selection:bg-emerald-500 selection:text-white relative overflow-hidden">
-      
+    <div className="min-h-screen w-screen flex items-center justify-center bg-[#e0e5ec] font-sans text-slate-600 selection:bg-blue-500 selection:text-white relative overflow-hidden">
+
       {/* Decorative Neumorphic background circles */}
-      <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-[#1a1c23] shadow-[14px_14px_28px_#121318,-14px_-14px_28px_#22252e] opacity-50 pointer-events-none"></div>
-      <div className="absolute -bottom-20 right-20 w-96 h-96 rounded-full bg-[#1a1c23] shadow-[14px_14px_28px_#121318,-14px_-14px_28px_#22252e] opacity-50 pointer-events-none"></div>
+      <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-[#e0e5ec] shadow-[14px_14px_28px_#a3b1c6,-14px_-14px_28px_#ffffff] opacity-70 pointer-events-none"></div>
+      <div className="absolute -bottom-20 right-20 w-96 h-96 rounded-full bg-[#e0e5ec] shadow-[14px_14px_28px_#a3b1c6,-14px_-14px_28px_#ffffff] opacity-70 pointer-events-none"></div>
 
       <div className="relative z-10 w-full max-w-[440px] p-8">
-        
+
         {/* Neumorphic Form Card */}
-        <div className="bg-[#1a1c23] rounded-[40px] shadow-[14px_14px_28px_#121318,-14px_-14px_28px_#22252e] p-10 relative">
-          
+        <div className="bg-[#e0e5ec] rounded-[40px] shadow-[14px_14px_28px_#a3b1c6,-14px_-14px_28px_#ffffff] p-10 relative">
+
           <div className="flex flex-col items-center mb-10">
             {/* Colorful Icon Container */}
-            <div className="w-20 h-20 rounded-full bg-[#1a1c23] shadow-[8px_8px_16px_#121318,-8px_-8px_16px_#22252e] flex items-center justify-center mb-6 text-cyan-500">
+            <div className="w-20 h-20 rounded-full bg-[#e0e5ec] shadow-[8px_8px_16px_#a3b1c6,-8px_-8px_16px_#ffffff] flex items-center justify-center mb-6 text-cyan-500">
               <Fingerprint size={36} strokeWidth={2} />
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-[#f7fafc]">NavaNala</h1>
-            <p className="text-[#cbd5e1] font-medium mt-2">Sign in to orchestrate.</p>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-800">NavaNala</h1>
+            <p className="text-slate-500 font-medium mt-2">Sign in to orchestrate.</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-8">
-            
+
             {error && (
-              <div className="py-3 px-4 rounded-[16px] bg-[#1a1c23] shadow-[inset_4px_4px_8px_#121318,inset_-4px_-4px_8px_#22252e] text-rose-500 text-sm font-semibold text-center">
+              <div className="py-3 px-4 rounded-[16px] bg-[#e0e5ec] shadow-[inset_4px_4px_8px_#a3b1c6,inset_-4px_-4px_8px_#ffffff] text-blue-500 text-sm font-semibold text-center">
                 {error}
               </div>
             )}
 
             <div className="space-y-3">
-              <label htmlFor="email" className="text-sm font-bold text-[#cbd5e1] ml-2 uppercase tracking-wider">Email</label>
+              <label htmlFor="email" className="text-sm font-bold text-slate-600 ml-2 uppercase tracking-wider">Email</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-orange-500">
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-blue-500">
                   <User size={20} strokeWidth={2.5} />
                 </div>
                 <input
@@ -74,15 +74,15 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@domain.com"
-                  className="w-full pl-14 pr-6 py-4 bg-[#1a1c23] rounded-full text-[#a0aec0] font-medium focus:outline-none focus:text-[#f7fafc] shadow-[inset_6px_6px_10px_#121318,inset_-6px_-6px_10px_#22252e] transition-all placeholder-[#718096] focus:ring-2 focus:ring-cyan-500/20"
+                  className="w-full pl-14 pr-6 py-4 bg-[#e0e5ec] rounded-full text-slate-700 font-medium focus:outline-none focus:text-slate-900 shadow-[inset_6px_6px_10px_#a3b1c6,inset_-6px_-6px_10px_#ffffff] transition-all placeholder-slate-400 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
             </div>
 
             <div className="space-y-3">
-              <label htmlFor="password" className="text-sm font-bold text-[#cbd5e1] ml-2 uppercase tracking-wider">Password</label>
+              <label htmlFor="password" className="text-sm font-bold text-slate-600 ml-2 uppercase tracking-wider">Password</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-amber-500">
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-sky-500">
                   <Key size={20} strokeWidth={2.5} />
                 </div>
                 <input
@@ -91,7 +91,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-14 pr-6 py-4 bg-[#1a1c23] rounded-full text-[#a0aec0] font-medium focus:outline-none focus:text-[#f7fafc] shadow-[inset_6px_6px_10px_#121318,inset_-6px_-6px_10px_#22252e] transition-all placeholder-[#718096] focus:ring-2 focus:ring-cyan-500/20"
+                  className="w-full pl-14 pr-6 py-4 bg-[#e0e5ec] rounded-full text-slate-700 font-medium focus:outline-none focus:text-slate-900 shadow-[inset_6px_6px_10px_#a3b1c6,inset_-6px_-6px_10px_#ffffff] transition-all placeholder-slate-400 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
             </div>
@@ -100,7 +100,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-4 py-4 px-6 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full text-white font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 shadow-[8px_8px_16px_#121318,-8px_-8px_16px_#22252e] hover:shadow-[4px_4px_8px_#121318,-4px_-4px_8px_#22252e] active:shadow-[inset_4px_4px_8px_rgba(0,0,0,0.4),inset_-4px_-4px_8px_rgba(255,255,255,0.1)] group disabled:opacity-70 disabled:grayscale"
+              className="w-full mt-4 py-4 px-6 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-white font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 shadow-[8px_8px_16px_#a3b1c6,-8px_-8px_16px_#ffffff] hover:shadow-[4px_4px_8px_#a3b1c6,-4px_-4px_8px_#ffffff] active:shadow-[inset_4px_4px_8px_#a3b1c6,inset_-4px_-4px_8px_#ffffff] group disabled:opacity-70 disabled:grayscale"
             >
               {loading ? (
                 <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin" />
@@ -112,9 +112,9 @@ export default function Login() {
               )}
             </button>
           </form>
-          
+
           <div className="mt-10 text-center">
-            <a href="#" className="text-sm font-bold text-[#cbd5e1] hover:text-cyan-500 transition-colors">
+            <a href="#" className="text-sm font-bold text-slate-500 hover:text-blue-500 transition-colors">
               Forgot your password?
             </a>
           </div>

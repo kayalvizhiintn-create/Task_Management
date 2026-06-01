@@ -28,6 +28,15 @@ export default function CreateTeam() {
     setProjects(taskService.getProjects() || []);
     setTasksMaster(taskService.getTaskMaster() || []);
 
+    const fetchLatestData = async () => {
+      const fetchedProjects = await taskService.fetchProjectsAsync();
+      setProjects(fetchedProjects || []);
+
+      const fetchedTasksMaster = await taskService.fetchTasksMasterAsync();
+      setTasksMaster(fetchedTasksMaster || []);
+    };
+    fetchLatestData();
+
     if (id) {
       const storedTeams = localStorage.getItem("navanala_teams");
       if (storedTeams) {
@@ -85,6 +94,16 @@ export default function CreateTeam() {
         taskName: teamTaskName
       };
       updatedTeams.push(newTeam);
+    }
+
+    // Auto-add new projects and tasks to Master if they don't exist yet
+    const localProjects = taskService.getProjects();
+    if (!localProjects.find(p => p.name.toLowerCase() === teamProjectName.trim().toLowerCase())) {
+      taskService.addProject({ name: teamProjectName.trim(), description: "", environment: "Indoor", bioIds: [] });
+    }
+    const localTasks = taskService.getTaskMaster();
+    if (!localTasks.find(t => t.name.toLowerCase() === teamTaskName.trim().toLowerCase())) {
+      taskService.addTaskMaster(teamTaskName.trim());
     }
 
     localStorage.setItem("navanala_teams", JSON.stringify(updatedTeams));
@@ -165,40 +184,48 @@ export default function CreateTeam() {
                 <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
                   Project Name *
                 </label>
-                <select
+                <input
+                  list="project-names"
                   required
                   value={teamProjectName}
                   onChange={(e) => {
                     setTeamProjectName(e.target.value);
                     setTeamTaskName(""); // reset task name when project changes
                   }}
-                  className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-900 dark:text-white appearance-none cursor-pointer"
-                >
-                  <option value="">Select Project...</option>
-                  {projects.map(p => (
-                    <option key={p.id} value={p.name}>{p.name}</option>
+                  placeholder="Select or type new project..."
+                  className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-900 dark:text-white"
+                />
+                <datalist id="project-names">
+                  {Array.from(new Set([
+                    ...projects.map(p => p.name),
+                    ...taskService.getTasks().map(t => t.projectName).filter(Boolean)
+                  ])).map(name => (
+                    <option key={name} value={name} />
                   ))}
-                  {teamProjectName && !projects.find(p => p.name === teamProjectName) && <option value={teamProjectName}>{teamProjectName}</option>}
-                </select>
+                </datalist>
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
                   Task Name *
                 </label>
-                <select
+                <input
+                  list="task-names"
                   required
                   value={teamTaskName}
                   onChange={(e) => setTeamTaskName(e.target.value)}
                   disabled={!teamProjectName}
-                  className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-900 dark:text-white appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <option value="">Select Task...</option>
-                  {tasksMaster.map(t => (
-                    <option key={t.id} value={t.name}>{t.name}</option>
+                  placeholder="Select or type new task..."
+                  className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+                <datalist id="task-names">
+                  {Array.from(new Set([
+                    ...tasksMaster.map(t => t.name),
+                    ...taskService.getTasks().map(t => t.name).filter(Boolean)
+                  ])).map(name => (
+                    <option key={name} value={name} />
                   ))}
-                  {teamTaskName && !tasksMaster.find(t => t.name === teamTaskName) && <option value={teamTaskName}>{teamTaskName}</option>}
-                </select>
+                </datalist>
               </div>
 
               <div className="space-y-2 md:col-span-2">

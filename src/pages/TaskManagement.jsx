@@ -24,10 +24,12 @@ export default function TaskManagement() {
   const [priorities, setPriorities] = useState([]);
   const navigate = useNavigate();
 
+  const [searchParams] = useSearchParams();
+
   // Search & Filter state
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
-  const [priorityFilter, setPriorityFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "All");
+  const [priorityFilter, setPriorityFilter] = useState(searchParams.get("priority") || "All");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [sortBy, setSortBy] = useState("dueDate-asc");
 
@@ -41,6 +43,13 @@ export default function TaskManagement() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    const status = searchParams.get("status");
+    if (status) setStatusFilter(status);
+    
+    const priority = searchParams.get("priority");
+    if (priority) setPriorityFilter(priority);
+  }, [searchParams]);
   function loadData() {
     setTasks(taskService.getTasks());
     setEmployees(taskService.getEmployees());
