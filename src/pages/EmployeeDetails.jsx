@@ -194,7 +194,6 @@ export default function EmployeeDetails() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-bold transition-all"
-                    placeholder="e.g. John Doe"
                   />
                 </div>
 
@@ -205,7 +204,6 @@ export default function EmployeeDetails() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-bold transition-all"
-                    placeholder="e.g. john@example.com"
                   />
                 </div>
 
@@ -250,7 +248,6 @@ export default function EmployeeDetails() {
                     value={bioId}
                     onChange={(e) => setBioId(e.target.value)}
                     className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-bold transition-all"
-                    placeholder="e.g. BIO-98234"
                   />
                 </div>
 
@@ -263,7 +260,6 @@ export default function EmployeeDetails() {
                     value={mobileNumber}
                     onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
                     className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-bold transition-all"
-                    placeholder="e.g. 9876543210"
                   />
                 </div>
 
@@ -276,7 +272,6 @@ export default function EmployeeDetails() {
                     value={aadharNumber}
                     onChange={(e) => setAadharNumber(e.target.value.replace(/\D/g, '').slice(0, 12))}
                     className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-bold transition-all"
-                    placeholder="XXXX-XXXX-XXXX"
                   />
                 </div>
               </div>

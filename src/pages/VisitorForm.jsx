@@ -138,7 +138,6 @@ export default function VisitorForm() {
                   required
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
-                  placeholder={activeTab === "external" ? "e.g. Acme Corp" : "e.g. Finance Dept - John Doe"}
                   className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-900 dark:text-white"
                 />
               </div>
@@ -151,7 +150,6 @@ export default function VisitorForm() {
                   required
                   value={placesVisited}
                   onChange={(e) => setPlacesVisited(e.target.value)}
-                  placeholder="e.g. Server Room, Main Office"
                   className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-900 dark:text-white"
                 />
               </div>
@@ -170,7 +168,6 @@ export default function VisitorForm() {
                   required
                   value={comments}
                   onChange={(e) => setComments(e.target.value)}
-                  placeholder="General impressions and thoughts..."
                   rows={4}
                   className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none text-slate-900 dark:text-white"
                 />
@@ -181,7 +178,6 @@ export default function VisitorForm() {
                   required
                   value={detailsAsked}
                   onChange={(e) => setDetailsAsked(e.target.value)}
-                  placeholder="Specific questions raised..."
                   rows={4}
                   className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none text-slate-900 dark:text-white"
                 />
@@ -192,7 +188,6 @@ export default function VisitorForm() {
                   required
                   value={improvementsSuggested}
                   onChange={(e) => setImprovementsSuggested(e.target.value)}
-                  placeholder="Suggestions for improvement..."
                   rows={4}
                   className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all resize-none text-slate-900 dark:text-white"
                 />

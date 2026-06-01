@@ -11,9 +11,9 @@ import {
   ChevronRight,
   Plus,
   UserCheck,
-  CheckCircle,
   AlertCircle,
-  X
+  X,
+  Image as ImageIcon
 } from "lucide-react";
 
 export default function TaskManagement() {
@@ -35,7 +35,7 @@ export default function TaskManagement() {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
   // Edit modal state removed, using EditTask.jsx page
 
@@ -49,6 +49,11 @@ export default function TaskManagement() {
     
     const priority = searchParams.get("priority");
     if (priority) setPriorityFilter(priority);
+
+    const search = searchParams.get("search");
+    if (search !== null) {
+      setSearchTerm(search);
+    }
   }, [searchParams]);
   function loadData() {
     setTasks(taskService.getTasks());
@@ -90,7 +95,9 @@ export default function TaskManagement() {
       task.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
       assigneeName.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = statusFilter === "All" || task.status === statusFilter;
+    const normalizedTaskStatus = (task.status || "").toLowerCase().replace(/\s+/g, "");
+    const normalizedFilterStatus = (statusFilter || "").toLowerCase().replace(/\s+/g, "");
+    const matchesStatus = statusFilter === "All" || normalizedTaskStatus === normalizedFilterStatus;
     const matchesPriority = priorityFilter === "All" || task.priority === priorityFilter;
     const matchesCategory = categoryFilter === "All" || task.category === categoryFilter;
 
@@ -123,16 +130,17 @@ export default function TaskManagement() {
 
   // Badge stylings
   const getStatusBadge = (status) => {
-    switch (status) {
-      case "Completed":
+    const s = (status || "").toLowerCase().replace(/\s+/g, "");
+    switch (s) {
+      case "completed": case "done":
         return "bg-emerald-50 text-emerald-700 border-emerald-200/80";
-      case "In Progress":
+      case "inprogress": case "active":
         return "bg-amber-50 text-amber-700 border-amber-200/80";
-      case "Testing":
+      case "testing": case "review":
         return "bg-violet-50 text-violet-700 border-violet-200/80";
-      case "Pending":
+      case "pending": case "taskcreated":
         return "bg-rose-50 text-rose-700 border-rose-200/80";
-      case "Hold":
+      case "hold": case "onhold":
       default:
         return "bg-slate-50 text-slate-700 border-slate-200/80";
     }
@@ -169,247 +177,173 @@ export default function TaskManagement() {
       </div>
 
       {/* Filter and Search Panel */}
-      <div className="bg-white border border-slate-200/50 p-4 lg:p-6 rounded-[1.5rem] lg:rounded-3xl shadow-premium space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+      <div className="flex flex-col lg:flex-row gap-4 mb-8">
+        {/* Search */}
+        <div className="relative flex-1">
+          <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+            <Search size={18} />
+          </span>
+          <input
+            type="text"
+            placeholder="Search tasks, categories, or employees..."
+            value={searchTerm}
+            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+            className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200/80 rounded-2xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm text-slate-800 placeholder-slate-400"
+          />
+        </div>
 
-          {/* Search bar */}
-          <div className="md:col-span-2 space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Search</label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                <Search size={16} />
-              </span>
-              <input
-                type="text"
-                placeholder="Search by task, category or employee name..."
-                value={searchTerm}
-                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="w-full pl-10 pr-4 py-2 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 text-slate-800"
-              />
-            </div>
-          </div>
-
-          {/* Status selector */}
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Status</label>
+        {/* Filters */}
+        <div className="flex flex-wrap lg:flex-nowrap gap-3">
+          <div className="flex items-center bg-white border border-slate-200/80 rounded-2xl px-4 py-2 shadow-sm transition-all focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary hover:border-slate-300">
+            <Filter size={16} className="text-slate-400 mr-2" />
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-700"
+              className="bg-transparent text-sm font-bold text-slate-700 focus:outline-none appearance-none cursor-pointer flex-1"
             >
               <option value="All">All Statuses</option>
-              {statuses.map(s => (
-                <option key={s.id} value={s.name}>{s.name}</option>
-              ))}
+              {statuses.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
             </select>
           </div>
-
-          {/* Priority selector */}
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Priority</label>
+          
+          <div className="flex items-center bg-white border border-slate-200/80 rounded-2xl px-4 py-2 shadow-sm transition-all focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary hover:border-slate-300">
+            <AlertCircle size={16} className="text-slate-400 mr-2" />
             <select
               value={priorityFilter}
               onChange={(e) => { setPriorityFilter(e.target.value); setCurrentPage(1); }}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-700"
+              className="bg-transparent text-sm font-bold text-slate-700 focus:outline-none appearance-none cursor-pointer flex-1"
             >
               <option value="All">All Priorities</option>
-              {priorities.map(p => (
-                <option key={p.id} value={p.name}>{p.name}</option>
-              ))}
+              {priorities.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
             </select>
           </div>
 
-          {/* Sort selection */}
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Sort By</label>
-            <select
-              value={sortBy}
-              onChange={(e) => { setSortBy(e.target.value); }}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-700"
-            >
-              <option value="dueDate-asc">Deadline (Earliest)</option>
-              <option value="dueDate-desc">Deadline (Latest)</option>
-              <option value="priority-high">Priority (Highest)</option>
-              <option value="name-asc">Task Alphabetical</option>
-            </select>
-          </div>
-
+          <select
+            value={sortBy}
+            onChange={(e) => { setSortBy(e.target.value); }}
+            className="px-4 py-3 bg-white border border-slate-200/80 rounded-2xl text-sm font-bold text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer hover:border-slate-300 transition-all"
+          >
+            <option value="dueDate-asc">Sort: Deadline (Earliest)</option>
+            <option value="dueDate-desc">Sort: Deadline (Latest)</option>
+            <option value="priority-high">Sort: Priority (Highest)</option>
+            <option value="name-asc">Sort: Alphabetical</option>
+          </select>
         </div>
       </div>
 
-      {/* Main Table view */}
-      <div className="bg-white border border-slate-200/50 rounded-[1.5rem] lg:rounded-3xl shadow-premium overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50/70 border-b border-slate-100 text-slate-400 text-xs font-bold uppercase tracking-wider">
-                <th className="px-6 py-4">Task Name</th>
-                <th className="px-6 py-4">Category</th>
-                <th className="px-6 py-4">Assigned Employee</th>
-                <th className="px-6 py-4">Priority</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Deadline</th>
-                <th className="px-6 py-4 text-center">Action Options</th>
+      {/* Hyper-Minimalist Table View */}
+      <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="border-b border-slate-100 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+              <th className="px-8 py-6 font-semibold">Task</th>
+              <th className="px-8 py-6 font-semibold">Assigned To</th>
+              <th className="px-8 py-6 font-semibold">Status</th>
+              <th className="px-8 py-6 font-semibold">Due</th>
+              <th className="px-8 py-6 text-left font-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50">
+            {currentItems.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="text-center py-24 text-slate-400">
+                  <div className="flex flex-col items-center justify-center">
+                    <Search size={32} className="mb-4 text-slate-200" />
+                    <p className="font-semibold text-sm">No tasks found matching your filters</p>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-sm font-semibold text-slate-700">
-              {currentItems.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="text-center py-12 text-slate-400">
-                    No matching tasks found. Adjust filters or search parameters.
-                  </td>
-                </tr>
-              ) : (
-                currentItems.map((task) => {
-                  const assignee = employees.find(e => e.id === task.assignTo || e.id === task.assigneeId);
-
-                  return (
-                    <tr key={task.id} className="hover:bg-slate-50/40 transition-colors">
-                      {/* Name */}
-                      <td className="px-6 py-4 max-w-[280px]">
-                        <p className="font-extrabold text-slate-800 tracking-tight truncate">{task.name}</p>
-                        <p className="text-[10px] text-slate-400 mt-0.5 truncate font-medium">{task.description}</p>
-                      </td>
-
-                      {/* Category tag */}
-                      <td className="px-6 py-4">
-                        <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-xl text-xs font-bold">
-                          {task.category}
-                        </span>
-                      </td>
-
-                      {/* Assigned Employee Avatar & Selector */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2.5">
-                          {assignee ? (
-                            <>
-                              <img src={assignee.avatar} alt={assignee.name} className="w-8 h-8 rounded-lg object-cover ring-1 ring-slate-200" />
-                              <div>
-                                <p className="font-bold text-xs text-slate-800">{assignee.name}</p>
-                                <select
-                                  value={task.assignTo || task.assigneeId}
-                                  onChange={(e) => handleQuickAssign(task.id, e.target.value)}
-                                  className="text-[9px] font-bold text-primary hover:underline bg-transparent border-none p-0 cursor-pointer focus:ring-0"
-                                >
-                                  {employees.map(emp => (
-                                    <option key={emp.id} value={emp.id}>{emp.name}</option>
-                                  ))}
-                                </select>
-                              </div>
-                            </>
-                          ) : (
-                            <span className="text-xs text-slate-400 font-bold italic">Unassigned</span>
-                          )}
+            ) : (
+              currentItems.map(task => {
+                const assignee = employees.find(e => e.id === task.assignTo || e.id === task.assigneeId);
+                return (
+                  <tr key={task.id} className="group hover:bg-slate-50/50 transition-colors">
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-2 h-2 rounded-full shadow-sm ${task.priority === 'High' ? 'bg-rose-500 shadow-rose-200' : task.priority === 'Medium' ? 'bg-amber-500 shadow-amber-200' : 'bg-blue-500 shadow-blue-200'}`}></div>
+                        <div>
+                          <p className="font-extrabold text-slate-800 text-sm">{task.name}</p>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">{task.projectName || "General Project"} &bull; {task.category || "General"}</p>
                         </div>
-                      </td>
-
-                      {/* Priority */}
-                      <td className="px-6 py-4">
-                        <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-md border ${getPriorityBadge(task.priority)}`}>
-                          {task.priority}
-                        </span>
-                      </td>
-
-                      {/* Status select/badge */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-md border ${getStatusBadge(task.status)}`}>
-                            {task.status}
-                          </span>
-                          <select
-                            value={task.status}
-                            onChange={(e) => handleQuickStatusChange(task.id, e.target.value)}
-                            className="w-5 h-5 opacity-0 absolute cursor-pointer"
-                            title="Quick Change Status"
-                          >
-                            {statuses.map(s => (
-                              <option key={s.id} value={s.name}>{s.name}</option>
-                            ))}
-                            {task.status && !statuses.find(s => s.name === task.status) && <option value={task.status}>{task.status}</option>}
-                          </select>
+                      </div>
+                    </td>
+                    <td className="px-8 py-6">
+                      {assignee ? (
+                        <div className="flex items-center gap-3">
+                          <img src={assignee.avatar} className="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-sm" alt="" />
+                          <span className="text-xs font-bold text-slate-700">{assignee.name}</span>
                         </div>
-                      </td>
-
-                      {/* Due Date */}
-                      <td className="px-6 py-4 text-xs font-bold text-slate-600">
-                        {task.dueDate}
-                      </td>
-
-                      {/* Action buttons */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center justify-center gap-1.5">
-                          <button
-                            onClick={() => navigate(`/task/${task.id}`)}
-                            title="View Details"
-                            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-primary transition-all duration-150"
-                          >
-                            <Eye size={16} />
-                          </button>
-                          <button
-                            onClick={() => navigate(`/edit-task/${task.id}`)}
-                            title="Edit Task"
-                            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-amber-600 transition-all duration-150"
-                          >
-                            <Edit3 size={16} />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(task.id)}
-                            title="Delete Task"
-                            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-rose-600 transition-all duration-150"
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                      ) : (
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 border-dashed flex items-center justify-center">
+                            <UserCheck size={12} className="text-slate-300" />
+                          </div>
+                          <span className="text-xs font-bold text-slate-400 italic">Unassigned</span>
                         </div>
-                      </td>
-
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination bar */}
-        {totalPages > 1 && (
-          <div className="px-6 py-4 bg-slate-50/70 border-t border-slate-100 flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-              Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, sortedTasks.length)} of {sortedTasks.length} tasks
-            </span>
-            <div className="flex gap-2">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => paginate(currentPage - 1)}
-                className="p-2 border border-slate-200 bg-white hover:bg-slate-50 rounded-xl text-slate-500 disabled:opacity-40 disabled:hover:bg-white transition-colors"
-              >
-                <ChevronLeft size={16} />
-              </button>
-              {[...Array(totalPages)].map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => paginate(idx + 1)}
-                  className={`w-9 h-9 flex items-center justify-center rounded-xl text-xs font-bold transition-all ${currentPage === idx + 1
-                    ? "bg-primary text-white shadow-glow"
-                    : "border border-slate-200 bg-white hover:bg-slate-50 text-slate-600"
-                    }`}
-                >
-                  {idx + 1}
-                </button>
-              ))}
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => paginate(currentPage + 1)}
-                className="p-2 border border-slate-200 bg-white hover:bg-slate-50 rounded-xl text-slate-500 disabled:opacity-40 disabled:hover:bg-white transition-colors"
-              >
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-        )}
+                      )}
+                    </td>
+                    <td className="px-8 py-6">
+                      <span className={`text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full ${getStatusBadge(task.status)}`}>
+                        {task.status}
+                      </span>
+                    </td>
+                    <td className="px-8 py-6">
+                      <span className="text-xs font-bold text-slate-500">{task.dueDate}</span>
+                    </td>
+                    <td className="px-8 py-6 text-left">
+                      <div className="flex justify-start gap-2">
+                        {task.attachment && (
+                          <button onClick={() => navigate(`/task/${task.id}/attachment`)} className="p-2 bg-white border border-slate-200 hover:border-indigo-200 rounded-xl text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 transition-all shadow-sm"><ImageIcon size={14}/></button>
+                        )}
+                        <button onClick={() => navigate(`/task/${task.id}`)} className="p-2 bg-white border border-slate-200 hover:border-blue-200 rounded-xl text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-all shadow-sm"><Eye size={14}/></button>
+                        <button onClick={() => navigate(`/edit-task/${task.id}`)} className="p-2 bg-white border border-slate-200 hover:border-amber-200 rounded-xl text-slate-400 hover:text-amber-500 hover:bg-amber-50 transition-all shadow-sm"><Edit3 size={14}/></button>
+                        <button onClick={() => handleDelete(task.id)} className="p-2 bg-white border border-slate-200 hover:border-rose-200 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all shadow-sm"><Trash2 size={14}/></button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
       </div>
 
-      {/* Edit modal removed */}
-
+      {/* Pagination bar */}
+      {totalPages > 1 && (
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <span className="text-sm font-semibold text-slate-500">
+            Showing <span className="text-slate-800 font-black">{indexOfFirstItem + 1}</span> to <span className="text-slate-800 font-black">{Math.min(indexOfLastItem, sortedTasks.length)}</span> of <span className="text-slate-800 font-black">{sortedTasks.length}</span> tasks
+          </span>
+          <div className="flex gap-2">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => paginate(currentPage - 1)}
+              className="p-2.5 border border-slate-200 bg-white hover:bg-slate-50 rounded-xl text-slate-500 disabled:opacity-40 disabled:hover:bg-white transition-colors shadow-sm"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            {[...Array(totalPages)].map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => paginate(idx + 1)}
+                className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all shadow-sm ${currentPage === idx + 1
+                  ? "bg-primary text-white shadow-glow"
+                  : "border border-slate-200 bg-white hover:bg-slate-50 text-slate-600"
+                  }`}
+              >
+                {idx + 1}
+              </button>
+            ))}
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => paginate(currentPage + 1)}
+              className="p-2.5 border border-slate-200 bg-white hover:bg-slate-50 rounded-xl text-slate-500 disabled:opacity-40 disabled:hover:bg-white transition-colors shadow-sm"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

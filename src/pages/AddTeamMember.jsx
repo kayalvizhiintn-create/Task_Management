@@ -168,7 +168,6 @@ export default function AddTeamMember() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               <input 
                 type="text" 
-                placeholder="Search employees by name or role..." 
                 value={memberSearchQuery}
                 onChange={(e) => setMemberSearchQuery(e.target.value)}
                 className="w-full pl-11 pr-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all text-slate-900 dark:text-white"
@@ -226,11 +225,11 @@ export default function AddTeamMember() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Mobile Number *</label>
-                  <input type="text" required value={newMemberMobileNumber} onChange={(e) => setNewMemberMobileNumber(e.target.value)} placeholder="10 digits" className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-900 dark:text-white" />
+                  <input type="text" required value={newMemberMobileNumber} onChange={(e) => setNewMemberMobileNumber(e.target.value)} className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-900 dark:text-white" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Aadhar Number *</label>
-                  <input type="text" required value={newMemberAadharNumber} onChange={(e) => setNewMemberAadharNumber(e.target.value)} placeholder="12 digits" className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-900 dark:text-white" />
+                  <input type="text" required value={newMemberAadharNumber} onChange={(e) => setNewMemberAadharNumber(e.target.value)} className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-900 dark:text-white" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Role</label>

@@ -49,6 +49,16 @@ export default function Navbar({ onSearchChange, onMenuClick }) {
     }
   };
 
+  const handleSearch = (e) => {
+    if (e.key === 'Enter') {
+      if (e.target.value.trim()) {
+        navigate(`/tasks?search=${encodeURIComponent(e.target.value.trim())}`);
+      } else {
+        navigate(`/tasks`);
+      }
+    }
+  };
+
   return (
     <header className="h-20 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-4 md:px-8 flex items-center justify-between sticky top-0 z-40 transition-colors duration-300 print:hidden">
       {/* Left Section: Menu & Search */}
@@ -56,19 +66,19 @@ export default function Navbar({ onSearchChange, onMenuClick }) {
         {/* Hamburger Menu */}
         <button 
           onClick={onMenuClick}
-          className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl lg:hidden flex-shrink-0"
+          className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl flex-shrink-0"
         >
           <Menu size={24} />
         </button>
 
         {/* Search Bar */}
-        <div className="w-full relative">
+        <div className="w-full relative hidden sm:block">
           <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
             <Search size={18} />
           </span>
           <input
             type="text"
-            placeholder="Search..."
+            onKeyDown={handleSearch}
             onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 text-slate-800 dark:text-slate-100 placeholder-slate-400"
           />

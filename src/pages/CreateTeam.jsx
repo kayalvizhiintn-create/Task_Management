@@ -174,7 +174,6 @@ export default function CreateTeam() {
                   required
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
-                  placeholder="e.g. Frontend Engineering"
                   className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-900 dark:text-white"
                 />
               </div>
@@ -192,14 +191,13 @@ export default function CreateTeam() {
                     setTeamProjectName(e.target.value);
                     setTeamTaskName(""); // reset task name when project changes
                   }}
-                  placeholder="Select or type new project..."
                   className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-900 dark:text-white"
                 />
                 <datalist id="project-names">
                   {Array.from(new Set([
                     ...projects.map(p => p.name),
-                    ...taskService.getTasks().map(t => t.projectName).filter(Boolean)
-                  ])).map(name => (
+                    ...(taskService.getTasks() || []).map(t => t.projectName)
+                  ].filter(Boolean))).map(name => (
                     <option key={name} value={name} />
                   ))}
                 </datalist>
@@ -215,14 +213,10 @@ export default function CreateTeam() {
                   value={teamTaskName}
                   onChange={(e) => setTeamTaskName(e.target.value)}
                   disabled={!teamProjectName}
-                  placeholder="Select or type new task..."
                   className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 <datalist id="task-names">
-                  {Array.from(new Set([
-                    ...tasksMaster.map(t => t.name),
-                    ...taskService.getTasks().map(t => t.name).filter(Boolean)
-                  ])).map(name => (
+                  {Array.from(new Set(tasksMaster.map(t => t.name))).map(name => (
                     <option key={name} value={name} />
                   ))}
                 </datalist>
@@ -235,7 +229,6 @@ export default function CreateTeam() {
                 <textarea
                   value={teamDescription}
                   onChange={(e) => setTeamDescription(e.target.value)}
-                  placeholder="Briefly describe what this team does..."
                   rows={3}
                   className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none text-slate-900 dark:text-white"
                 />

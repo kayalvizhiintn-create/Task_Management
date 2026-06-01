@@ -151,17 +151,17 @@ export default function EditEmployee() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
             <div className="space-y-2">
               <label className="text-sm font-extrabold text-slate-700 dark:text-slate-300 ml-1">Full Name *</label>
-              <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. John Doe" className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all" />
+              <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all" />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-extrabold text-slate-700 dark:text-slate-300 ml-1">Email Address *</label>
-              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="e.g. john@company.com" className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all" />
+              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all" />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-extrabold text-slate-700 dark:text-slate-300 ml-1">Password</label>
-              <input type="text" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Leave blank to keep unchanged" className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all" />
+              <input type="text" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all" />
             </div>
 
             <div className="space-y-2">
@@ -184,17 +184,17 @@ export default function EditEmployee() {
 
             <div className="space-y-2">
               <label className="text-sm font-extrabold text-slate-700 dark:text-slate-300 ml-1">Bio ID / Employee ID</label>
-              <input type="text" value={bioId} onChange={(e) => setBioId(e.target.value)} placeholder="e.g. BIO-98432" className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all" />
+              <input type="text" value={bioId} onChange={(e) => setBioId(e.target.value)} className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all" />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-extrabold text-slate-700 dark:text-slate-300 ml-1">Mobile Number</label>
-              <input type="text" maxLength={10} value={mobileNumber} onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="e.g. 9876543210" className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all" />
+              <input type="text" maxLength={10} value={mobileNumber} onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all" />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-extrabold text-slate-700 dark:text-slate-300 ml-1">Aadhar Number</label>
-              <input type="text" maxLength={12} value={aadharNumber} onChange={(e) => setAadharNumber(e.target.value.replace(/\D/g, '').slice(0, 12))} placeholder="XXXX-XXXX-XXXX" className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all" />
+              <input type="text" maxLength={12} value={aadharNumber} onChange={(e) => setAadharNumber(e.target.value.replace(/\D/g, '').slice(0, 12))} className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all" />
             </div>
           </div>
 

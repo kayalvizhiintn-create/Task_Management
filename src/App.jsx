@@ -9,6 +9,7 @@ import TaskManagement from "./pages/TaskManagement";
 import CreateTask from "./pages/CreateTask";
 import EditTask from "./pages/EditTask";
 import TaskDetails from "./pages/TaskDetails";
+import TaskAttachment from "./pages/TaskAttachment";
 import EmployeeView from "./pages/EmployeeView";
 import Categories from "./pages/Categories";
 import Reports from "./pages/Reports";
@@ -76,6 +77,9 @@ export default function App() {
         {/* Entry Login Page */}
         <Route path="/login" element={<Login />} />
 
+        {/* Full-Screen Attachment Viewer (No Sidebar/Navbar) */}
+        <Route path="/task/:id/attachment" element={<ProtectedRoute screenName="Tasks"><TaskAttachment /></ProtectedRoute>} />
+
         {/* Protected SaaS Workspace Dashboard Layout */}
         <Route
           element={<DashboardLayout onSearchChange={setGlobalSearch} />}
@@ -90,6 +94,7 @@ export default function App() {
           <Route path="/create-task" element={<ProtectedRoute screenName="Create Task"><CreateTask /></ProtectedRoute>} />
           <Route path="/edit-task/:id" element={<ProtectedRoute screenName="Tasks"><EditTask /></ProtectedRoute>} />
           <Route path="/task/:id" element={<ProtectedRoute screenName="Tasks"><TaskDetails /></ProtectedRoute>} />
+
 
           {/* Core Sidebar Links */}
           <Route path="/employees" element={<ProtectedRoute screenName="Task Planner"><EmployeeView /></ProtectedRoute>} />

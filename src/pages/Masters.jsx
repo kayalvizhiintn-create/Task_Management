@@ -1260,7 +1260,6 @@ export default function Masters() {
                   required
                   value={newItemName}
                   onChange={(e) => setNewItemName(e.target.value)}
-                  placeholder={`Add new ${activeTab === "roles" ? "role" : activeTab === "locations" ? "location" : activeTab === "departments" ? "department" : activeTab === "statuses" ? "status" : activeTab === "task_master" ? "task name" : activeTab === "taskfile" ? "taskfile name" : activeTab === "task_role" ? "task role" : activeTab === "user_master" ? "user name" : activeTab === "zone_master" ? "zone name" : "priority"}...`}
                   className="flex-1 px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-slate-900 dark:text-white font-semibold transition-all"
                 />
                 <button
@@ -1357,7 +1356,7 @@ export default function Masters() {
                   </div>
                   <div>
                     <label className="text-xs font-bold text-slate-600 dark:text-slate-400">Password</label>
-                    <input type="password" placeholder={editingEmpId ? "Leave blank to keep old password" : ""} required={!editingEmpId} value={empForm.password} onChange={e => setEmpForm({...empForm, password: e.target.value})} className="w-full mt-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900" />
+                    <input type="password" required={!editingEmpId} value={empForm.password} onChange={e => setEmpForm({...empForm, password: e.target.value})} className="w-full mt-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900" />
                   </div>
                   <div>
                     <label className="text-xs font-bold text-slate-600 dark:text-slate-400">Image URL</label>
@@ -1405,7 +1404,6 @@ export default function Masters() {
                 </select>
                 <input
                   type="text"
-                  placeholder="Child menu name..."
                   value={menuForm.child}
                   onChange={e => setMenuForm({...menuForm, child: e.target.value})}
                   className="flex-1 px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold"
@@ -1618,7 +1616,7 @@ export default function Masters() {
               {projectTab === "languages" && (
                 <div className="space-y-8 animate-fade-in">
                   <form onSubmit={handleLanguageSubmit} className="flex gap-4">
-                    <input type="text" placeholder="Language Name (e.g. Python)" value={langForm.name} onChange={e => setLangForm({...langForm, name: e.target.value})} className="flex-1 px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold" />
+                    <input type="text" value={langForm.name} onChange={e => setLangForm({...langForm, name: e.target.value})} className="flex-1 px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold" />
                     <button type="submit" disabled={!langForm.name.trim()} className="px-6 py-3.5 bg-slate-900 text-white rounded-2xl font-bold">Add Language</button>
                   </form>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1636,7 +1634,7 @@ export default function Masters() {
               {projectTab === "frameworks" && (
                 <div className="space-y-8 animate-fade-in">
                   <form onSubmit={handleFrameworkSubmit} className="flex gap-4">
-                    <input type="text" placeholder="Framework Name (e.g. React)" value={fwForm.name} onChange={e => setFwForm({...fwForm, name: e.target.value})} className="flex-1 px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold" />
+                    <input type="text" value={fwForm.name} onChange={e => setFwForm({...fwForm, name: e.target.value})} className="flex-1 px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold" />
                     <button type="submit" disabled={!fwForm.name.trim()} className="px-6 py-3.5 bg-slate-900 text-white rounded-2xl font-bold">Add Framework</button>
                   </form>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

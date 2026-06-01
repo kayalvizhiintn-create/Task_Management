@@ -142,7 +142,6 @@ export default function VisitorsEnquiry() {
             </div>
             <input
               type="text"
-              placeholder="Search visits by name or place..."
               value={globalSearch}
               onChange={(e) => setGlobalSearch(e.target.value)}
               className="w-full pl-12 pr-4 py-4 bg-white/60 dark:bg-slate-900/60 backdrop-blur-lg border border-white/40 dark:border-slate-800 rounded-2xl text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-lg shadow-slate-200/20 dark:shadow-none placeholder:text-slate-500"

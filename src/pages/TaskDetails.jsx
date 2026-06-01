@@ -15,7 +15,10 @@ import {
   FileText,
   Briefcase,
   MapPin,
-  Layers
+  Layers,
+  Image as ImageIcon,
+  X,
+  Eye
 } from "lucide-react";
 
 export default function TaskDetails() {
@@ -215,6 +218,25 @@ export default function TaskDetails() {
               </p>
             </div>
 
+            {/* Attachments */}
+            {task.attachment && (
+              <div className="space-y-2 mt-4">
+                <h4 className="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Attached Image</h4>
+                <div className="relative group rounded-xl overflow-hidden border border-slate-200 inline-block">
+                  <img src={task.attachment} alt="Task Attachment" className="max-h-64 object-contain bg-slate-900" />
+                  <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/task/${task.id}/attachment`)}
+                      className="p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-lg transition-transform hover:scale-110 flex items-center gap-2 font-bold text-sm"
+                    >
+                      <Eye size={16} /> View Full Screen
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Timeline info fields */}
             <div className="grid grid-cols-2 gap-4 pt-6 border-t border-slate-100 mt-4">
               <div className="flex items-center gap-3.5 bg-slate-50 p-3.5 rounded-2xl">
@@ -244,7 +266,6 @@ export default function TaskDetails() {
             <form onSubmit={handleAddComment} className="flex gap-3">
               <input
                 type="text"
-                placeholder="Type a new comment or progress note..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-semibold"

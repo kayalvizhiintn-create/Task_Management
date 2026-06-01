@@ -13,6 +13,7 @@ import {
   Camera,
   Upload,
   X,
+  Eye,
   Image as ImageIcon
 } from "lucide-react";
 
@@ -55,6 +56,9 @@ export default function CreateTask() {
   // Feedback State
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+
+  // Modal State
+  const [showImageModal, setShowImageModal] = useState(false);
 
   useEffect(() => {
     const loadDependencies = async () => {
@@ -185,7 +189,8 @@ export default function CreateTask() {
       purchaseType,
       hardwareDetails,
       softwareDetails,
-      department
+      department,
+      attachment
     };
 
     taskService.createTask(newTask);
@@ -257,22 +262,17 @@ export default function CreateTask() {
                   <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
-                  <input
-                    list="create-task-names"
+                  <select
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter or select Task Name"
-                    className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-700 shadow-inner"
+                    className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-700 appearance-none shadow-inner"
                     required
-                  />
-                  <datalist id="create-task-names">
-                    {Array.from(new Set([
-                      ...tasksMaster.map(t => t.name),
-                      ...taskService.getTasks().map(t => t.name).filter(Boolean)
-                    ])).map(n => (
-                      <option key={n} value={n} />
+                  >
+                    <option value="" disabled>Select Task Name</option>
+                    {tasksMaster.map(t => (
+                      <option key={t.id} value={t.name}>{t.name}</option>
                     ))}
-                  </datalist>
+                  </select>
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                     <LayoutGrid size={16} />
                   </div>
@@ -285,7 +285,6 @@ export default function CreateTask() {
                   <input
                     type="text"
                     list="create-project-names"
-                    placeholder="Enter or select Project Name (Optional)"
                     value={projectName}
                     onChange={(e) => setProjectName(e.target.value)}
                     className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-700 shadow-inner"
@@ -381,7 +380,6 @@ export default function CreateTask() {
                         <label className="text-xs font-bold text-slate-700">What Hardware</label>
                         <input
                           type="text"
-                          placeholder="e.g. Laptops"
                           value={hardwareDetails.what}
                           onChange={(e) => setHardwareDetails({ ...hardwareDetails, what: e.target.value })}
                           className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-medium"
@@ -391,7 +389,6 @@ export default function CreateTask() {
                         <label className="text-xs font-bold text-slate-700">Use</label>
                         <input
                           type="text"
-                          placeholder="e.g. Office work"
                           value={hardwareDetails.use}
                           onChange={(e) => setHardwareDetails({ ...hardwareDetails, use: e.target.value })}
                           className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-medium"
@@ -401,7 +398,6 @@ export default function CreateTask() {
                         <label className="text-xs font-bold text-slate-700">Need</label>
                         <input
                           type="text"
-                          placeholder="e.g. High performance"
                           value={hardwareDetails.need}
                           onChange={(e) => setHardwareDetails({ ...hardwareDetails, need: e.target.value })}
                           className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-medium"
@@ -416,7 +412,6 @@ export default function CreateTask() {
                         <label className="text-xs font-bold text-slate-700">What Software</label>
                         <input
                           type="text"
-                          placeholder="e.g. Adobe Suite"
                           value={softwareDetails.what}
                           onChange={(e) => setSoftwareDetails({ ...softwareDetails, what: e.target.value })}
                           className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-medium"
@@ -426,7 +421,6 @@ export default function CreateTask() {
                         <label className="text-xs font-bold text-slate-700">Use</label>
                         <input
                           type="text"
-                          placeholder="e.g. Design"
                           value={softwareDetails.use}
                           onChange={(e) => setSoftwareDetails({ ...softwareDetails, use: e.target.value })}
                           className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-medium"
@@ -436,7 +430,6 @@ export default function CreateTask() {
                         <label className="text-xs font-bold text-slate-700">Need</label>
                         <input
                           type="text"
-                          placeholder="e.g. 5 licenses"
                           value={softwareDetails.need}
                           onChange={(e) => setSoftwareDetails({ ...softwareDetails, need: e.target.value })}
                           className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-medium"
@@ -451,7 +444,6 @@ export default function CreateTask() {
                 <label className="text-sm font-bold text-slate-700">Detailed Description</label>
                 <textarea
                   rows="4"
-                  placeholder="Elaborate on the task details, desired outputs, references, and standard guidelines to assist the assignee..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-base focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-slate-800 font-medium placeholder:text-slate-400 shadow-inner resize-none"
@@ -560,7 +552,6 @@ export default function CreateTask() {
                 <label className="text-sm font-bold text-slate-700">Remarks / Side Notes</label>
                 <input
                   type="text"
-                  placeholder="e.g. Requires coordination with QA team"
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
                   className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-base focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 text-slate-800 font-medium placeholder:text-slate-400 shadow-inner"
@@ -582,13 +573,20 @@ export default function CreateTask() {
               {attachment ? (
                 <div className="relative group rounded-xl overflow-hidden border border-slate-200 inline-block">
                   <img src={attachment} alt="Task Attachment" className="max-h-64 object-contain bg-slate-900" />
-                  <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                  <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-sm">
+                    <button
+                      type="button"
+                      onClick={() => setShowImageModal(true)}
+                      className="p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-lg transition-transform hover:scale-110 flex items-center gap-2 font-bold text-sm"
+                    >
+                      <Eye size={16} /> View
+                    </button>
                     <button
                       type="button"
                       onClick={clearAttachment}
                       className="p-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl shadow-lg transition-transform hover:scale-110 flex items-center gap-2 font-bold text-sm"
                     >
-                      <X size={16} /> Remove Picture
+                      <X size={16} /> Remove
                     </button>
                   </div>
                 </div>
@@ -666,6 +664,24 @@ export default function CreateTask() {
         </div>
 
       </form>
+
+      {/* Image Preview Modal */}
+      {showImageModal && attachment && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/90 backdrop-blur-sm p-4 sm:p-8 animate-fade-in" onClick={() => setShowImageModal(false)}>
+          <button 
+            onClick={() => setShowImageModal(false)}
+            className="absolute top-6 right-6 p-2 bg-slate-800 hover:bg-slate-700 text-white rounded-full transition-colors"
+          >
+            <X size={24} />
+          </button>
+          <img 
+            src={attachment} 
+            alt="Task Attachment Full" 
+            className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }

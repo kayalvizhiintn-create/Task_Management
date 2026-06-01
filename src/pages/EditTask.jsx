@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, Save } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Save, ImageIcon, Camera, Upload, X, Eye } from "lucide-react";
 import { taskService } from "../services/taskService";
 
 export default function EditTask() {
@@ -15,6 +15,12 @@ export default function EditTask() {
   const [departments, setDepartments] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // Attachment state
+  const [attachment, setAttachment] = useState(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [cameraStream, setCameraStream] = useState(null);
+  const videoRef = React.useRef(null);
 
   const [editFormData, setEditFormData] = useState({
     name: "",
@@ -61,6 +67,7 @@ export default function EditTask() {
         hardwareDetails: task.hardwareDetails || { what: "", use: "", need: "" },
         softwareDetails: task.softwareDetails || { what: "", use: "", need: "" }
       });
+      setAttachment(task.attachment || null);
     }
     setLoading(false);
   }, [id]);
@@ -71,13 +78,79 @@ export default function EditTask() {
       alert("Please fill in required fields.");
       return;
     }
-    taskService.updateTask(id, editFormData);
+    
+    // Include attachment in the update
+    const finalData = {
+      ...editFormData,
+      attachment
+    };
+    
+    taskService.updateTask(id, finalData);
     
     setShowToast(true);
     setTimeout(() => {
       setShowToast(false);
       navigate(-1); // Navigate back to where they came from
     }, 1500);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [cameraStream]);
+
+  const startCamera = async () => {
+    try {
+      setIsCameraActive(true);
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      setCameraStream(stream);
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      }, 100);
+    } catch (err) {
+      console.error("Camera access error:", err);
+      alert("Unable to access the camera. Please check permissions.");
+      setIsCameraActive(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      setCameraStream(null);
+    }
+    setIsCameraActive(false);
+  };
+
+  const captureSnapshot = () => {
+    if (!videoRef.current) return;
+    const video = videoRef.current;
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL("image/jpeg");
+    setAttachment(dataUrl);
+    stopCamera();
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => setAttachment(event.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearAttachment = () => {
+    setAttachment(null);
   };
 
   if (loading) {
@@ -160,7 +233,6 @@ export default function EditTask() {
               <input
                 type="text"
                 list="edit-project-names"
-                placeholder="Enter or select Project Name (Optional)"
                 value={editFormData.projectName}
                 onChange={(e) => setEditFormData({ ...editFormData, projectName: e.target.value })}
                 className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all"
@@ -250,6 +322,83 @@ export default function EditTask() {
                 onChange={(e) => setEditFormData({ ...editFormData, remarks: e.target.value })} 
                 className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-slate-900 dark:text-white font-semibold transition-all" 
               />
+            </div>
+          </div>
+
+          {/* Section: Attachments */}
+          <div className="space-y-6 border-t border-slate-100 dark:border-slate-700/50 pt-6">
+            <h4 className="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2.5 pb-2">
+              <div className="p-2 bg-amber-500/10 rounded-xl text-amber-500">
+                <ImageIcon size={18} />
+              </div>
+              <span>Attachments (Optional)</span>
+            </h4>
+
+            <div className="bg-slate-50/50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-inner">
+              {attachment ? (
+                <div className="relative group rounded-xl overflow-hidden border border-slate-200 inline-block">
+                  <img src={attachment} alt="Task Attachment" className="max-h-64 object-contain bg-slate-900" />
+                  <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-sm">
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/task/${id}/attachment`)}
+                      className="p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-lg transition-transform hover:scale-110 flex items-center gap-2 font-bold text-sm"
+                    >
+                      <Eye size={16} /> View
+                    </button>
+                    <button
+                      type="button"
+                      onClick={clearAttachment}
+                      className="p-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl shadow-lg transition-transform hover:scale-110 flex items-center gap-2 font-bold text-sm"
+                    >
+                      <X size={16} /> Remove
+                    </button>
+                  </div>
+                </div>
+              ) : isCameraActive ? (
+                <div className="space-y-4">
+                  <div className="relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950 aspect-video max-w-2xl mx-auto shadow-xl">
+                    <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex items-center justify-center gap-4">
+                    <button
+                      type="button"
+                      onClick={stopCamera}
+                      className="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-sm transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={captureSnapshot}
+                      className="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white font-bold rounded-xl text-sm shadow-lg flex items-center gap-2 transition-transform hover:-translate-y-0.5"
+                    >
+                      <Camera size={16} /> Take Photo
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+                  <label className="flex-1 flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl hover:border-primary/50 hover:bg-primary/5 cursor-pointer transition-all w-full max-w-xs group">
+                    <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+                    <div className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-400 group-hover:text-primary group-hover:scale-110 transition-all shadow-sm">
+                      <Upload size={24} />
+                    </div>
+                    <span className="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-primary">Upload Picture</span>
+                  </label>
+                  <div className="text-slate-400 font-bold text-sm">OR</div>
+                  <button
+                    type="button"
+                    onClick={startCamera}
+                    className="flex-1 flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all w-full max-w-xs group"
+                  >
+                    <div className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-400 group-hover:text-indigo-500 group-hover:scale-110 transition-all shadow-sm">
+                      <Camera size={24} />
+                    </div>
+                    <span className="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-indigo-500">Take Photo</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 

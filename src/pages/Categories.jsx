@@ -85,7 +85,6 @@ export default function Categories() {
               </div>
               <input
                 type="text"
-                placeholder="New Department..."
                 value={newCatName}
                 onChange={(e) => setNewCatName(e.target.value)}
                 className="w-full lg:w-64 px-2 py-3 bg-transparent text-slate-900 dark:text-white font-bold focus:outline-none placeholder:text-slate-400"

@@ -46,9 +46,9 @@ export default function Login() {
         <div className="bg-[#e0e5ec] rounded-[40px] shadow-[14px_14px_28px_#a3b1c6,-14px_-14px_28px_#ffffff] p-10 relative">
 
           <div className="flex flex-col items-center mb-10">
-            {/* Colorful Icon Container */}
-            <div className="w-20 h-20 rounded-full bg-[#e0e5ec] shadow-[8px_8px_16px_#a3b1c6,-8px_-8px_16px_#ffffff] flex items-center justify-center mb-6 text-cyan-500">
-              <Fingerprint size={36} strokeWidth={2} />
+            {/* Logo Image Container with Animation */}
+            <div className="w-24 h-24 rounded-full bg-white shadow-[8px_8px_16px_#a3b1c6,-8px_-8px_16px_#ffffff] flex items-center justify-center mb-6 overflow-hidden group cursor-pointer hover:shadow-[4px_4px_8px_#a3b1c6,-4px_-4px_8px_#ffffff] transition-all duration-500">
+              <img src="src/assets/logo1.jpg" alt="Navanala Logo" className="w-16 h-16 object-contain group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-500" />
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-slate-800">NavaNala</h1>
             <p className="text-slate-500 font-medium mt-2">Sign in to orchestrate.</p>
@@ -73,7 +73,6 @@ export default function Login() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@domain.com"
                   className="w-full pl-14 pr-6 py-4 bg-[#e0e5ec] rounded-full text-slate-700 font-medium focus:outline-none focus:text-slate-900 shadow-[inset_6px_6px_10px_#a3b1c6,inset_-6px_-6px_10px_#ffffff] transition-all placeholder-slate-400 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
@@ -90,7 +89,6 @@ export default function Login() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
                   className="w-full pl-14 pr-6 py-4 bg-[#e0e5ec] rounded-full text-slate-700 font-medium focus:outline-none focus:text-slate-900 shadow-[inset_6px_6px_10px_#a3b1c6,inset_-6px_-6px_10px_#ffffff] transition-all placeholder-slate-400 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>

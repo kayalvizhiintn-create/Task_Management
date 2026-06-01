@@ -39,7 +39,7 @@ const navItems = [
     { path: "/directory", icon: <UsersRound size={20} />, label: "Directory" },
     // { path: "/categories", icon: <FolderTree size={20} />, label: "Categories" },
     { path: "/reports", icon: <FileText size={20} />, label: "Reports" },
-    { path: "/employee-details", icon: <UserCircle size={20} />, label: "My Profile" },
+    // { path: "/employee-details", icon: <UserCircle size={20} />, label: "My Profile" },
     { path: "/team-details", icon: <Briefcase size={20} />, label: "Team Details" },
     { path: "/visitors/external", icon: <MapPin size={20} />, label: "Visitors" },
     { path: "/masters", icon: <Layers size={20} />, label: "Masters" },
@@ -64,11 +64,9 @@ export default function Sidebar({ onClose }) {
             <div className="absolute top-0 left-0 w-full h-32 bg-indigo-500/5 blur-3xl rounded-full -translate-y-1/2"></div>
 
             <div className="p-6 border-b border-slate-800/50 flex items-center justify-between relative z-10">
-                <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-indigo-500/20">
-                        N
-                    </div>
-                    <h1 className="text-2xl font-black text-white tracking-tight">Navanala</h1>
+                <div className="flex items-center w-full">
+                    {/* <h1 className="text-2xl font-black text-white tracking-tight">Navanala</h1> */}
+                    <img src="src/assets/logo.jpg" alt="Navanala Logo" className="h-14 w-auto object-contain drop-shadow-sm rounded-2xl overflow-hidden" />
                 </div>
                 {onClose && (
                     <button
