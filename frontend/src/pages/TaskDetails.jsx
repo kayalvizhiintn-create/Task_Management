@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { taskService } from "../services/taskService";
+import TaskForum from "../components/TaskForum";
 import {
   ArrowLeft,
   User,
@@ -30,6 +31,7 @@ export default function TaskDetails() {
   const [assignedByEmp, setAssignedByEmp] = useState(null);
   const [newComment, setNewComment] = useState("");
   const [timeline, setTimeline] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [showCompletedModal, setShowCompletedModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -81,6 +83,7 @@ export default function TaskDetails() {
       setTimeline(fetchedTask.timeline || []);
 
       const emps = await taskService.getEmployees();
+      setEmployees(emps);
       setAssignedToEmp(emps.find(e => e.id === fetchedTask.assignTo || e.id === fetchedTask.assigneeId));
       setAssignedByEmp(emps.find(e => e.id === fetchedTask.assignedBy));
     } catch (err) {
@@ -146,25 +149,7 @@ export default function TaskDetails() {
     setShowCompletedModal(true);
   };
 
-  // Add Comment/Remark to Timeline
-  const handleAddComment = (e) => {
-    e.preventDefault();
-    if (!newComment.trim()) return;
-
-    const today = new Date().toISOString().split("T")[0];
-    const updatedTimeline = [
-      ...timeline,
-      { date: today, type: "Comment", message: `Comment: "${newComment}"` }
-    ];
-
-    taskService.updateTask(task.id, {
-      timeline: updatedTimeline,
-      remarks: newComment
-    });
-
-    setNewComment("");
-    loadTaskDetails();
-  };
+  // Comment logic moved to TaskForum component
 
   // Badges styling
   const getStatusColor = (status) => {
@@ -336,27 +321,11 @@ export default function TaskDetails() {
 
           </div>
 
-          {/* Comment input form */}
-          <div className="bg-white border border-slate-200/50 rounded-[1.5rem] lg:rounded-3xl shadow-premium p-5 lg:p-8 space-y-4">
-            <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-              <MessageSquarePlus size={18} className="text-slate-400" />
-              <span>Add Progress Remarks</span>
-            </h4>
-            <form onSubmit={handleAddComment} className="flex gap-3">
-              <input
-                type="text"
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 font-semibold"
-              />
-              <button
-                type="submit"
-                className="px-5 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-bold transition-all shadow-glow"
-              >
-                Send Note
-              </button>
-            </form>
-          </div>
+          {/* Forum Component */}
+          <TaskForum 
+            currentUser={taskService.getCurrentUser()} 
+            employees={employees} 
+          />
 
         </div>
 
