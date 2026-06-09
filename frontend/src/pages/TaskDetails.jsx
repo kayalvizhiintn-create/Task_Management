@@ -19,7 +19,8 @@ import {
   Layers,
   Image as ImageIcon,
   X,
-  Eye
+  Eye,
+  RefreshCw
 } from "lucide-react";
 
 export default function TaskDetails() {
@@ -35,12 +36,20 @@ export default function TaskDetails() {
   const [showCompletedModal, setShowCompletedModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    loadTaskDetails();
+    loadTaskDetails(false);
+
+    const intervalId = setInterval(() => {
+      loadTaskDetails(true);
+    }, 15000);
+
+    return () => clearInterval(intervalId);
   }, [id]);
 
-  async function loadTaskDetails() {
+  async function loadTaskDetails(showIndicator = false) {
+    if (showIndicator) setIsRefreshing(true);
     try {
       const allTasks = await taskService.getTasks();
       let fetchedTask = (allTasks || []).find(t => t.id && t.id.toString() === id.toString());
@@ -89,6 +98,10 @@ export default function TaskDetails() {
     } catch (err) {
       console.error("Error loading task details", err);
       setTask(null);
+    } finally {
+      if (showIndicator) {
+        setTimeout(() => setIsRefreshing(false), 800);
+      }
     }
   }
 
@@ -173,7 +186,15 @@ export default function TaskDetails() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 lg:space-y-8 animate-fade-in">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8 max-w-[2560px] mx-auto animate-fade-in relative 2xl:px-8">
+      
+      {/* Global Refresh Indicator */}
+      {isRefreshing && (
+        <div className="fixed top-20 right-8 flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-full shadow-premium animate-fade-in z-[100] font-black tracking-widest text-xs uppercase border border-emerald-400">
+          <RefreshCw size={14} className="animate-spin" />
+          <span>Syncing...</span>
+        </div>
+      )}
 
       {/* Top Navigation Row */}
       <div className="flex justify-between items-center">

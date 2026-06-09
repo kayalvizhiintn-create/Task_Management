@@ -17,7 +17,9 @@ import {
   Calendar,
   ArrowUpRight,
   BarChart3,
-  Wallet
+  Wallet,
+  ArrowRight,
+  RefreshCw
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -30,65 +32,75 @@ export default function Dashboard() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isSelectingDate, setIsSelectingDate] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const navigate = useNavigate();
+
+  const loadApiData = async (showIndicator = false) => {
+    if (showIndicator) setIsRefreshing(true);
+    try {
+      const [tasksRes, activitiesRes, categoriesRes, workloadsRes] = await Promise.all([
+        taskService.getTasks(),
+        taskService.getActivities(),
+        taskService.getDepartments(),
+        taskService.getEmployees()
+      ]);
+
+      setTasks(tasksRes || []);
+      setActivities(activitiesRes || []);
+      setCategories(categoriesRes || []);
+      setWorkloads(workloadsRes || []);
+
+      const storedTeamsStr = localStorage.getItem("navanala_teams");
+      let activeTeams = [];
+      if (storedTeamsStr) {
+        try {
+          activeTeams = JSON.parse(storedTeamsStr);
+        } catch (e) {
+          console.error("Failed to parse teams", e);
+        }
+      }
+
+      if (activeTeams.length === 0) {
+        activeTeams = [
+          {
+            id: "team-1",
+            name: "Creative & Brand Operations",
+            description: "Responsible for brand guidelines, marketing campaigns, and visual identity updates.",
+            leadId: "emp-1",
+            memberIds: ["emp-3", "emp-5"],
+            categories: ["Branding Identity", "Marketing", "Legal", "HR"]
+          },
+          {
+            id: "team-2",
+            name: "Systems Engineering & Quality Assurance",
+            description: "Focuses on building reliable web services, performance optimization, and automated testing.",
+            leadId: "emp-2",
+            memberIds: ["emp-4"],
+            categories: ["Engineering", "Finance"]
+          }
+        ];
+        localStorage.setItem("navanala_teams", JSON.stringify(activeTeams));
+      }
+
+      setTeams(activeTeams);
+    } catch (err) {
+      console.error("Failed to fetch data from API", err);
+    } finally {
+      if (showIndicator) {
+        setTimeout(() => setIsRefreshing(false), 800); // Small delay to make the refresh visually apparent
+      }
+    }
+  };
 
   useEffect(() => {
     setCurrentUser(taskService.getCurrentUser());
+    loadApiData(false);
 
-    const loadApiData = async () => {
-      try {
-        const [tasksRes, activitiesRes, categoriesRes, workloadsRes] = await Promise.all([
-          taskService.getTasks(),
-          taskService.getActivities(),
-          taskService.getDepartments(),
-          taskService.getEmployees()
-        ]);
+    const intervalId = setInterval(() => {
+      loadApiData(true);
+    }, 15000);
 
-        setTasks(tasksRes || []);
-        setActivities(activitiesRes || []);
-        setCategories(categoriesRes || []);
-        setWorkloads(workloadsRes || []);
-
-        // Load teams directly from the TeamDetails page storage
-        const storedTeamsStr = localStorage.getItem("navanala_teams");
-        let activeTeams = [];
-        if (storedTeamsStr) {
-          try {
-            activeTeams = JSON.parse(storedTeamsStr);
-          } catch (e) {
-            console.error("Failed to parse teams", e);
-          }
-        }
-
-        // If empty, initialize with default teams just like TeamDetails.jsx
-        if (activeTeams.length === 0) {
-          activeTeams = [
-            {
-              id: "team-1",
-              name: "Creative & Brand Operations",
-              description: "Responsible for brand guidelines, marketing campaigns, and visual identity updates.",
-              leadId: "emp-1",
-              memberIds: ["emp-3", "emp-5"],
-              categories: ["Branding Identity", "Marketing", "Legal", "HR"]
-            },
-            {
-              id: "team-2",
-              name: "Systems Engineering & Quality Assurance",
-              description: "Focuses on building reliable web services, performance optimization, and automated testing.",
-              leadId: "emp-2",
-              memberIds: ["emp-4"],
-              categories: ["Engineering", "Finance"]
-            }
-          ];
-          localStorage.setItem("navanala_teams", JSON.stringify(activeTeams));
-        }
-
-        setTeams(activeTeams);
-      } catch (err) {
-        console.error("Failed to fetch data from API", err);
-      }
-    };
-    loadApiData();
+    return () => clearInterval(intervalId);
   }, []);
 
   // Compute stat card figures
@@ -289,9 +301,15 @@ export default function Dashboard() {
   const selectedDayEvents = allEvents.filter(e => e.date === selectedDateStr);
 
   return (
-    <div className="space-y-6 lg:space-y-8 max-w-[2560px] mx-auto animate-fade-in pb-10 2xl:px-8">
+    <div className="space-y-6 lg:space-y-8 max-w-[2560px] mx-auto animate-fade-in pb-10 2xl:px-8 relative">
 
-
+      {/* Global Refresh Indicator */}
+      {isRefreshing && (
+        <div className="fixed top-20 right-8 flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-full shadow-premium animate-fade-in z-[100] font-black tracking-widest text-xs uppercase border border-emerald-400">
+          <RefreshCw size={14} className="animate-spin" />
+          <span>Syncing...</span>
+        </div>
+      )}
 
       {/* Top Statistics Cards Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 lg:gap-4">

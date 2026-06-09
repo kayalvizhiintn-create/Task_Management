@@ -30,6 +30,7 @@ import {
   UserCheck
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import TaskForum from "../components/TaskForum";
 
 const DEFAULT_TEAMS = [
   {
@@ -60,6 +61,22 @@ export default function TeamDetails() {
   // Component state
   const navigate = useNavigate();
 
+  // Reload local tasks and employees when state updates
+  const refreshData = async () => {
+    const [tasksList, emps, cats] = await Promise.all([
+      taskService.getTasks(),
+      taskService.getEmployees(),
+      taskService.getCategories()
+    ]);
+    setTasks(tasksList || []);
+    setEmployees(emps || []);
+    setCategories(cats || []);
+    const storedTeams = localStorage.getItem("navanala_teams");
+    if (storedTeams) {
+      setTeams(JSON.parse(storedTeams));
+    }
+  };
+
   // Initialize and load data
   useEffect(() => {
     // Seed default teams if none exist
@@ -78,34 +95,15 @@ export default function TeamDetails() {
       }
     }
 
-    const loadData = async () => {
-      const [emps, cats, tasksList] = await Promise.all([
-        taskService.getEmployees(),
-        taskService.getCategories(),
-        taskService.getTasks()
-      ]);
-      setEmployees(emps || []);
-      setCategories(cats || []);
-      setTasks(tasksList || []);
-    };
-    loadData();
-  }, []);
+    refreshData();
 
-  // Reload local tasks and employees when state updates
-  const refreshData = async () => {
-    const [tasksList, emps, cats] = await Promise.all([
-      taskService.getTasks(),
-      taskService.getEmployees(),
-      taskService.getCategories()
-    ]);
-    setTasks(tasksList || []);
-    setEmployees(emps || []);
-    setCategories(cats || []);
-    const storedTeams = localStorage.getItem("navanala_teams");
-    if (storedTeams) {
-      setTeams(JSON.parse(storedTeams));
-    }
-  };
+    // Auto refresh data every 15 seconds
+    const intervalId = setInterval(() => {
+      refreshData();
+    }, 15000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   // Find active team details
   const activeTeam = teams.find(t => t.id === selectedTeamId) || null;
@@ -807,6 +805,14 @@ export default function TeamDetails() {
                 </table>
               </div>
             )}
+          </div>
+
+          {/* Team Discussion Forum */}
+          <div className="mt-8">
+            <TaskForum 
+              currentUser={taskService.getCurrentUser()}
+              employees={[teamLead, ...teamMembers].filter(Boolean)}
+            />
           </div>
         </>
       ) : (

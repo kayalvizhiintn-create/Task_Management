@@ -14,7 +14,8 @@ import {
   AlertCircle,
   X,
   LayoutDashboard,
-  Image as ImageIcon
+  Image as ImageIcon,
+  RefreshCw
 } from "lucide-react";
 
 export default function TaskManagement() {
@@ -23,6 +24,7 @@ export default function TaskManagement() {
   const [categories, setCategories] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [priorities, setPriorities] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -41,7 +43,13 @@ export default function TaskManagement() {
   // Edit modal state removed, using EditTask.jsx page
 
   useEffect(() => {
-    loadData();
+    loadData(false);
+
+    const intervalId = setInterval(() => {
+      loadData(true);
+    }, 15000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
@@ -56,19 +64,26 @@ export default function TaskManagement() {
       setSearchTerm(search);
     }
   }, [searchParams]);
-  async function loadData() {
-    const [tasksList, emps, cats, stats, priors] = await Promise.all([
-      taskService.getTasks(),
-      taskService.getEmployees(),
-      taskService.getCategories(),
-      taskService.getStatuses(),
-      taskService.getPriorities()
-    ]);
-    setTasks(tasksList || []);
-    setEmployees(emps || []);
-    setCategories(cats || []);
-    setStatuses(stats || []);
-    setPriorities(priors || []);
+  async function loadData(showIndicator = false) {
+    if (showIndicator) setIsRefreshing(true);
+    try {
+      const [tasksList, emps, cats, stats, priors] = await Promise.all([
+        taskService.getTasks(),
+        taskService.getEmployees(),
+        taskService.getCategories(),
+        taskService.getStatuses(),
+        taskService.getPriorities()
+      ]);
+      setTasks(tasksList || []);
+      setEmployees(emps || []);
+      setCategories(cats || []);
+      setStatuses(stats || []);
+      setPriorities(priors || []);
+    } finally {
+      if (showIndicator) {
+        setTimeout(() => setIsRefreshing(false), 800);
+      }
+    }
   }
 
   // Delete handler
@@ -175,10 +190,17 @@ export default function TaskManagement() {
   };
 
   return (
-    <div className="space-y-6 lg:space-y-8 max-w-[2560px] mx-auto animate-fade-in 2xl:px-8">
+    <div className="space-y-6 lg:space-y-8 max-w-[2560px] mx-auto animate-fade-in pb-10 relative 2xl:px-8">
+      
+      {/* Global Refresh Indicator */}
+      {isRefreshing && (
+        <div className="fixed top-20 right-8 flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-full shadow-premium animate-fade-in z-[100] font-black tracking-widest text-xs uppercase border border-emerald-400">
+          <RefreshCw size={14} className="animate-spin" />
+          <span>Syncing...</span>
+        </div>
+      )}
 
-      {/* Top Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Task Directory</h2>
           <p className="text-slate-500 font-medium mt-1">Audit, modify, assign, and sort standard operational goals.</p>
