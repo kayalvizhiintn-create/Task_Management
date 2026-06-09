@@ -207,6 +207,7 @@ export default function Dashboard() {
       case "inprogress": case "active": return "bg-amber-100 text-amber-700 border-amber-200";
       case "testing": case "review": return "bg-blue-100 text-blue-700 border-blue-200";
       case "pending": case "taskcreated": return "bg-rose-100 text-rose-700 border-rose-200";
+      case "delayed": return "bg-orange-100 text-orange-700 border-orange-200";
       default: return "bg-slate-100 text-slate-700 border-slate-200";
     }
   };

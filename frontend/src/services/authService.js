@@ -9,6 +9,24 @@ export const authService = {
       if (Array.isArray(data)) employees = data;
       else if (data.data && Array.isArray(data.data)) employees = data.data;
       else if (data.users && Array.isArray(data.users)) employees = data.users;
+
+      try {
+        const rolesRes = await apiClient.get('/api/v1/role/get-all-roles');
+        const rolesData = rolesRes.data;
+        let roles = [];
+        if (Array.isArray(rolesData)) roles = rolesData;
+        else if (rolesData.data && Array.isArray(rolesData.data)) roles = rolesData.data;
+        else if (rolesData.roles && Array.isArray(rolesData.roles)) roles = rolesData.roles;
+
+        employees.forEach(u => {
+          if (!u.role && u.roleId) {
+            const r = roles.find(r => r._id === u.roleId || r.id === u.roleId || r.roleId === u.roleId || r.RoleId === u.roleId);
+            if (r) u.role = r.name || r.roleName || r.role_name || r.RoleName;
+          }
+        });
+      } catch (roleErr) {
+        console.error("API error fetching roles for login mapping", roleErr);
+      }
     } catch (err) {
       console.error("API error fetching users for login", err);
     }
@@ -51,6 +69,13 @@ export const authService = {
 
     if (matchedEmployee.password !== password) {
       throw new Error("Invalid password.");
+    }
+
+    if (!matchedEmployee.name) {
+      matchedEmployee.name = matchedEmployee.userName || matchedEmployee.displayName || matchedEmployee.user_name || "User";
+    }
+    if (!matchedEmployee.role) {
+      matchedEmployee.role = "User";
     }
 
     localStorage.setItem("navanala_currentUser", JSON.stringify(matchedEmployee));

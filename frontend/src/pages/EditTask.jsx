@@ -99,6 +99,28 @@ export default function EditTask() {
       }
 
       if (task) {
+        const formatDateForInput = (dateStr) => {
+          if (!dateStr) return "";
+          try {
+            let dString = String(dateStr).split('T')[0];
+            if (dString.includes('-') && dString.split('-')[0].length <= 2) {
+               const parts = dString.split('-');
+               dString = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            } else if (dString.includes('/') && dString.split('/')[0].length <= 2) {
+               const parts = dString.split('/');
+               dString = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+            const d = new Date(dString);
+            if (!isNaN(d.getTime())) {
+               // Offset by timezone to avoid date shifting
+               const offset = d.getTimezoneOffset();
+               d.setMinutes(d.getMinutes() - offset);
+               return d.toISOString().split('T')[0];
+            }
+          } catch (e) {}
+          return String(dateStr).split('T')[0] || dateStr;
+        };
+
         setEditFormData({
           name: task.name || "",
           category: task.category || "",
@@ -106,8 +128,8 @@ export default function EditTask() {
           assignedBy: task.assignedBy || "",
           priority: task.priority || "",
           status: (task.status && task.status.toLowerCase() === "task created") ? "Pending" : (task.status || ""),
-          startDate: task.startDate || "",
-          dueDate: task.dueDate || "",
+          startDate: formatDateForInput(task.startDate),
+          dueDate: formatDateForInput(task.dueDate),
           description: task.description || "",
           remarks: task.remarks || "",
           projectName: task.projectName || "",

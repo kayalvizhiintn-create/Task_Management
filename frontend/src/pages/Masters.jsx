@@ -468,6 +468,7 @@ export default function Masters() {
         await departmentService.updateDepartment({
           id: editingId,
           _id: editingId,
+          departmentId: editingId,
           name: editName.trim(),
           departmentName: editName.trim(),
           dpt_name: editName.trim()

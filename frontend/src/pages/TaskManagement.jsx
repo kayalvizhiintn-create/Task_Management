@@ -171,6 +171,8 @@ export default function TaskManagement() {
         return "bg-violet-50 text-violet-700 border-violet-200/80";
       case "pending": case "taskcreated":
         return "bg-rose-50 text-rose-700 border-rose-200/80";
+      case "delayed":
+        return "bg-orange-50 text-orange-700 border-orange-200/80";
       case "hold": case "onhold":
       default:
         return "bg-slate-50 text-slate-700 border-slate-200/80";

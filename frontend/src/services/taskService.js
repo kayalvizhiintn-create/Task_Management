@@ -107,6 +107,21 @@ export const taskService = {
         const stat = statuses.find(s => s.id === t.statusId || s.id === t.StatusId);
         const zn = zones.find(z => z.id === t.zoneId || z.id === t.ZoneId);
 
+        let mappedStatus = stat ? stat.name : "Task Create";
+        const dDate = t.endDate || t.EndDate;
+        if (dDate) {
+          const isCompleted = ["completed", "done"].includes(mappedStatus.toLowerCase().trim());
+          if (!isCompleted) {
+            const dueDateObj = new Date(dDate);
+            dueDateObj.setHours(0, 0, 0, 0);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (dueDateObj < today) {
+              mappedStatus = "Delayed";
+            }
+          }
+        }
+
         return {
           ...t,
           id: t.taskID || t.taskId || t.TaskId || t.id,
@@ -118,9 +133,9 @@ export const taskService = {
           assignTo: t.assignedToBioId || t.AssignedToBioId,
           assignedBy: t.assignedByBioId || t.AssignedByBioId,
           priority: prio ? prio.name : "",
-          status: stat ? stat.name : "Task Create",
+          status: mappedStatus,
           startDate: t.startDate || t.StartDate,
-          dueDate: t.endDate || t.EndDate,
+          dueDate: dDate,
           description: t.detailedDescription || t.DetailedDescription
         };
       });
