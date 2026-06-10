@@ -346,6 +346,7 @@ export default function TaskDetails() {
           <TaskForum 
             currentUser={taskService.getCurrentUser()} 
             employees={employees} 
+            taskId={task.id}
           />
 
         </div>

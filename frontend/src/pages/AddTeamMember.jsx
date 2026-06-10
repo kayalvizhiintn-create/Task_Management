@@ -43,29 +43,27 @@ export default function AddTeamMember() {
     }, 1500);
   };
 
-  const addMemberToTeam = (empId) => {
-    const storedTeams = localStorage.getItem("navanala_teams");
-    if (!storedTeams) return;
-    let updatedTeams = JSON.parse(storedTeams);
-    updatedTeams = updatedTeams.map(t => {
-      if (t.id === teamId) {
-        const memberIds = [...(t.memberIds || [])];
+  const addMemberToTeam = async (empId) => {
+    try {
+      const team = await taskService.getTeamById(teamId);
+      if (team) {
+        const memberIds = [...(team.memberIds || [])];
         if (!memberIds.includes(empId)) {
           memberIds.push(empId);
         }
-        return { ...t, memberIds };
+        await taskService.updateTeam({ ...team, memberIds });
       }
-      return t;
-    });
-    localStorage.setItem("navanala_teams", JSON.stringify(updatedTeams));
+    } catch (err) {
+      console.error("Failed to add member to team", err);
+    }
   };
 
-  const handleAddExistingMember = (emp) => {
-    addMemberToTeam(emp.id);
+  const handleAddExistingMember = async (emp) => {
+    await addMemberToTeam(emp.id);
     triggerToast(`"${emp.name}" added to team successfully!`);
   };
 
-  const handleCreateAndAddMember = (e) => {
+  const handleCreateAndAddMember = async (e) => {
     e.preventDefault();
     if (!newMemberName.trim()) {
       alert("Name is required");
@@ -93,7 +91,7 @@ export default function AddTeamMember() {
       avatar: newMemberAvatar
     });
 
-    addMemberToTeam(newEmp.id);
+    await addMemberToTeam(newEmp.id);
     triggerToast(`Employee "${newEmp.name}" created and added to team!`);
   };
 

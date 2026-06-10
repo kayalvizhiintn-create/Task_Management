@@ -61,6 +61,45 @@ export const taskService = {
   logout: () => authService.logout(),
   getCurrentUser: () => authService.getCurrentUser(),
 
+  // Teams
+  async getTeams() {
+    try {
+      const res = await apiClient.get('/api/v1/team/get-all-teams');
+      let data = [];
+      if (res && res.data && res.data.data) {
+        data = res.data.data;
+      }
+      return data;
+    } catch (err) {
+      console.error("API Error fetching teams:", err);
+      return [];
+    }
+  },
+  async getTeamById(id) {
+    try {
+      const res = await apiClient.get(`/api/v1/team/get-team-by-id?id=${id}`);
+      if (res && res.data && res.data.data) {
+        return res.data.data;
+      }
+      return null;
+    } catch (err) {
+      console.error("API Error fetching team details:", err);
+      return null;
+    }
+  },
+  async createTeam(data) {
+    const res = await apiClient.post('/api/v1/team/create-team', data);
+    return res.data;
+  },
+  async updateTeam(data) {
+    const res = await apiClient.put('/api/v1/team/update-team', data);
+    return res.data;
+  },
+  async deleteTeam(id) {
+    const res = await apiClient.delete(`/api/v1/team/delete-team?id=${id}`);
+    return res.data;
+  },
+
   // Events
   async getEvents() {
     try {

@@ -64,20 +64,23 @@ export default function CreateTeam() {
     fetchLatestData();
 
     if (id) {
-      const storedTeams = localStorage.getItem("navanala_teams");
-      if (storedTeams) {
-        const parsed = JSON.parse(storedTeams);
-        const team = parsed.find(t => t.id === id);
-        if (team) {
-          setTeamName(team.name || "");
-          setTeamDescription(team.description || "");
-          setTeamLeadId(team.leadId || "");
-          setTeamMemberIds(team.memberIds || []);
-          setTeamCategories(team.categories || []);
-          setTeamProjectName(team.projectName || "");
-          setTeamTaskName(team.taskName || "");
+      const fetchTeamDetails = async () => {
+        try {
+          const team = await taskService.getTeamById(id);
+          if (team) {
+            setTeamName(team.name || "");
+            setTeamDescription(team.description || "");
+            setTeamLeadId(team.leadId || "");
+            setTeamMemberIds(team.memberIds || []);
+            setTeamCategories(team.categories || []);
+            setTeamProjectName(team.projectName || "");
+            setTeamTaskName(team.taskName || "");
+          }
+        } catch (err) {
+          console.error("Error fetching team", err);
         }
-      }
+      };
+      fetchTeamDetails();
     }
     setLoading(false);
   }, [id]);
@@ -110,40 +113,28 @@ export default function CreateTeam() {
       }
     }
 
-    const storedTeams = localStorage.getItem("navanala_teams");
-    let updatedTeams = storedTeams ? JSON.parse(storedTeams) : [];
+    const payload = {
+      name: teamName,
+      description: teamDescription,
+      leadId: parseInt(teamLeadId, 10),
+      memberIds: teamMemberIds,
+      categories: teamCategories,
+      projectName: teamProjectName,
+      taskName: teamTaskName
+    };
 
-    if (id) {
-      updatedTeams = updatedTeams.map(t => {
-        if (t.id === id) {
-          return {
-            ...t,
-            name: teamName,
-            description: teamDescription,
-            leadId: teamLeadId,
-            memberIds: teamMemberIds,
-            categories: teamCategories,
-            projectName: teamProjectName,
-            taskName: teamTaskName
-          };
-        }
-        return t;
-      });
-    } else {
-      const newTeam = {
-        id: `team-${Date.now()}`,
-        name: teamName,
-        description: teamDescription,
-        leadId: teamLeadId,
-        memberIds: teamMemberIds,
-        categories: teamCategories,
-        projectName: teamProjectName,
-        taskName: teamTaskName
-      };
-      updatedTeams.push(newTeam);
+    try {
+      if (id) {
+        payload.id = parseInt(id, 10);
+        await taskService.updateTeam(payload);
+      } else {
+        await taskService.createTeam(payload);
+      }
+    } catch (err) {
+      console.error("Error saving team", err);
+      alert("Failed to save team");
+      return;
     }
-
-    localStorage.setItem("navanala_teams", JSON.stringify(updatedTeams));
 
     setShowToast(true);
     setTimeout(() => {

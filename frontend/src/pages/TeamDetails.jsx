@@ -27,7 +27,8 @@ import {
   MapPin,
   Phone,
   CreditCard,
-  UserCheck
+  UserCheck,
+  MessageSquarePlus
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import TaskForum from "../components/TaskForum";
@@ -57,45 +58,39 @@ export default function TeamDetails() {
   const [employees, setEmployees] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [selectedForumTaskId, setSelectedForumTaskId] = useState("");
 
   // Component state
   const navigate = useNavigate();
 
   // Reload local tasks and employees when state updates
   const refreshData = async () => {
-    const [tasksList, emps, cats] = await Promise.all([
+    const [tasksList, emps, cats, fetchedTeams] = await Promise.all([
       taskService.getTasks(),
       taskService.getEmployees(),
-      taskService.getCategories()
+      taskService.getCategories(),
+      taskService.getTeams()
     ]);
     setTasks(tasksList || []);
     setEmployees(emps || []);
     setCategories(cats || []);
-    const storedTeams = localStorage.getItem("navanala_teams");
-    if (storedTeams) {
-      setTeams(JSON.parse(storedTeams));
+    
+    if (fetchedTeams && fetchedTeams.length > 0) {
+      setTeams(fetchedTeams);
+    } else {
+      setTeams([]);
     }
   };
 
   // Initialize and load data
   useEffect(() => {
-    // Seed default teams if none exist
-    const storedTeams = localStorage.getItem("navanala_teams");
-    if (!storedTeams) {
-      localStorage.setItem("navanala_teams", JSON.stringify(DEFAULT_TEAMS));
-      setTeams(DEFAULT_TEAMS);
-      if (DEFAULT_TEAMS.length > 0) {
-        setSelectedTeamId(DEFAULT_TEAMS[0].id);
-      }
-    } else {
-      const parsed = JSON.parse(storedTeams);
-      setTeams(parsed);
-      if (parsed.length > 0) {
-        setSelectedTeamId(parsed[0].id);
-      }
-    }
-
-    refreshData();
+    refreshData().then(() => {
+      taskService.getTeams().then(fetchedTeams => {
+         if (fetchedTeams && fetchedTeams.length > 0) {
+             setSelectedTeamId(fetchedTeams[0].id);
+         }
+      });
+    });
 
     // Auto refresh data every 15 seconds
     const intervalId = setInterval(() => {
@@ -147,16 +142,21 @@ export default function TeamDetails() {
   const handleSaveTeam = () => {};
 
   // Delete Team
-  const handleDeleteTeam = (id, name) => {
+  const handleDeleteTeam = async (id, name) => {
     if (window.confirm(`Are you sure you want to delete the team "${name}"?`)) {
-      const updated = teams.filter(t => t.id !== id);
-      localStorage.setItem("navanala_teams", JSON.stringify(updated));
-      setTeams(updated);
-      triggerToast(`Team "${name}" has been deleted.`);
-      if (updated.length > 0) {
-        setSelectedTeamId(updated[0].id);
-      } else {
-        setSelectedTeamId("");
+      try {
+        await taskService.deleteTeam(id);
+        triggerToast(`Team "${name}" has been deleted.`);
+        await refreshData();
+        const updated = await taskService.getTeams();
+        if (updated && updated.length > 0) {
+          setSelectedTeamId(updated[0].id);
+        } else {
+          setSelectedTeamId("");
+        }
+      } catch (err) {
+        console.error("Error deleting team", err);
+        alert("Failed to delete team");
       }
     }
   };
@@ -170,47 +170,41 @@ export default function TeamDetails() {
   const handleCreateTask = () => {};
 
   // Handle adding an existing employee to the team
-  const handleAddExistingMember = (empId, empName) => {
+  const handleAddExistingMember = async (empId, empName) => {
     if (!activeTeam) return;
 
-    let updatedTeams = [...teams];
-    updatedTeams = updatedTeams.map(t => {
-      if (t.id === activeTeam.id) {
-        const memberIds = [...(t.memberIds || [])];
-        if (!memberIds.includes(empId)) {
-          memberIds.push(empId);
-        }
-        return { ...t, memberIds };
-      }
-      return t;
-    });
-
-    localStorage.setItem("navanala_teams", JSON.stringify(updatedTeams));
-    setTeams(updatedTeams);
-    refreshData();
-    triggerToast(`"${empName}" added to team successfully!`);
+    const memberIds = [...(activeTeam.memberIds || [])];
+    if (!memberIds.includes(empId)) {
+      memberIds.push(empId);
+    }
+    
+    const payload = { ...activeTeam, memberIds };
+    try {
+      await taskService.updateTeam(payload);
+      await refreshData();
+      triggerToast(`"${empName}" added to team successfully!`);
+    } catch (err) {
+      console.error("Failed to add member", err);
+    }
   };
 
   // Handle removing a member from the team
-  const handleRemoveMember = (empId, empName) => {
+  const handleRemoveMember = async (empId, empName) => {
     if (!activeTeam) return;
 
     if (window.confirm(`Are you sure you want to remove ${empName} from this team?`)) {
-      let updatedTeams = [...teams];
-      updatedTeams = updatedTeams.map(t => {
-        if (t.id === activeTeam.id) {
-          return {
-            ...t,
-            memberIds: (t.memberIds || []).filter(id => id !== empId)
-          };
-        }
-        return t;
-      });
+      const payload = {
+        ...activeTeam,
+        memberIds: (activeTeam.memberIds || []).filter(id => id !== empId)
+      };
 
-      localStorage.setItem("navanala_teams", JSON.stringify(updatedTeams));
-      setTeams(updatedTeams);
-      refreshData();
-      triggerToast(`"${empName}" has been removed from the team.`);
+      try {
+        await taskService.updateTeam(payload);
+        await refreshData();
+        triggerToast(`"${empName}" has been removed from the team.`);
+      } catch (err) {
+         console.error("Failed to remove member", err);
+      }
     }
   };
 
@@ -789,7 +783,18 @@ export default function TeamDetails() {
                               {task.status}
                             </span>
                           </td>
-                          <td className="px-6 py-4.5 text-right">
+                          <td className="px-6 py-4.5 text-right flex justify-end items-center gap-3">
+                            <button
+                              onClick={() => {
+                                setSelectedForumTaskId(task.id);
+                                document.getElementById("team-forum-section")?.scrollIntoView({ behavior: "smooth" });
+                              }}
+                              className="inline-flex items-center gap-1 text-xs font-bold text-indigo-500 hover:text-indigo-700 transition-colors"
+                              title="Discuss this task"
+                            >
+                              <MessageSquarePlus size={14} />
+                              <span>Discuss</span>
+                            </button>
                             <Link
                               to={`/task/${task.id}`}
                               className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary-dark transition-colors"
@@ -808,10 +813,29 @@ export default function TeamDetails() {
           </div>
 
           {/* Team Discussion Forum */}
-          <div className="mt-8">
+          <div className="mt-8" id="team-forum-section">
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
+              <div>
+                <h4 className="font-extrabold text-slate-900 dark:text-white text-xl">Team Discussion</h4>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Select a team to view and participate in its discussion.</p>
+              </div>
+              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-xl min-w-[250px] shadow-sm">
+                <select
+                  value={selectedForumTaskId || ""}
+                  onChange={(e) => setSelectedForumTaskId(e.target.value)}
+                  className="w-full bg-transparent border-none p-0 text-sm font-bold text-slate-800 dark:text-white focus:ring-0 cursor-pointer outline-none"
+                >
+                  <option value="" disabled>Select a Team to Discuss</option>
+                  {teams.map(t => (
+                    <option key={t.id} value={`team-${t.id}`}>{t.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
             <TaskForum 
               currentUser={taskService.getCurrentUser()}
               employees={[teamLead, ...teamMembers].filter(Boolean)}
+              taskId={selectedForumTaskId}
             />
           </div>
         </>

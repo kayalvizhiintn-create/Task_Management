@@ -18,54 +18,113 @@ export default function AddTeamTask() {
   const [teamCategories, setTeamCategories] = useState([]);
   const [tasksMaster, setTasksMaster] = useState([]);
   const [priorities, setPriorities] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [zones, setZones] = useState([]);
+  const [statuses, setStatuses] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedTeams = localStorage.getItem("navanala_teams");
-    if (storedTeams) {
-      const parsed = JSON.parse(storedTeams);
-      const team = parsed.find(t => t.id === teamId);
-      if (team) {
-        setTeamCategories(team.categories || []);
+    const loadData = async () => {
+      setLoading(true);
+      const [allEmp, tasksMasterData, priosData, deptsData, projsData, zonesData, statsData] = await Promise.all([
+        taskService.getEmployees(),
+        taskService.getTaskMaster(),
+        taskService.getPriorities(),
+        taskService.getDepartments(),
+        taskService.getProjects(),
+        taskService.getZoneMaster(),
+        taskService.getStatuses()
+      ]);
 
-        // Only allow assignment to team members or team lead
-        const allEmp = taskService.getEmployees() || [];
-        const teamEmp = allEmp.filter(e => e.id === team.leadId || (team.memberIds && team.memberIds.includes(e.id)));
-        setEmployees(teamEmp);
+      try {
+        const team = await taskService.getTeamById(teamId);
+        if (team) {
+          setTeamCategories(team.categories || []);
+
+          // Only allow assignment to team members or team lead
+          const teamEmp = (allEmp || []).filter(e => e.id === team.leadId || (team.memberIds && team.memberIds.includes(e.id)));
+          setEmployees(teamEmp);
+        }
+      } catch (err) {
+        console.error("Error fetching team", err);
       }
-    }
+      
+      setTasksMaster(tasksMasterData || []);
+      setPriorities(priosData || []);
+      if (priosData && priosData.length > 0) setTaskPriority(priosData[0].name);
+
+      setDepartments(deptsData || []);
+      setProjects(projsData || []);
+      setZones(zonesData || []);
+      setStatuses(statsData || []);
+      
+      setLoading(false);
+    };
     
-    setTasksMaster(taskService.getTaskMaster() || []);
-    const prios = taskService.getPriorities() || [];
-    setPriorities(prios);
-    if (prios.length > 0) setTaskPriority(prios[0].name);
-    
-    setLoading(false);
+    loadData();
   }, [teamId]);
 
-  const handleCreateTask = (e) => {
+  const handleCreateTask = async (e) => {
     e.preventDefault();
     if (!taskName.trim() || !taskCategory || !taskAssigneeId || !taskDueDate) {
       alert("All required fields must be filled.");
       return;
     }
 
-    taskService.createTask({
-      name: taskName,
-      category: taskCategory,
-      assigneeId: taskAssigneeId,
-      priority: taskPriority,
-      dueDate: taskDueDate,
-      description: taskDescription,
-      status: "Pending"
-    });
+    const formData = new FormData();
+    formData.append("TaskName", taskName);
 
-    setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-      navigate("/team-details");
-    }, 1500);
+    const dept = departments.find(d => d.name === taskCategory);
+    if (dept) formData.append("DeptId", dept.id);
+
+    const pri = priorities.find(p => p.name === taskPriority);
+    if (pri) formData.append("PriorityId", pri.id);
+
+    const stat = statuses.find(s => s.name.toLowerCase() === "pending" || s.name.toLowerCase() === "task create");
+    if (stat) {
+      formData.append("StatusId", stat.id);
+    } else if (statuses.length > 0) {
+      formData.append("StatusId", statuses[0].id);
+    }
+
+    formData.append("AssignedToBioId", taskAssigneeId);
+
+    try {
+      const currentUser = taskService.getCurrentUser ? await taskService.getCurrentUser() : null;
+      if (currentUser && currentUser.id) {
+        formData.append("AssignedByBioId", currentUser.id);
+      } else {
+        formData.append("AssignedByBioId", taskAssigneeId);
+      }
+    } catch (e) {
+      formData.append("AssignedByBioId", taskAssigneeId);
+    }
+
+    formData.append("EndDate", taskDueDate);
+    
+    const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 16);
+    formData.append("StartDate", localISOTime);
+
+    let finalDescription = taskDescription || "";
+    formData.append("DetailedDescription", finalDescription);
+
+    if (projects.length > 0) formData.append("ProjectId", projects[0].id);
+    if (zones.length > 0) formData.append("ZoneId", zones[0].id);
+
+    try {
+      await taskService.createTask(formData);
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+        navigate("/team-details");
+      }, 1500);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to create task");
+    }
   };
 
   if (loading) return null;
