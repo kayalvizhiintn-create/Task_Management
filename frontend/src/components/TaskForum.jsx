@@ -9,7 +9,8 @@ import {
   Reply,
   X,
   FileText,
-  Image as ImageIcon
+  Image as ImageIcon,
+  History
 } from 'lucide-react';
 import { taskCommentService } from '../services/taskCommentService';
 
@@ -219,14 +220,25 @@ export default function TaskForum({ currentUser, employees, taskId }) {
 
   return (
     <div className="bg-white border border-slate-200/50 rounded-[1.5rem] lg:rounded-3xl shadow-premium p-5 lg:p-8 flex flex-col h-full max-h-[800px]">
-      <div className="flex items-center gap-3 border-b border-slate-100 pb-4 mb-4">
-        <div className="p-2.5 bg-primary/10 rounded-xl text-primary">
-          <MessageSquarePlus size={20} />
+      <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-primary/10 rounded-xl text-primary">
+            <MessageSquarePlus size={20} />
+          </div>
+          <div>
+            <h3 className="text-lg font-black text-slate-900 tracking-tight">Discussion Forum</h3>
+            <p className="text-xs font-semibold text-slate-500">Collaborate, mention teammates, and share files.</p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-lg font-black text-slate-900 tracking-tight">Discussion Forum</h3>
-          <p className="text-xs font-semibold text-slate-500">Collaborate, mention teammates, and share files.</p>
-        </div>
+        <button 
+          onClick={loadComments}
+          disabled={!taskId}
+          className="flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-primary bg-primary/10 hover:bg-primary/20 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          title="Revise History"
+        >
+          <History size={16} />
+          History Revise
+        </button>
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 space-y-6 custom-scrollbar mb-4">
