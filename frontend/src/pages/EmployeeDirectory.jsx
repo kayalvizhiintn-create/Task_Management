@@ -202,7 +202,7 @@ export default function EmployeeDirectory() {
           <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mt-1">Try resetting your search query or add a new employee.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 lg:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
           {filteredEmployees.map((emp, index) => {
             const colors = [
               "bg-blue-600",

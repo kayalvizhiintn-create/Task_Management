@@ -28,10 +28,23 @@ export default function AddTeamMember() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setEmployees(taskService.getEmployees() || []);
-    setMasterRoles(taskService.getMasterRoles() || []);
-    setMasterLocations(taskService.getMasterLocations() || []);
-    setLoading(false);
+    const fetchData = async () => {
+      try {
+        const [emps, roles, locations] = await Promise.all([
+          taskService.getEmployees(),
+          taskService.getMasterRoles(),
+          taskService.getMasterLocations()
+        ]);
+        setEmployees(emps || []);
+        setMasterRoles(roles || []);
+        setMasterLocations(locations || []);
+      } catch (err) {
+        console.error("Failed to load data for add team member", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, [teamId]);
 
   const triggerToast = (msg) => {

@@ -112,48 +112,48 @@ export default function HardwareDashboard() {
       </div>
 
       {/* Top Statistics Cards Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4 lg:gap-4">
 
         {/* Total Devices */}
-        <div className="bg-gradient-to-br from-slate-900 to-indigo-950 border border-indigo-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Total Devices</p>
+        <div className="bg-gradient-to-br from-slate-900 to-indigo-950 border border-indigo-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest truncate flex-1">Total Devices</p>
             <Server size={16} className="text-indigo-400" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{metrics.totalDevices}</h3>
         </div>
 
         {/* Active Devices */}
-        <div className="bg-gradient-to-br from-slate-900 to-emerald-950 border border-emerald-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Active Devices</p>
+        <div className="bg-gradient-to-br from-slate-900 to-emerald-950 border border-emerald-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest truncate flex-1">Active Devices</p>
             <Wifi size={16} className="text-emerald-400" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{metrics.activeDevices}</h3>
         </div>
 
         {/* Fault Devices */}
-        <div className="bg-gradient-to-br from-slate-900 to-amber-950 border border-amber-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Fault Devices</p>
+        <div className="bg-gradient-to-br from-slate-900 to-amber-950 border border-amber-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest truncate flex-1">Fault Devices</p>
             <WifiOff size={16} className="text-amber-400" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{metrics.faultDevices}</h3>
         </div>
 
         {/* Temperature */}
-        <div className="bg-gradient-to-br from-slate-900 to-blue-950 border border-blue-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Temperature</p>
+        <div className="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate flex-1">Temperature</p>
             <Thermometer size={16} className="text-blue-400" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{metrics.temperature}°C</h3>
         </div>
 
         {/* Power Usage */}
-        <div className="bg-gradient-to-br from-slate-900 to-rose-950 border border-rose-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Power Usage</p>
+        <div className="bg-gradient-to-br from-slate-900 to-rose-950 border border-rose-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-rose-400 uppercase tracking-widest truncate flex-1">Power Usage</p>
             <Zap size={16} className="text-rose-400" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{metrics.powerUsage} kW</h3>
@@ -239,7 +239,7 @@ export default function HardwareDashboard() {
         </div>
 
         {/* Power Draw History Widget */}
-        <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium flex flex-col justify-between lg:col-span-2 relative overflow-hidden">
+        <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium flex flex-col justify-between xl:col-span-2 lg:col-span-1 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-indigo-50/50 via-transparent to-transparent pointer-events-none" />
 
           <div className="relative z-10 flex justify-between items-start mb-2">
@@ -308,7 +308,7 @@ export default function HardwareDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
 
         {/* Device Workload Summary */}
-        <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium lg:col-span-2 flex flex-col justify-between">
+        <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium xl:col-span-2 lg:col-span-1 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-6">
               <h4 className="font-extrabold text-slate-900 text-base">Key Hardware Load Summary</h4>

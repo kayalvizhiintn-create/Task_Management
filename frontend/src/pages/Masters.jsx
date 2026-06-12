@@ -988,7 +988,7 @@ export default function Masters() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {/* Sidebar Tabs */}
         <div className="lg:col-span-1 space-y-3">
           {[
@@ -1025,7 +1025,7 @@ export default function Masters() {
         </div>
 
         {/* Content Area */}
-        <div className="lg:col-span-3 bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 rounded-[2rem] p-6 lg:p-8 shadow-sm">
+        <div className="lg:col-span-2 xl:col-span-3 bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 rounded-[2rem] p-6 lg:p-8 shadow-sm">
 
           {/* Generic Master Tabs */}
           {(activeTab === "roles" || activeTab === "locations" || activeTab === "departments" || activeTab === "statuses" || activeTab === "task_master" || activeTab === "taskfile" || activeTab === "task_role" || activeTab === "user_master" || activeTab === "zone_master" || activeTab === "priorities") && (

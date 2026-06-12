@@ -97,15 +97,38 @@ export default function TaskManagement() {
   // Edit handlers removed, using EditTask.jsx page
 
   // Inline Status quick toggling
-  const handleQuickStatusChange = (id, newStatus) => {
-    taskService.updateTask(id, { status: newStatus });
-    loadData();
+  const handleQuickStatusChange = async (id, newStatus) => {
+    try {
+      const rawTaskRes = await taskService.getTaskById(id);
+      const rawTask = rawTaskRes?.data || rawTaskRes;
+      if (!rawTask) return;
+      
+      const stat = statuses.find(s => s.name === newStatus);
+      if (stat) {
+        rawTask.StatusId = stat.id;
+        rawTask.TaskID = rawTask.TaskID || rawTask.Id || id;
+        await taskService.updateTask(rawTask);
+        loadData();
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // Inline Assignee quick change
-  const handleQuickAssign = (id, newAssignTo) => {
-    taskService.updateTask(id, { assignTo: newAssignTo });
-    loadData();
+  const handleQuickAssign = async (id, newAssignTo) => {
+    try {
+      const rawTaskRes = await taskService.getTaskById(id);
+      const rawTask = rawTaskRes?.data || rawTaskRes;
+      if (!rawTask) return;
+      
+      rawTask.AssignedToBioId = parseInt(newAssignTo) || 0;
+      rawTask.TaskID = rawTask.TaskID || rawTask.Id || id;
+      await taskService.updateTask(rawTask);
+      loadData();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // Filtering & Sorting calculations
@@ -281,7 +304,7 @@ export default function TaskManagement() {
       </div>
 
       {/* Hyper-Minimalist Table View */}
-      <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-x-auto">
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-slate-100 text-slate-400 text-[10px] font-black uppercase tracking-widest">

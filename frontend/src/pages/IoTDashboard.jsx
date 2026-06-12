@@ -110,48 +110,48 @@ export default function IoTDashboard() {
       </div>
 
       {/* Top Statistics Cards Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4 lg:gap-4">
 
         {/* Total IoT Devices */}
-        <div className="bg-gradient-to-br from-slate-900 to-indigo-950 border border-indigo-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Total IoT Devices</p>
+        <div className="bg-gradient-to-br from-slate-900 to-indigo-950 border border-indigo-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest truncate flex-1">Total IoT Devices</p>
             <Cpu size={16} className="text-indigo-400" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{metrics.totalDevices}</h3>
         </div>
 
         {/* Online Devices */}
-        <div className="bg-gradient-to-br from-slate-900 to-emerald-950 border border-emerald-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Online Devices</p>
+        <div className="bg-gradient-to-br from-slate-900 to-emerald-950 border border-emerald-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest truncate flex-1">Online Devices</p>
             <Wifi size={16} className="text-emerald-400" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{metrics.activeDevices}</h3>
         </div>
 
         {/* Sensor Readings */}
-        <div className="bg-gradient-to-br from-slate-900 to-amber-950 border border-amber-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Sensor Readings</p>
+        <div className="bg-gradient-to-br from-slate-900 to-amber-950 border border-amber-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest truncate flex-1">Sensor Readings</p>
             <Activity size={16} className="text-amber-400" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{metrics.faultDevices}</h3>
         </div>
 
         {/* Alerts / Warnings */}
-        <div className="bg-gradient-to-br from-slate-900 to-blue-950 border border-blue-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Alerts & Warnings</p>
+        <div className="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate flex-1">Alerts & Warnings</p>
             <AlertTriangle size={16} className="text-blue-400" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{metrics.temperature}</h3>
         </div>
 
         {/* Power Consumption */}
-        <div className="bg-gradient-to-br from-slate-900 to-rose-950 border border-rose-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Power Consump.</p>
+        <div className="bg-gradient-to-br from-slate-900 to-rose-950 border border-rose-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-rose-400 uppercase tracking-widest truncate flex-1">Power Consump.</p>
             <Zap size={16} className="text-rose-400" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{metrics.powerUsage} kW</h3>
@@ -237,7 +237,7 @@ export default function IoTDashboard() {
         </div>
 
         {/* Data Transmission History Widget */}
-        <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium flex flex-col justify-between lg:col-span-2 relative overflow-hidden">
+        <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium flex flex-col justify-between xl:col-span-2 lg:col-span-1 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-indigo-50/50 via-transparent to-transparent pointer-events-none" />
 
           <div className="relative z-10 flex justify-between items-start mb-2">
@@ -307,7 +307,7 @@ export default function IoTDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
 
         {/* Hub Workload Summary */}
-        <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium lg:col-span-2 flex flex-col justify-between">
+        <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium xl:col-span-2 lg:col-span-1 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-6">
               <h4 className="font-extrabold text-slate-900 text-base">Key Hub Load Summary</h4>

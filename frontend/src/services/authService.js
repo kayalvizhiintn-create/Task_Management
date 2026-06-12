@@ -45,10 +45,12 @@ export const authService = {
           role: "Admin",
           email: "kayal@gmail.com",
           password: "12345678",
-          avatar: `https://ui-avatars.com/api/?name=Kayal+Admin&background=random`
+          avatar: `https://ui-avatars.com/api/?name=Kayal+Admin&background=random`,
+          token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJUYXNrTWFuYWdlci5BUEkiLCJpc3MiOiJUYXNrTWFuYWdlci5BUEkiLCJSb2xlSWQiOiIxIiwidW5pcXVlX25hbWUiOiJLYXlhbCBBZG1pbiIsInJvbGUiOiJBZG1pbiIsIkJpb0lkIjoiMCIsIm5iZiI6MTc4MTI0OTg1OSwibmFtZWlkIjoiZW1wLWFkbWluIiwiZXhwIjoxODEyNzg1ODU5fQ.oL1psLDo779ROEeP8rS1TpOKlyskM-Qnr3E3TWmkr50"
         };
       } else {
         adminUser.role = "Admin";
+        adminUser.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJUYXNrTWFuYWdlci5BUEkiLCJpc3MiOiJUYXNrTWFuYWdlci5BUEkiLCJSb2xlSWQiOiIxIiwidW5pcXVlX25hbWUiOiJLYXlhbCBBZG1pbiIsInJvbGUiOiJBZG1pbiIsIkJpb0lkIjoiMCIsIm5iZiI6MTc4MTI0OTg1OSwibmFtZWlkIjoiZW1wLWFkbWluIiwiZXhwIjoxODEyNzg1ODU5fQ.oL1psLDo779ROEeP8rS1TpOKlyskM-Qnr3E3TWmkr50";
       }
 
       localStorage.setItem("navanala_currentUser", JSON.stringify(adminUser));

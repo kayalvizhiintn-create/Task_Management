@@ -112,7 +112,7 @@ export default function EmployeeView() {
 
       {/* Selected Employee Profile Summary card */}
       {activeEmployee && (
-        <div className="bg-white border border-slate-200/50 rounded-3xl p-6 shadow-premium flex flex-col md:flex-row md:items-center gap-6 justify-between">
+        <div className="bg-white border border-slate-200/50 rounded-3xl p-6 shadow-premium flex flex-col xl:flex-row xl:items-center gap-6 justify-between">
           <div className="flex items-center gap-4">
             <img src={activeEmployee.avatar} alt={activeEmployee.name} className="w-16 h-16 rounded-2xl object-cover ring-4 ring-primary/10 shrink-0" />
             <div>
@@ -127,7 +127,7 @@ export default function EmployeeView() {
               </p>
             </div>
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap sm:flex-nowrap gap-4">
             <div className="text-center bg-slate-50 px-4 py-3 rounded-2xl border border-slate-200/20 shrink-0">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest block">Total Scope</span>
               <span className="text-lg font-black text-slate-800 mt-1 block">{totalCount}</span>
@@ -145,7 +145,7 @@ export default function EmployeeView() {
       )}
 
       {/* Statistics Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
 
         {/* Total Tasks */}
         <div className="bg-white border border-slate-200/50 p-5 rounded-3xl shadow-premium flex items-center justify-between">
@@ -216,7 +216,7 @@ export default function EmployeeView() {
             <p className="text-sm">No tasks assigned to this employee workspace.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {employeeTasks.map((task) => (
               <div
                 key={task.id}

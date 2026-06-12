@@ -222,10 +222,10 @@ export default function TaskDetails() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-4 lg:gap-8">
 
         {/* Left Columns: Task Information & Employee Card */}
-        <div className="lg:col-span-2 space-y-4 lg:space-y-8">
+        <div className="xl:col-span-2 lg:col-span-1 space-y-4 lg:space-y-8">
 
           {/* Main Info Card */}
           <div className="bg-white border border-slate-200/50 rounded-[1.5rem] lg:rounded-3xl shadow-premium p-5 lg:p-8 space-y-4 lg:space-y-6">

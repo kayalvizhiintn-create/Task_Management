@@ -145,7 +145,7 @@ export default function Reports() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-8 print:hidden">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-8 print:hidden">
         
         {/* Core summary metrics */}
         <div className="bg-white border border-slate-200/50 p-5 lg:p-6 rounded-[1.5rem] lg:rounded-3xl shadow-premium flex items-center justify-between">
@@ -175,7 +175,7 @@ export default function Reports() {
       </div>
 
       {/* Analytics Visualization cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8 print:grid-cols-1">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-8 print:grid-cols-1">
         
         {/* Priority Breakdown (Bar chart representation using simple pure HTML/CSS bars) */}
         <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium space-y-4 lg:space-y-6">

@@ -161,7 +161,7 @@ export default function VisitorForm() {
             <div className="flex items-center gap-2 text-lg font-black text-slate-800 dark:text-slate-200">
               <MessageSquare size={20} className="text-indigo-500" /> Feedback & Discussion
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Comments *</label>
                 <textarea

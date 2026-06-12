@@ -149,8 +149,8 @@ export default function EditTask() {
 
   const handleSaveEdit = async (e) => {
     e.preventDefault();
-    if (!editFormData.name || !editFormData.dueDate) {
-      alert("Please fill in required fields.");
+    if (!editFormData.name) {
+      alert("Please fill in required fields: Task Name.");
       return;
     }
 
@@ -181,22 +181,36 @@ export default function EditTask() {
     }
 
     const finalData = {
-      TaskID: id,
+      TaskID: parseInt(id),
       TaskName: editFormData.name,
       ProjectId: proj.id,
-      DeptId: dept ? dept.id : null,
+      DeptId: dept ? dept.id : undefined,
       ZoneId: zn.id,
-      DetailedDescription: editFormData.description || "",
-      AssignedByBioId: editFormData.assignedBy ? parseInt(editFormData.assignedBy) : null,
-      AssignedToBioId: editFormData.assignTo ? parseInt(editFormData.assignTo) : null,
-      PriorityId: pri ? pri.id : null,
-      StatusId: stat ? stat.id : null,
-      StartDate: editFormData.startDate || null,
-      EndDate: editFormData.dueDate || null,
-      Remark: editFormData.remarks || ""
+      DetailedDescription: editFormData.description ? editFormData.description : undefined,
+      AssignedByBioId: editFormData.assignedBy ? parseInt(editFormData.assignedBy) : undefined,
+      AssignedToBioId: editFormData.assignTo ? parseInt(editFormData.assignTo) : undefined,
+      PriorityId: pri ? pri.id : undefined,
+      StatusId: stat ? stat.id : undefined,
+      StartDate: editFormData.startDate ? editFormData.startDate : undefined,
+      EndDate: editFormData.dueDate ? editFormData.dueDate : undefined,
+      Remark: editFormData.remarks ? editFormData.remarks : undefined
     };
 
-    await taskService.updateTask(finalData);
+    try {
+      await taskService.updateTask(finalData);
+    } catch (err) {
+      console.error(err);
+      let errorMsg = err.response?.data?.message || err.message;
+      if (err.response?.data?.errors) {
+        // Format ASP.NET Core validation errors
+        const errors = err.response.data.errors;
+        errorMsg = Object.entries(errors)
+          .map(([field, msgs]) => `${field}: ${msgs.join(', ')}`)
+          .join('\n');
+      }
+      alert("Failed to update task:\n" + errorMsg);
+      return;
+    }
 
     if (stat && stat.name.toLowerCase() === "completed") {
       setShowCompletedModal(true);

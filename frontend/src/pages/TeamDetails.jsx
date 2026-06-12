@@ -428,13 +428,13 @@ export default function TeamDetails() {
           </div>
 
           {/* Quick Metrics Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6">
-            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 lg:p-6 rounded-[1.5rem] shadow-premium hover:-translate-y-1 transition-transform group flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">SLA Resolution Rate</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 lg:gap-6">
+            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 lg:p-6 rounded-[1.5rem] shadow-premium hover:-translate-y-1 transition-transform group flex items-center justify-between gap-2 h-full">
+              <div className="space-y-1 min-w-0 flex-1">
+                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest truncate">SLA Resolution Rate</p>
                 <h4 className="text-2xl font-black text-slate-800 dark:text-white">{completionRate}%</h4>
               </div>
-              <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 rounded-2xl"><TrendingUp size={18} /></div>
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 rounded-2xl shrink-0"><TrendingUp size={18} /></div>
             </div>
 
             <div className="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 rounded-3xl shadow-sm flex items-center justify-between">
@@ -450,37 +450,37 @@ export default function TeamDetails() {
                 <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">In Progress</p>
                 <h4 className="text-2xl font-black text-amber-600">{inProgressTasksCount} tasks</h4>
               </div>
-              <div className="p-3 bg-amber-50 dark:bg-amber-500/10 text-amber-600 rounded-2xl"><Clock size={18} /></div>
+              <div className="p-3 bg-amber-50 dark:bg-amber-500/10 text-amber-600 rounded-2xl shrink-0"><Clock size={18} /></div>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 rounded-3xl shadow-sm flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Pending</p>
-                <h4 className="text-2xl font-black text-rose-600">{pendingTasksCount} tasks</h4>
+            <div className="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 rounded-3xl shadow-sm flex items-center justify-between h-full">
+              <div className="space-y-1 flex-1 truncate">
+                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest truncate">Pending</p>
+                <h4 className="text-2xl font-black text-rose-600 truncate">{pendingTasksCount} tasks</h4>
               </div>
-              <div className="p-3 bg-rose-50 dark:bg-rose-500/10 text-rose-600 rounded-2xl"><AlertCircle size={18} /></div>
+              <div className="p-3 bg-rose-50 dark:bg-rose-500/10 text-rose-600 rounded-2xl shrink-0"><AlertCircle size={18} /></div>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 rounded-3xl shadow-sm flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Testing</p>
-                <h4 className="text-2xl font-black text-violet-600">{testingTasksCount} tasks</h4>
+            <div className="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 rounded-3xl shadow-sm flex items-center justify-between h-full">
+              <div className="space-y-1 flex-1 truncate">
+                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest truncate">Testing</p>
+                <h4 className="text-2xl font-black text-violet-600 truncate">{testingTasksCount} tasks</h4>
               </div>
-              <div className="p-3 bg-violet-50 dark:bg-violet-500/10 text-violet-600 rounded-2xl"><CheckCircle2 size={18} /></div>
+              <div className="p-3 bg-violet-50 dark:bg-violet-500/10 text-violet-600 rounded-2xl shrink-0"><CheckCircle2 size={18} /></div>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 rounded-3xl shadow-sm flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">On Hold</p>
-                <h4 className="text-2xl font-black text-slate-500">{holdTasksCount} tasks</h4>
+            <div className="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 p-5 rounded-3xl shadow-sm flex items-center justify-between h-full">
+              <div className="space-y-1 flex-1 truncate">
+                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest truncate">On Hold</p>
+                <h4 className="text-2xl font-black text-slate-500 truncate">{holdTasksCount} tasks</h4>
               </div>
-              <div className="p-3 bg-slate-150 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 rounded-2xl"><CheckCircle2 size={18} /></div>
+              <div className="p-3 bg-slate-150 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 rounded-2xl shrink-0"><CheckCircle2 size={18} /></div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-8">
             {/* Team Lead Card Spotlight */}
-            <div className="lg:col-span-1 space-y-8">
+            <div className="xl:col-span-1 lg:col-span-1 space-y-8">
               {teamLead ? (
                 <div className="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 rounded-[2rem] p-6 md:p-8 shadow-premium flex flex-col items-center text-center relative overflow-hidden group">
                   <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-emerald-600 to-teal-600" />
@@ -533,7 +533,7 @@ export default function TeamDetails() {
             </div>
 
             {/* Project Categories received list */}
-            <div className="lg:col-span-2 space-y-8">
+            <div className="xl:col-span-2 lg:col-span-1 space-y-8">
               <div className="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 rounded-[2.5rem] p-6 md:p-8 shadow-premium space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -621,7 +621,7 @@ export default function TeamDetails() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {teamMembers.map(member => {
                 const memberProjects = [...new Set(tasks.filter(t => t.assigneeId === member.id && activeTeam.categories.includes(t.category)).map(t => t.category))];
 
@@ -665,152 +665,7 @@ export default function TeamDetails() {
             </div>
           </div>
 
-          {/* Task Delegation Dashboard */}
-          <div className="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 rounded-[2.5rem] p-6 md:p-8 shadow-premium space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-              <div>
-                <h4 className="font-extrabold text-slate-900 dark:text-white text-lg">Task Delegation Matrix</h4>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Reassign projects or add new tasks directly under this team's scope.</p>
-              </div>
 
-              <button
-                onClick={() => navigate(`/team-details/${activeTeam.id}/add-task`)}
-                className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-850 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-xl font-bold text-xs shadow-premium hover:scale-[1.02] transition-all self-start sm:self-auto"
-              >
-                <PlusCircle size={15} />
-                Delegate New Task
-              </button>
-            </div>
-
-            {teamTasks.length === 0 ? (
-              <div className="bg-slate-50 dark:bg-slate-900/30 border border-slate-200/50 dark:border-slate-700/50 rounded-3xl p-16 text-center text-slate-400 font-semibold">
-                <ClipboardList size={40} className="mx-auto text-slate-300 dark:text-slate-700 mb-3" />
-                <p className="text-sm">No tasks found inside this team's project categories.</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto rounded-2xl border border-slate-250/60 dark:border-slate-700/60">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 dark:bg-slate-900/70 text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-wider border-b border-slate-150 dark:border-slate-700/60">
-                      <th className="px-6 py-4">Task Name & Project</th>
-                      <th className="px-6 py-4">Current Delegated Assignee</th>
-                      <th className="px-6 py-4">Priority</th>
-                      <th className="px-6 py-4">Due Date</th>
-                      <th className="px-6 py-4">Status</th>
-                      <th className="px-6 py-4 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50 text-slate-700 dark:text-slate-350 text-xs font-semibold">
-                    {teamTasks.map((task) => {
-                      const assignee = employees.find(e => e.id === task.assigneeId);
-
-                      // Priority color codes
-                      const getPriorityStyle = (priority) => {
-                        switch (priority) {
-                          case "High": return "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300";
-                          case "Medium": return "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300";
-                          default: return "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300";
-                        }
-                      };
-
-                      const getStatusBadgeStyle = (status) => {
-                        switch (status) {
-                          case "Completed": return "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/50";
-                          case "Testing": return "bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/20 dark:text-violet-400 dark:border-violet-900/50";
-                          case "In Progress": return "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/50";
-                          case "Pending": return "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/20 dark:text-rose-400 dark:border-rose-900/50";
-                          default: return "bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-900 dark:text-slate-400 dark:border-slate-800";
-                        }
-                      };
-
-                      return (
-                        <tr key={task.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                          <td className="px-6 py-4.5 space-y-1">
-                            <span className="font-extrabold text-slate-900 dark:text-white block text-sm leading-tight hover:text-primary cursor-pointer">
-                              <Link to={`/task/${task.id}`}>{task.name}</Link>
-                            </span>
-                            <span className="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-450 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider inline-block">
-                              {task.category}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4.5">
-                            {/* Delegate Selector Dropdown */}
-                            <div className="flex items-center gap-2">
-                              <img
-                                src={assignee ? assignee.avatar : "https://ui-avatars.com/api/?name=Unassigned"}
-                                alt={assignee ? assignee.name : "Unassigned"}
-                                className="w-8 h-8 rounded-lg object-cover bg-white shadow-sm ring-1 ring-slate-100 dark:ring-slate-800"
-                              />
-                              <select
-                                value={task.assigneeId || ""}
-                                onChange={(e) => handleReassignTask(task.id, e.target.value)}
-                                className="bg-transparent border-none p-0 text-xs font-bold text-slate-800 dark:text-white cursor-pointer focus:ring-0 focus:outline-none hover:underline"
-                              >
-                                <option value="" disabled>Select Assignee</option>
-                                {/* Limit to team lead + team members */}
-                                {teamLead && (
-                                  <option key={teamLead.id} value={teamLead.id}>
-                                    {teamLead.name} (Lead)
-                                  </option>
-                                )}
-                                {teamMembers.map(member => (
-                                  <option key={member.id} value={member.id}>
-                                    {member.name}
-                                  </option>
-                                ))}
-                                {/* Allow assigning to other company resources as fallback */}
-                                <option disabled>──────────</option>
-                                {employees
-                                  .filter(e => e.id !== teamLead?.id && !activeTeam.memberIds.includes(e.id))
-                                  .map(otherEmp => (
-                                    <option key={otherEmp.id} value={otherEmp.id}>
-                                      {otherEmp.name} (External)
-                                    </option>
-                                  ))}
-                              </select>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4.5">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${getPriorityStyle(task.priority)}`}>
-                              {task.priority}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4.5 font-bold text-slate-500 dark:text-slate-400">
-                            {task.dueDate}
-                          </td>
-                          <td className="px-6 py-4.5">
-                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${getStatusBadgeStyle(task.status)}`}>
-                              {task.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4.5 text-right flex justify-end items-center gap-3">
-                            <button
-                              onClick={() => {
-                                setSelectedForumTaskId(task.id);
-                                document.getElementById("team-forum-section")?.scrollIntoView({ behavior: "smooth" });
-                              }}
-                              className="inline-flex items-center gap-1 text-xs font-bold text-indigo-500 hover:text-indigo-700 transition-colors"
-                              title="Discuss this task"
-                            >
-                              <MessageSquarePlus size={14} />
-                              <span>Discuss</span>
-                            </button>
-                            <Link
-                              to={`/task/${task.id}`}
-                              className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary-dark transition-colors"
-                            >
-                              <span>Overview</span>
-                              <ChevronRight size={14} />
-                            </Link>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
 
           {/* Team Discussion Forum */}
           <div className="mt-8" id="team-forum-section">

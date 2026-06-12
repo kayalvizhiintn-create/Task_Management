@@ -21,8 +21,9 @@ apiClient.interceptors.request.use(
     if (userStr) {
       try {
         const user = JSON.parse(userStr);
-        // Assuming there is some token logic or just passing user info
-        // config.headers.Authorization = `Bearer ${user.token}`;
+        if (user && user.token) {
+          config.headers.Authorization = `Bearer ${user.token}`;
+        }
       } catch (error) {
         console.error("Error parsing user from localStorage", error);
       }

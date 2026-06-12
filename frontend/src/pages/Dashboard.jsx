@@ -262,34 +262,34 @@ export default function Dashboard() {
       } else if (isToday) {
         boxStyles = 'bg-indigo-200/50 border border-indigo-300 hover:bg-white hover:shadow-floating hover:border-indigo-400';
       } else if (hasTask && hasEvent) {
-        boxStyles = 'bg-gradient-to-br from-blue-100/80 to-rose-100/80 border border-purple-200 hover:from-blue-200/80 hover:to-rose-200/80 hover:shadow-floating hover:border-purple-300';
+        boxStyles = 'bg-gradient-to-br from-slate-200/80 to-slate-300/80 border border-slate-400 hover:from-slate-300/80 hover:to-slate-400/80 hover:shadow-floating hover:border-slate-500';
       } else if (hasTask) {
-        boxStyles = 'bg-rose-100 border border-rose-200 hover:bg-rose-200/80 hover:shadow-floating hover:border-rose-300';
+        boxStyles = 'bg-slate-200 border border-slate-300 hover:bg-slate-300/80 hover:shadow-floating hover:border-slate-400';
       } else if (hasEvent) {
-        boxStyles = 'bg-blue-100 border border-blue-200 hover:bg-blue-200/80 hover:shadow-floating hover:border-blue-300';
+        boxStyles = 'bg-slate-100 border border-slate-200 hover:bg-slate-200/80 hover:shadow-floating hover:border-slate-300';
       }
 
       days.push(
         <div
           key={i}
           onClick={() => setSelectedDate(new Date(year, month, i))}
-          className={`group min-h-[40px] aspect-square p-1 flex flex-col items-center justify-center rounded-xl cursor-pointer transition-all duration-300 ${boxStyles}`}
+          className={`group relative min-h-[44px] aspect-square p-1.5 flex items-start justify-start rounded-xl cursor-pointer transition-all duration-300 ${boxStyles}`}
         >
-          <span className={`text-xs font-extrabold w-7 h-7 flex items-center justify-center rounded-full transition-colors duration-300
+          <span className={`text-sm font-extrabold w-7 h-7 flex items-center justify-center rounded-full transition-colors duration-300
             ${isToday ? 'bg-gradient-to-br from-indigo-500 to-primary text-white shadow-md' :
               isSelected ? 'bg-primary/10 text-primary' :
-                (hasTask && hasEvent) ? 'text-purple-700 group-hover:bg-purple-100 group-hover:text-purple-900' :
-                  hasTask ? 'text-rose-700 group-hover:bg-rose-50 group-hover:text-rose-900' :
-                    hasEvent ? 'text-blue-700 group-hover:bg-blue-50 group-hover:text-blue-900' :
-                      'text-slate-600 group-hover:bg-slate-100 group-hover:text-slate-900'}
+                (hasTask && hasEvent) ? 'text-slate-900 group-hover:bg-slate-300 group-hover:text-slate-900' :
+                  hasTask ? 'text-slate-900 group-hover:bg-slate-200 group-hover:text-slate-900' :
+                    hasEvent ? 'text-slate-800 group-hover:bg-slate-200 group-hover:text-slate-900' :
+                      'text-slate-600 group-hover:bg-slate-100 group-hover:text-slate-800'}
           `}>
             {i}
           </span>
           {dayEvents.length > 0 && (
-            <div className="flex gap-0.5 mt-1">
-              {dayEvents.slice(0, 3).map((ev, idx) => (
-                <div key={idx} className={`w-1.5 h-1.5 rounded-full ${ev.type === 'Event' ? 'bg-blue-500' : 'bg-rose-400'}`}></div>
-              ))}
+            <div className="absolute bottom-1 right-1">
+              <span className="text-[8px] font-black text-slate-600 whitespace-nowrap bg-white/80 border border-slate-300 shadow-sm px-1 rounded">
+                {dayEvents.length}
+              </span>
             </div>
           )}
         </div>
@@ -313,67 +313,67 @@ export default function Dashboard() {
       )}
 
       {/* Top Statistics Cards Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 lg:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4 lg:gap-4">
 
         {/* Total Tasks */}
-        <div onClick={() => navigate("/tasks")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-indigo-950 border border-indigo-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Total</p>
-            <ListTodo size={16} className="text-indigo-400" />
+        <div onClick={() => navigate("/tasks")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-indigo-950 border border-indigo-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest truncate flex-1">Total</p>
+            <ListTodo size={16} className="text-indigo-400 shrink-0" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{totalCount}</h3>
         </div>
 
         {/* Completed Tasks */}
-        <div onClick={() => navigate("/tasks?status=Completed")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-emerald-950 border border-emerald-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Completed</p>
-            <CheckCircle2 size={16} className="text-emerald-400" />
+        <div onClick={() => navigate("/tasks?status=Completed")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-emerald-950 border border-emerald-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest truncate flex-1">Completed</p>
+            <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{completedCount}</h3>
         </div>
 
         {/* Processing Tasks */}
-        <div onClick={() => navigate("/tasks?status=Processing")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-amber-950 border border-amber-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Processing</p>
-            <TrendingUp size={16} className="text-amber-400" />
+        <div onClick={() => navigate("/tasks?status=Processing")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-amber-950 border border-amber-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest truncate flex-1">Processing</p>
+            <TrendingUp size={16} className="text-amber-400 shrink-0" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{processingCount}</h3>
         </div>
 
         {/* Pending Tasks */}
-        <div onClick={() => navigate("/tasks?status=Pending")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-rose-950 border border-rose-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Pending</p>
-            <Clock size={16} className="text-rose-400" />
+        <div onClick={() => navigate("/tasks?status=Pending")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-rose-950 border border-rose-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-rose-400 uppercase tracking-widest truncate flex-1">Pending</p>
+            <Clock size={16} className="text-rose-400 shrink-0" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{pendingCount}</h3>
         </div>
 
         {/* On Hold Tasks */}
-        <div onClick={() => navigate("/tasks?status=On-Hold")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">On Hold</p>
-            <AlertTriangle size={16} className="text-slate-400" />
+        <div onClick={() => navigate("/tasks?status=On-Hold")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate flex-1">On Hold</p>
+            <AlertTriangle size={16} className="text-slate-400 shrink-0" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{onHoldCount}</h3>
         </div>
 
         {/* Delayed Tasks */}
-        <div onClick={() => navigate("/tasks?status=Delayed")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-orange-950 border border-orange-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-orange-400 uppercase tracking-widest">Delayed</p>
-            <Clock size={16} className="text-orange-400" />
+        <div onClick={() => navigate("/tasks?status=Delayed")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-orange-950 border border-orange-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-orange-400 uppercase tracking-widest truncate flex-1">Delayed</p>
+            <Clock size={16} className="text-orange-400 shrink-0" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{delayedCount}</h3>
         </div>
 
         {/* Cancelled Tasks */}
-        <div onClick={() => navigate("/tasks?status=Cancelled")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-red-950 border border-red-900/40 p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest">Cancelled</p>
-            <AlertTriangle size={16} className="text-red-400" />
+        <div onClick={() => navigate("/tasks?status=Cancelled")} className="cursor-pointer bg-gradient-to-br from-slate-900 to-red-950 border border-red-900/40 p-3 xl:p-4 rounded-2xl shadow-premium hover:shadow-floating transition-all duration-300 flex flex-col justify-between group h-full">
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest truncate flex-1">Cancelled</p>
+            <AlertTriangle size={16} className="text-red-400 shrink-0" />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">{cancelledCount}</h3>
         </div>
@@ -381,18 +381,13 @@ export default function Dashboard() {
       </div>
 
       {/* 30% / 70% Layout for Calendar and Workload Summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-12 lg:grid-cols-1 gap-4 lg:gap-6">
 
         {/* Calendar & Details Column (30% -> col-span-4) */}
-        <div className="lg:col-span-4 flex flex-col gap-4 lg:gap-6">
-          <div className="bg-white border border-slate-200/50 p-5 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-premium">
+        <div className="xl:col-span-4 lg:col-span-1 bg-white border border-slate-200/50 p-5 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-premium flex flex-col gap-4 lg:gap-6">
+          <div>
             <div className="flex flex-col mb-6">
-              <h4 className="font-black text-slate-900 text-lg flex items-center gap-2 mb-4">
-                <div className="p-2 bg-primary/10 rounded-xl text-primary">
-                  <Calendar size={20} />
-                </div>
-                Schedule
-              </h4>
+
               <div className="flex items-center justify-between bg-slate-50 border border-slate-100 p-1.5 rounded-2xl">
                 <button onClick={prevMonth} className="p-1.5 hover:bg-white hover:shadow-sm rounded-xl text-slate-600 transition-all duration-300">
                   <ChevronLeft size={18} />
@@ -453,18 +448,7 @@ export default function Dashboard() {
 
               {/* Calendar Legend */}
               <div className="flex flex-wrap items-center justify-center gap-4 mt-5 pt-4 border-t border-slate-200/60">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Event</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-400"></span>
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Deadline</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-3 h-3 rounded-full bg-gradient-to-br from-blue-400 to-rose-400 shadow-sm"></span>
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Both</span>
-                </div>
+
                 <div className="flex items-center gap-1.5">
                   <span className="w-3 h-3 rounded-full bg-gradient-to-br from-indigo-500 to-primary shadow-sm"></span>
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Today</span>
@@ -474,18 +458,14 @@ export default function Dashboard() {
           </div>
 
           {/* Selected Date Details */}
-          <div className="bg-white border border-slate-200/50 p-5 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-premium flex-1">
-            <h4 className="font-black text-slate-900 text-base mb-4 flex items-center gap-2">
-              <div className="w-2 h-6 bg-primary rounded-full"></div>
-              Details for {selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-            </h4>
+          <div className="flex-1">
             <div className="flex flex-col gap-3">
               {selectedDayEvents.length > 0 ? (
                 selectedDayEvents.map((ev, idx) => (
-                  <div key={idx} className={`p-3 rounded-xl border ${ev.type === 'Event' ? 'bg-blue-50/50 border-blue-100' : 'bg-rose-50/50 border-rose-100'}`}>
+                  <div key={idx} className={`p-3 rounded-xl border ${ev.type === 'Event' ? 'bg-slate-100/50 border-slate-200' : 'bg-slate-200/50 border-slate-300'}`}>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className={`w-2 h-2 rounded-full ${ev.type === 'Event' ? 'bg-blue-500' : 'bg-rose-500'}`}></span>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider ${ev.type === 'Event' ? 'text-blue-600' : 'text-rose-600'}`}>{ev.type}</span>
+                      <span className={`w-2 h-2 rounded-full ${ev.type === 'Event' ? 'bg-slate-500' : 'bg-slate-700'}`}></span>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider ${ev.type === 'Event' ? 'text-slate-500' : 'text-slate-700'}`}>{ev.type}</span>
                     </div>
                     <p className={`text-sm font-bold text-slate-800`}>{ev.title}</p>
                   </div>
@@ -500,9 +480,9 @@ export default function Dashboard() {
         </div>
 
         {/* Category Workload Column (70% -> col-span-8) */}
-        <div className="lg:col-span-8 flex flex-col gap-4 lg:gap-6">
+        <div className="xl:col-span-8 lg:col-span-1 flex flex-col gap-4 lg:gap-6">
           {/* Category Workload Summary Card */}
-          <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-[2rem] shadow-premium">
+          <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-[2rem] shadow-premium h-full flex-1">
             <div>
               <div className="flex justify-between items-center mb-6">
                 <h4 className="font-extrabold text-slate-900 text-base lg:text-lg">Category Workload Summary</h4>
@@ -532,13 +512,46 @@ export default function Dashboard() {
                         <td className="py-4 pl-4">
                           <p className="font-bold text-slate-800">{cat.category}</p>
                         </td>
-                        <td className="py-4 text-center text-emerald-600 font-bold">{cat.completed}</td>
-                        <td className="py-4 text-center text-amber-600 font-bold">{cat.processing}</td>
-                        <td className="py-4 text-center text-rose-600 font-bold">{cat.pending}</td>
-                        <td className="py-4 text-center text-slate-500 font-bold">{cat.onhold}</td>
-                        <td className="py-4 text-center text-orange-600 font-bold">{cat.delayed}</td>
-                        <td className="py-4 text-center text-red-600 font-bold">{cat.cancelled}</td>
-                        <td className="py-4 text-center text-indigo-600 font-black">
+                        <td 
+                          onClick={() => navigate(`/tasks?status=Completed&category=${encodeURIComponent(cat.category)}`)}
+                          className="py-4 text-center text-emerald-600 font-bold text-base cursor-pointer hover:underline transition-all"
+                        >
+                          {cat.completed}
+                        </td>
+                        <td 
+                          onClick={() => navigate(`/tasks?status=Processing&category=${encodeURIComponent(cat.category)}`)}
+                          className="py-4 text-center text-amber-600 font-bold text-base cursor-pointer hover:underline transition-all"
+                        >
+                          {cat.processing}
+                        </td>
+                        <td 
+                          onClick={() => navigate(`/tasks?status=Pending&category=${encodeURIComponent(cat.category)}`)}
+                          className="py-4 text-center text-rose-600 font-bold text-base cursor-pointer hover:underline transition-all"
+                        >
+                          {cat.pending}
+                        </td>
+                        <td 
+                          onClick={() => navigate(`/tasks?status=On-Hold&category=${encodeURIComponent(cat.category)}`)}
+                          className="py-4 text-center text-slate-500 font-bold text-base cursor-pointer hover:underline transition-all"
+                        >
+                          {cat.onhold}
+                        </td>
+                        <td 
+                          onClick={() => navigate(`/tasks?status=Delayed&category=${encodeURIComponent(cat.category)}`)}
+                          className="py-4 text-center text-orange-600 font-bold text-base cursor-pointer hover:underline transition-all"
+                        >
+                          {cat.delayed}
+                        </td>
+                        <td 
+                          onClick={() => navigate(`/tasks?status=Cancelled&category=${encodeURIComponent(cat.category)}`)}
+                          className="py-4 text-center text-red-600 font-bold text-base cursor-pointer hover:underline transition-all"
+                        >
+                          {cat.cancelled}
+                        </td>
+                        <td 
+                          onClick={() => navigate(`/tasks?category=${encodeURIComponent(cat.category)}`)}
+                          className="py-4 text-center text-indigo-600 font-black text-lg cursor-pointer hover:underline transition-all"
+                        >
                           {cat.completed + cat.processing + cat.pending + cat.onhold + cat.delayed + cat.cancelled}
                         </td>
                       </tr>
@@ -554,60 +567,62 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Action Needed: High Priority Tasks Card */}
-          <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-[2rem] shadow-premium flex-1">
-            <div className="flex justify-between items-center mb-6">
-              <h4 className="font-extrabold text-slate-900 text-base lg:text-lg flex items-center gap-2">
-                <AlertTriangle size={20} className="text-rose-500" />
-                Action Needed: High Priority
-              </h4>
-              <Link to="/tasks?priority=High" className="text-xs font-bold text-primary hover:text-primary-dark transition-all flex items-center gap-1">
-                <span>View All</span>
-                <ChevronRight size={14} />
-              </Link>
-            </div>
-            <div className="flex flex-col gap-3">
-              {tasks.filter(t => (t.priority || "").toLowerCase() === "high" && !["completed", "done"].includes((t.status || "").toLowerCase().trim())).slice(0, 4).map((task, idx) => {
-                const assignee = workloads.find(e => e.id === task.assignTo);
-                return (
-                  <div key={idx} className="p-4 rounded-xl border border-rose-100 bg-rose-50/30 flex items-center justify-between hover:bg-rose-50/80 transition-colors">
-                    <div className="flex items-center gap-4">
-                      <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></div>
-                      <div>
-                        <p className="font-bold text-slate-800 text-sm">{task.name}</p>
-                        <p className="text-xs text-slate-500 font-medium mt-0.5 line-clamp-1">{task.description}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md border bg-white border-rose-200 text-rose-600">
-                        {task.status || "Pending"}
-                      </span>
-                      {assignee && (
-                        <img src={assignee.avatar || "https://i.pravatar.cc/150?u=user"} alt={assignee.name} title={`Assigned to ${assignee.name}`} className="w-8 h-8 rounded-full border-2 border-white shadow-sm object-cover" />
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-              {tasks.filter(t => (t.priority || "").toLowerCase() === "high" && !["completed", "done"].includes((t.status || "").toLowerCase().trim())).length === 0 && (
-                <div className="text-center py-8 bg-slate-50 rounded-xl border border-slate-100 border-dashed">
-                  <p className="text-sm font-medium text-slate-500 flex items-center justify-center gap-2">
-                    <CheckCircle2 size={18} className="text-emerald-500" />
-                    All caught up! No pending high priority tasks.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
+
         </div>
 
       </div>
 
       {/* Middle Section: Task Analytics Charts & Category Progress */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-4 lg:gap-6">
+
+        {/* Action Needed: High Priority Tasks Card */}
+        <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium xl:col-span-1 lg:col-span-1 flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-6">
+            <h4 className="font-extrabold text-slate-900 text-base lg:text-lg flex items-center gap-2">
+              <AlertTriangle size={20} className="text-rose-500" />
+              Action Needed: High Priority
+            </h4>
+            <Link to="/tasks?priority=High" className="text-xs font-bold text-primary hover:text-primary-dark transition-all flex items-center gap-1">
+              <span>View All</span>
+              <ChevronRight size={14} />
+            </Link>
+          </div>
+          <div className="flex flex-col gap-3">
+            {tasks.filter(t => (t.priority || "").toLowerCase() === "high" && !["completed", "done"].includes((t.status || "").toLowerCase().trim())).slice(0, 4).map((task, idx) => {
+              const assignee = workloads.find(e => e.id === task.assignTo);
+              return (
+                <div key={idx} className="p-4 rounded-xl border border-rose-100 bg-rose-50/30 flex items-center justify-between hover:bg-rose-50/80 transition-colors">
+                  <div className="flex items-center gap-4 flex-1 min-w-0 pr-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shrink-0"></div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-slate-800 text-sm truncate">{task.name}</p>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5 truncate">{task.description}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md border bg-white border-rose-200 text-rose-600 whitespace-nowrap">
+                      {task.status || "Pending"}
+                    </span>
+                    {assignee && (
+                      <img src={assignee.avatar || "https://i.pravatar.cc/150?u=user"} alt={assignee.name} title={`Assigned to ${assignee.name}`} className="w-8 h-8 rounded-full border-2 border-white shadow-sm object-cover shrink-0" />
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            {tasks.filter(t => (t.priority || "").toLowerCase() === "high" && !["completed", "done"].includes((t.status || "").toLowerCase().trim())).length === 0 && (
+              <div className="text-center py-8 bg-slate-50 rounded-xl border border-slate-100 border-dashed">
+                <p className="text-sm font-medium text-slate-500 flex items-center justify-center gap-2">
+                  <CheckCircle2 size={18} className="text-emerald-500" />
+                  All caught up! No pending high priority tasks.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Team Projects Overview */}
-        <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium lg:col-span-3 flex flex-col justify-between">
+        <div className="bg-white border border-slate-200/50 p-5 lg:p-8 rounded-[1.5rem] lg:rounded-3xl shadow-premium xl:col-span-2 lg:col-span-1 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-6">
               <h4 className="font-extrabold text-slate-900 text-lg">Team Projects Overview</h4>
